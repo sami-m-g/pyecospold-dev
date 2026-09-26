@@ -9,13 +9,18 @@ repos:
   - id: check-added-large-files
   - id: check-case-conflict
   - id: check-illegal-windows-names
-  - id: check-json
   - id: check-merge-conflict
   - id: check-yaml
   - id: end-of-file-fixer
   - id: mixed-line-ending
     args: [--fix=lf]
   - id: trailing-whitespace
+
+- repo: https://github.com/python-jsonschema/check-jsonschema
+  rev: 0.38.2
+  hooks:
+  - id: check-readthedocs
+  - id: check-renovate
 
 - repo: https://github.com/astral-sh/uv-pre-commit
   rev: 0.12.19
