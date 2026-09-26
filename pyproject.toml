@@ -82,10 +82,6 @@ ignore = [
     "COM812", # conflicts with the formatter
     "CPY001", # licence is declared once in pyproject
     # temporary: existing violations; each is removed by the commit that fixes it
-    "ANN001",
-    "ANN201",
-    "ANN202",
-    "ANN401",
     "ARG002",
     "ARG005",
     "B905",
@@ -120,6 +116,9 @@ ignore = [
     "D205", # docstrings are copied 1:1 from the XSD
     "N802", # public API names mirror the XSD
     "N815",
+]
+"pyecospold/{helpers,lxmlh/*}.py" = [
+    "ANN401", # values and element classes are resolved at runtime
 ]
 "tests/**" = ["ANN", "D", "INP001", "PLR2004", "S101"]
 

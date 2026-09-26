@@ -859,7 +859,7 @@ class TimePeriod(etree.ElementBase):
             raise ValueError("`new_date` is before `timePeriod.startDate`")
         self._endDate = new_date.isoformat()
 
-    def _init(self):
+    def _init(self) -> None:
         """Harmonize all possible date formats to actual dates.
 
         Shortcircuit evaluation is dates are already present as _init is called

@@ -80,7 +80,13 @@ from .model_v2 import TimePeriod as TimePeriodV2
 class EcospoldLookupV1(etree.CustomElementClassLookup):
     """Custom XML lookup class for Ecospold V1 files."""
 
-    def lookup(self, type, doc, namespace, name):  # noqa: A002 (lxml's signature)
+    def lookup(
+        self,
+        type: str,  # noqa: A002 (lxml's signature)
+        doc: object,
+        namespace: str | None,
+        name: str | None,
+    ) -> type[etree.ElementBase] | None:
         """Maps Ecospold XML elements to custom Ecospold classes."""
         lookupmap = {
             "administrativeInformation": AdministrativeInformationV1,
@@ -104,16 +110,19 @@ class EcospoldLookupV1(etree.CustomElementClassLookup):
             "timePeriod": TimePeriodV1,
             "validation": Validation,
         }
-        try:
-            return lookupmap[name]
-        except KeyError:
-            return None
+        return lookupmap.get(name or "")
 
 
 class EcospoldLookupV2(etree.CustomElementClassLookup):
     """Custom XML lookup class for Ecospold V2 files."""
 
-    def lookup(self, type, doc, namespace, name):  # noqa: A002 (lxml's signature)
+    def lookup(
+        self,
+        type: str,  # noqa: A002 (lxml's signature)
+        doc: object,
+        namespace: str | None,
+        name: str | None,
+    ) -> type[etree.ElementBase] | None:
         """Maps Ecospold XML elements to custom Ecospold classes."""
         lookupmap = {
             "activity": Activity,
@@ -154,10 +163,7 @@ class EcospoldLookupV2(etree.CustomElementClassLookup):
             "uncertainty": Uncertainty,
             "uniform": Uniform,
         }
-        try:
-            return lookupmap[name]
-        except KeyError:
-            return None
+        return lookupmap.get(name or "")
 
 
 def parse_file_v1(file: str | Path | IO[str] | IO[bytes]) -> EcoSpoldV1:

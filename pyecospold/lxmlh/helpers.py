@@ -88,7 +88,7 @@ def get_element_text(
     )
 
 
-def get_inner_text_list(parent: etree.ElementBase, element: str):
+def get_inner_text_list(parent: etree.ElementBase, element: str) -> list[str]:
     """Return the texts of the last nodes in a chain of XML elements.
 
     Helper wrapper method for retrieving the list of last nodes in a chain of XML
