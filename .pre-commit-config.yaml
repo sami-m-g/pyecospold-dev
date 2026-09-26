@@ -1,3 +1,5 @@
+default_install_hook_types: [pre-commit, pre-push]
+default_stages: [pre-commit]
 exclude: ^(pyecospold/schemas|tests/fixtures|docs/_static)/
 
 repos:
@@ -30,3 +32,10 @@ repos:
     language: system
     types: [python]
     pass_filenames: false
+  - id: pytest
+    name: pytest
+    entry: uv run --frozen pytest
+    language: system
+    always_run: true
+    pass_filenames: false
+    stages: [pre-push]
