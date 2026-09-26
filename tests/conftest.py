@@ -84,19 +84,19 @@ class Item(etree.ElementBase):
 class ShipOrder(etree.ElementBase):
     """ShipOrder element."""
 
-    orderId = create_attribute("orderid", str, FILE_SCHEMA, lambda orderId: orderId)
-    orderStatus = create_attribute("orderstatus", str, FILE_SCHEMA, None)
-    orderTime = create_attribute("ordertime", str, FILE_SCHEMA, None)
-    orderPerson = create_element_text("orderperson", str, FILE_SCHEMA)
+    order_id = create_attribute("orderid", str, FILE_SCHEMA, lambda order_id: order_id)
+    order_status = create_attribute("orderstatus", str, FILE_SCHEMA, None)
+    order_time = create_attribute("ordertime", str, FILE_SCHEMA, None)
+    order_person = create_element_text("orderperson", str, FILE_SCHEMA)
     discounts = create_attribute_list("discount", int, FILE_SCHEMA)
 
     @property
-    def shipTo(self) -> "ShipTo":
+    def ship_to(self) -> "ShipTo":
         """Inner shipto element"""
         return get_element(self, "shipto")
 
     @property
-    def itemsList(self) -> list["Item"]:
+    def items_list(self) -> list["Item"]:
         "Items."
         return get_element_list(self, "item")
 
@@ -106,13 +106,13 @@ class Lookup(etree.CustomElementClassLookup):
 
     def lookup(self, unused_node_type, unused_document, unused_namespace, name):
         """Maps XML elements to custom classes."""
-        lookupMap = {
+        lookup_map = {
             "item": Item,
             "shiporder": ShipOrder,
             "shipto": ShipTo,
         }
         try:
-            return lookupMap[name]
+            return lookup_map[name]
         except KeyError:
             return None
 
@@ -129,28 +129,28 @@ def __random_file_name() -> str:
 
 @pytest.fixture(name="zip_data")
 def __zip_data(tmpdir) -> str:
-    zipFilePath = os.path.join(tmpdir, FILE_NAME_ZIP)
-    with zipfile.ZipFile(zipFilePath, "w", zipfile.ZIP_DEFLATED) as zipFile:
+    zip_file_path = os.path.join(tmpdir, FILE_NAME_ZIP)
+    with zipfile.ZipFile(zip_file_path, "w", zipfile.ZIP_DEFLATED) as zip_file:
         for root, _, files in os.walk(DIR_DATA):
             for file in files:
-                zipFile.write(os.path.join(root, file), file)
-    return zipFilePath
+                zip_file.write(os.path.join(root, file), file)
+    return zip_file_path
 
 
 def compare_files(file1: str, file2: str) -> bool:
     """Compares two files ignoring whitespace."""
-    with open(file1, encoding="utf-8") as inputFile:
-        with open(file2, encoding="utf-8") as outputFile:
+    with open(file1, encoding="utf-8") as input_file:
+        with open(file2, encoding="utf-8") as output_file:
             mapping = {ord(c): "" for c in [" ", "\t", "\n"]}
-            translatedOutput = outputFile.read().translate(mapping)
-            translatedInput = inputFile.read().translate(mapping)
-            return translatedOutput == translatedInput
+            translated_output = output_file.read().translate(mapping)
+            translated_input = input_file.read().translate(mapping)
+            return translated_output == translated_input
 
 
 def confirm_validation_results(validation_results: list) -> None:
     """Tests validation results."""
-    for validationResult in validation_results:
-        if validationResult[0].name == FILE_SAMPLE_INVALID.name:
-            assert str(validationResult[1][0]).find(ERROR_STR) != -1
+    for validation_result in validation_results:
+        if validation_result[0].name == FILE_SAMPLE_INVALID.name:
+            assert str(validation_result[1][0]).find(ERROR_STR) != -1
         else:
-            assert validationResult[1] is None
+            assert validation_result[1] is None

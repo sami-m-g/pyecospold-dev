@@ -34,12 +34,12 @@ def set_attribute_list(
 
     Raises DocumentInvalid exception on inappropriate setting according to XSD schema.
     """
-    for oldValue in get_element_list(element, key):
-        element.remove(oldValue)
+    for old_value in get_element_list(element, key):
+        element.remove(old_value)
     elements = []
-    nameSpace = element.nsmap.get(None, "")
+    name_space = element.nsmap.get(None, "")
     for value in values:
-        elements.append(etree.SubElement(element, f"{{{nameSpace}}}{key}"))
+        elements.append(etree.SubElement(element, f"{{{name_space}}}{key}"))
         elements[-1].text = str(value)
     element.extend(elements)
     schema = etree.XMLSchema(file=schema_file)
@@ -96,10 +96,10 @@ def get_inner_text_list(parent: etree.ElementBase, element: str):
     Helper wrapper method for retrieving the list of last nodes in a chain of XML
     elements.
     """
-    innerElements = get_element_list(parent, element)
+    inner_elements = get_element_list(parent, element)
     return [
-        re.sub("[ ]{2,}", "", str(innerElement.text)).replace("\n", " ")
-        for innerElement in innerElements
+        re.sub("[ ]{2,}", "", str(inner_element.text)).replace("\n", " ")
+        for inner_element in inner_elements
     ]
 
 

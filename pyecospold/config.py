@@ -85,9 +85,9 @@ class Defaults:
             for key, value in dict(config["parameters"]).items():
                 setattr(cls, key, value)
 
-        staticDefaults = {
+        static_defaults = {
             name: dict(section)
             for name, section in config.items()
             if name not in ["parameters"]
         }
-        cls.static_defaults = staticDefaults
+        cls.static_defaults = static_defaults

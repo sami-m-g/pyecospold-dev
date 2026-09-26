@@ -395,12 +395,12 @@ def save_ecospold_file(
     fill_defaults: whether to fill defaults values for attributes or not.
     """
     if not fill_defaults:
-        staticDefaults = None
-        dynamicDefaults = None
+        static_defaults = None
+        dynamic_defaults = None
     else:
-        staticDefaults = Defaults.STATIC_DEFAULTS
-        dynamicDefaults = Defaults.DYNAMIC_DEFAULTS
+        static_defaults = Defaults.STATIC_DEFAULTS
+        dynamic_defaults = Defaults.DYNAMIC_DEFAULTS
 
     save_file(
-        root, path, static_defaults=staticDefaults, dynamic_defaults=dynamicDefaults
+        root, path, static_defaults=static_defaults, dynamic_defaults=dynamic_defaults
     )

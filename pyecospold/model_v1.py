@@ -436,7 +436,7 @@ class Exchange(etree.ElementBase):
         4=FromNature, 5=FromTechnosphere.
         """
         return [
-            Exchange.INPUT_GROUPS_MAP[inputGroup] for inputGroup in self._inputGroups
+            Exchange.INPUT_GROUPS_MAP[input_group] for input_group in self._inputGroups
         ]
 
     @property
@@ -446,8 +446,8 @@ class Exchange(etree.ElementBase):
         2=Allocated by product, 3=WasteToTreatment, 4=ToNature.
         """
         return [
-            Exchange.OUTPUT_GROUPS_MAP[outputGroup]
-            for outputGroup in self._outputGroups
+            Exchange.OUTPUT_GROUPS_MAP[output_group]
+            for output_group in self._outputGroups
         ]
 
     @property

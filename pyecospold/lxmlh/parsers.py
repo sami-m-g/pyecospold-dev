@@ -114,10 +114,10 @@ def parse_zip_file(
     defaults to [".xml"]. Returns a list of tuples of file paths and corresponding
     custom Python classes representing the root of the XML file.
     """
-    with tempfile.TemporaryDirectory() as unzipDir:
-        with zipfile.ZipFile(file_path, "r") as zipFile:
-            zipFile.extractall(unzipDir)
-            return parse_directory(unzipDir, schema_path, lookup, valid_suffixes)
+    with tempfile.TemporaryDirectory() as unzip_dir:
+        with zipfile.ZipFile(file_path, "r") as zip_file:
+            zip_file.extractall(unzip_dir)
+            return parse_directory(unzip_dir, schema_path, lookup, valid_suffixes)
 
 
 def validate_zip_file(
@@ -132,10 +132,10 @@ def validate_zip_file(
     list of valid file suffixes which will only be considered for validating. If None,
     defaults to [".xml"].
     """
-    with tempfile.TemporaryDirectory() as unzipDir:
-        with zipfile.ZipFile(file_path, "r") as zipFile:
-            zipFile.extractall(unzipDir)
-            return validate_directory(unzipDir, schema_path, valid_suffixes)
+    with tempfile.TemporaryDirectory() as unzip_dir:
+        with zipfile.ZipFile(file_path, "r") as zip_file:
+            zip_file.extractall(unzip_dir)
+            return validate_directory(unzip_dir, schema_path, valid_suffixes)
 
 
 def save_file(

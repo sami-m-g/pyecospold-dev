@@ -28,15 +28,15 @@ def test_parse_zip_file(zip_data) -> None:
 
     assert len(roots) == 2
     assert roots[0][0].name == FILE_SAMPLE.name
-    assert roots[0][1].shipTo.name == "Ola Nordmann"
+    assert roots[0][1].ship_to.name == "Ola Nordmann"
 
 
 def test_save_file(ship_order: etree.ElementTree, tmpdir, random_file_name) -> None:
     """It saves file correctly."""
-    outputPath = os.path.join(tmpdir, random_file_name)
-    save_file(ship_order, outputPath)
+    output_path = os.path.join(tmpdir, random_file_name)
+    save_file(ship_order, output_path)
 
-    assert compare_files(FILE_SAMPLE, outputPath)
+    assert compare_files(FILE_SAMPLE, output_path)
 
 
 def test_save_file_defaults(
@@ -45,30 +45,30 @@ def test_save_file_defaults(
     """It saves file correctly."""
 
     def _get_order_time(element: etree.ElementBase) -> str:
-        return element.orderId
+        return element.order_id
 
-    staticDefaults = {"ShipOrder": {"orderStatus": "wip"}}
-    dynamicDefaults = {"ShipOrder": {"orderTime": _get_order_time}}
-    outputPath = os.path.join(tmpdir, random_file_name)
+    static_defaults = {"ShipOrder": {"order_status": "wip"}}
+    dynamic_defaults = {"ShipOrder": {"order_time": _get_order_time}}
+    output_path = os.path.join(tmpdir, random_file_name)
     save_file(
         ship_order,
-        outputPath,
-        static_defaults=staticDefaults,
-        dynamic_defaults=dynamicDefaults,
+        output_path,
+        static_defaults=static_defaults,
+        dynamic_defaults=dynamic_defaults,
     )
-    assert compare_files(FILE_SAMPLE_DEFAULTS, outputPath)
+    assert compare_files(FILE_SAMPLE_DEFAULTS, output_path)
 
 
 def test_validate_directory() -> None:
     """It validates directory correctly."""
-    validationResults = validate_directory(DIR_DATA, FILE_SCHEMA)
-    confirm_validation_results(validationResults)
+    validation_results = validate_directory(DIR_DATA, FILE_SCHEMA)
+    confirm_validation_results(validation_results)
 
 
 def test_validate_zip_file_with_fail(zip_data) -> None:
     """It validates zip file correctly."""
-    validSuffixes = [".xml", ".invalid"]
-    validationResults = validate_zip_file(
-        zip_data, FILE_SCHEMA, valid_suffixes=validSuffixes
+    valid_suffixes = [".xml", ".invalid"]
+    validation_results = validate_zip_file(
+        zip_data, FILE_SCHEMA, valid_suffixes=valid_suffixes
     )
-    confirm_validation_results(validationResults)
+    confirm_validation_results(validation_results)

@@ -35,22 +35,24 @@ def validate_cas(cas: str | float) -> str:
 
     """
     if isinstance(cas, str):
-        casStr = cas.strip()
+        cas_str = cas.strip()
     elif isinstance(cas, (int, float)):
-        casStr = _convert_numeric_cas(cas)
+        cas_str = _convert_numeric_cas(cas)
 
-    validCharacters = {str(x) for x in range(10)}.union({"-"})
-    invalidCharacters = {c for c in casStr if c not in validCharacters}
-    if invalidCharacters:
-        raise ValueError(f"CAS number includes invalid characters: {invalidCharacters}")
+    valid_characters = {str(x) for x in range(10)}.union({"-"})
+    invalid_characters = {c for c in cas_str if c not in valid_characters}
+    if invalid_characters:
+        raise ValueError(
+            f"CAS number includes invalid characters: {invalid_characters}"
+        )
 
-    if not casStr:
+    if not cas_str:
         raise ValueError("Given CAS is empty: {cas}.")
 
-    casStr = _rehyphenate_cas(casStr)
+    cas_str = _rehyphenate_cas(cas_str)
 
-    _check_digit(casStr)
-    return _zero_pad_cas(casStr)
+    _check_digit(cas_str)
+    return _zero_pad_cas(cas_str)
 
 
 def _check_digit(cas_str: str) -> None:
@@ -68,8 +70,8 @@ def _check_digit(cas_str: str) -> None:
 def _convert_numeric_cas(cas: float) -> str:
     if math.isnan(cas):
         raise ValueError("Given CAS value is Not-a-Number")
-    casStr = str(int(cas))
-    return _rehyphenate_cas(casStr)
+    cas_str = str(int(cas))
+    return _rehyphenate_cas(cas_str)
 
 
 def _rehyphenate_cas(cas_str: str) -> str:
