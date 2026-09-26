@@ -23,7 +23,6 @@ from .parsers import (
 __all__ = (
     "TYPE_DEFAULTS",
     "TYPE_FUNC_MAP",
-    "__version__",
     "create_attribute",
     "create_attribute_list",
     "create_element_text",

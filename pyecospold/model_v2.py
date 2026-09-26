@@ -1348,7 +1348,7 @@ class IntermediateExchange(CustomExchange):
         return "input" if self.find("inputGroup", self.nsmap) is not None else "output"
 
     @property
-    def groupStr(self) -> list[str]:
+    def groupStr(self) -> str:
         """Choice between _inputGroupStr and _outputGroupStr. Check their
         documentation for more information.
         """
@@ -1440,7 +1440,7 @@ class ElementaryExchange(CustomExchange):
         return "input" if self.find("inputGroup", self.nsmap) is not None else "output"
 
     @property
-    def groupStr(self) -> list[str]:
+    def groupStr(self) -> str:
         """Choice between _inputGroupStr and _outputGroupStr. Check their
         documentation for more information.
         """

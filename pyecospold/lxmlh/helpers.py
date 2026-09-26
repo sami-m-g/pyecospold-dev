@@ -58,14 +58,12 @@ def set_element_text(
     schema.assertValid(parent.getroottree())
 
 
-def get_element(parent: etree.ElementBase, element: str) -> etree.ElementBase:
+def get_element(parent: etree.ElementBase, element: str) -> Any:  # class set by lookup
     """Helper wrapper method for retrieving XML elements as custom XML classes."""
     return parent.find(element, namespaces=parent.nsmap)
 
 
-def get_element_list(
-    parent: etree.ElementBase, element: str
-) -> list[etree.ElementBase]:
+def get_element_list(parent: etree.ElementBase, element: str) -> list[Any]:
     """Return the child elements with the given name.
 
     Helper wrapper method for retrieving XML list elements as a list of custom XML
@@ -137,7 +135,7 @@ def create_attribute(
     attr_type: type,
     schema_file: str,
     validator: Callable | None = None,
-) -> property:
+) -> Any:
     """Helper wrapper method for creating setters and getters for an attribute."""
     return property(
         fget=lambda self: get_attribute(self, name, attr_type),
@@ -147,7 +145,7 @@ def create_attribute(
     )
 
 
-def create_element_text(name: str, element_type: type, schema_file: str) -> property:
+def create_element_text(name: str, element_type: type, schema_file: str) -> Any:
     """Helper wrapper method for creating setters and getters for an element text."""
     return property(
         fget=lambda self: get_element_text(self, name, element_type),
@@ -155,7 +153,7 @@ def create_element_text(name: str, element_type: type, schema_file: str) -> prop
     )
 
 
-def create_attribute_list(name: str, attr_type: type, schema_file: str) -> property:
+def create_attribute_list(name: str, attr_type: type, schema_file: str) -> Any:
     """Helper wrapper method for creating setters and getters for an attribute list."""
     return property(
         fget=lambda self: get_attribute_list(self, name, attr_type),
@@ -166,7 +164,7 @@ def create_attribute_list(name: str, attr_type: type, schema_file: str) -> prope
 def fill_in_defaults(
     node: etree.ElementBase,
     static_defaults: dict[str, dict[str, str]],
-    dynamic_defaults: dict[str, dict[str, Callable[[etree.ElementBase], str]]],
+    dynamic_defaults: dict[str, dict[str, Callable[[Any], str]]],
 ) -> None:
     """Helper method for filling in defaults in all tree given any node."""
     root = node.getroottree()

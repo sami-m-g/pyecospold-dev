@@ -2,8 +2,8 @@
 
 from __future__ import annotations
 
-from io import StringIO
 from pathlib import Path
+from typing import IO
 
 from lxml import etree
 
@@ -80,7 +80,7 @@ from .model_v2 import TimePeriod as TimePeriodV2
 class EcospoldLookupV1(etree.CustomElementClassLookup):
     """Custom XML lookup class for Ecospold V1 files."""
 
-    def lookup(self, unused_node_type, unused_document, unused_namespace, name):
+    def lookup(self, type, doc, namespace, name):  # noqa: A002 (lxml's signature)
         """Maps Ecospold XML elements to custom Ecospold classes."""
         lookupmap = {
             "administrativeInformation": AdministrativeInformationV1,
@@ -113,7 +113,7 @@ class EcospoldLookupV1(etree.CustomElementClassLookup):
 class EcospoldLookupV2(etree.CustomElementClassLookup):
     """Custom XML lookup class for Ecospold V2 files."""
 
-    def lookup(self, unused_node_type, unused_document, unused_namespace, name):
+    def lookup(self, type, doc, namespace, name):  # noqa: A002 (lxml's signature)
         """Maps Ecospold XML elements to custom Ecospold classes."""
         lookupmap = {
             "activity": Activity,
@@ -160,44 +160,48 @@ class EcospoldLookupV2(etree.CustomElementClassLookup):
             return None
 
 
-def parse_file_v1(file: str | Path | StringIO) -> EcoSpoldV1:
+def parse_file_v1(file: str | Path | IO[str] | IO[bytes]) -> EcoSpoldV1:
     """Parses an Ecospold V1 XML file to custom Ecospold classes.
 
     Parameters:
-    file: the str|Path path to the Ecospold XML file or its StringIO representation.
+    file: the str|Path path to the Ecospold XML file or an open file object.
 
     Returns an EcoSpold class representing the root of the XML file.
     """
     return parse_file(file, Defaults.SCHEMA_V1_FILE, EcospoldLookupV1())
 
 
-def parse_file_v2(file: str | Path | StringIO) -> EcoSpoldV2:
+def parse_file_v2(file: str | Path | IO[str] | IO[bytes]) -> EcoSpoldV2:
     """Parses an Ecospold V2 XML file to custom Ecospold classes.
 
     Parameters:
-    file: the str|Path path to the Ecospold XML file or its StringIO representation.
+    file: the str|Path path to the Ecospold XML file or an open file object.
 
     Returns an EcoSpold class representing the root of the XML file.
     """
     return parse_file(file, Defaults.SCHEMA_V2_FILE, EcospoldLookupV2())
 
 
-def validate_file_v1(file: str | Path | StringIO) -> list[str] | None:
+def validate_file_v1(
+    file: str | Path | IO[str] | IO[bytes],
+) -> etree._ListErrorLog | None:
     """Validates an Ecospold V1 XML file to custom Ecospold classes.
 
     Parameters:
-    file: the str|Path path to the Ecospold XML file or its StringIO representation.
+    file: the str|Path path to the Ecospold XML file or an open file object.
 
     Returns ``None`` if valid or a list of error strings.
     """
     return validate_file(file, Defaults.SCHEMA_V1_FILE)
 
 
-def validate_file_v2(file: str | Path | StringIO) -> list[str] | None:
+def validate_file_v2(
+    file: str | Path | IO[str] | IO[bytes],
+) -> etree._ListErrorLog | None:
     """Parses an Ecospold V2 XML file to custom Ecospold classes.
 
     Parameters:
-    file: the str|Path path to the Ecospold XML file or its StringIO representation.
+    file: the str|Path path to the Ecospold XML file or an open file object.
 
     Returns ``None`` if valid or a list of error strings.
     """
@@ -253,8 +257,8 @@ def parse_directory_v2(
 
 
 def validate_directory_v1(
-    dir_path: str | Path | StringIO, valid_suffixes: list[str] | None = None
-) -> list[tuple[Path, list[str] | None]]:
+    dir_path: str | Path, valid_suffixes: list[str] | None = None
+) -> list[tuple[Path, etree._ListErrorLog | None]]:
     """Validates an Ecospold V1 XML file to custom Ecospold classes.
 
     Parameters:
@@ -274,8 +278,8 @@ def validate_directory_v1(
 
 
 def validate_directory_v2(
-    dir_path: str | Path | StringIO, valid_suffixes: list[str] | None = None
-) -> list[tuple[Path, list[str] | None]]:
+    dir_path: str | Path, valid_suffixes: list[str] | None = None
+) -> list[tuple[Path, etree._ListErrorLog | None]]:
     """Validates an Ecospold V1 XML file to custom Ecospold classes.
 
     Parameters:
@@ -343,8 +347,8 @@ def parse_zip_file_v2(
 
 
 def validate_zip_file_v1(
-    file_path: str | Path | StringIO, valid_suffixes: list[str] | None = None
-) -> list[tuple[Path, list[str] | None]]:
+    file_path: str | Path, valid_suffixes: list[str] | None = None
+) -> list[tuple[Path, etree._ListErrorLog | None]]:
     """Validates an Ecospold V1 XML file to custom Ecospold classes.
 
     Parameters:
@@ -364,8 +368,8 @@ def validate_zip_file_v1(
 
 
 def validate_zip_file_v2(
-    file_path: str | Path | StringIO, valid_suffixes: list[str] | None = None
-) -> list[tuple[Path, list[str] | None]]:
+    file_path: str | Path, valid_suffixes: list[str] | None = None
+) -> list[tuple[Path, etree._ListErrorLog | None]]:
     """Validates an Ecospold V2 XML file to custom Ecospold classes.
 
     Parameters:
@@ -385,7 +389,7 @@ def validate_zip_file_v2(
 
 
 def save_ecospold_file(
-    root: etree.ElementBase, path: str, fill_defaults: bool = False
+    root: etree.ElementBase, path: str | Path, fill_defaults: bool = False
 ) -> None:
     """Saves an Ecospold class to an XML file.
 

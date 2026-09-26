@@ -68,7 +68,7 @@ class Defaults:
     }
 
     @classmethod
-    def config_defaults(cls, config_file: str) -> None:
+    def config_defaults(cls, config_file: str | Path) -> None:
         """Fully/ partially overrides defaults.
 
         Parameters:
