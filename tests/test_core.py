@@ -87,15 +87,17 @@ def test_parse(
     assert all(isinstance(root, root_class) for _, root in results)
 
 
+@pytest.mark.parametrize("sample", ["1.xml", "2.spold"])
 def test_save_file(
     tmp_path: Path,
     fixtures_dir: Path,
     version: str,
+    sample: str,
     api: Callable,
     canonical_xml: Callable[[Path], str],
 ) -> None:
     """It writes back the file it read."""
-    input_path = fixtures_dir / version / f"{version}_1.xml"
+    input_path = fixtures_dir / version / f"{version}_{sample}"
     output_path = tmp_path / input_path.name
     save_ecospold_file(api("parse_file")(input_path), output_path, fill_defaults=False)
 
