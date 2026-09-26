@@ -1,3 +1,5 @@
+"""Helpers for mapping XML elements to Python classes with lxml."""
+
 from .config import TYPE_DEFAULTS, TYPE_FUNC_MAP
 from .helpers import (
     create_attribute,

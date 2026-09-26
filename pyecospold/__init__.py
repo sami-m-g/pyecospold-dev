@@ -1,3 +1,5 @@
+"""Read, validate and write EcoSpold v1 and v2 XML files."""
+
 __all__ = (
     "Defaults",
     "__version__",

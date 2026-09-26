@@ -1,4 +1,6 @@
-"""All information from
+"""Validation and normalisation of CAS registry numbers.
+
+All information from
 https://www.cas.org/support/documentation/chemical-substances/checkdig
 
 CAS numbers have the form A-B-C, where:

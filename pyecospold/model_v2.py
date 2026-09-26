@@ -37,71 +37,71 @@ class EcoSpold(etree.ElementBase):
 
     @property
     def geography(self) -> "Geography":
-        """Synonym for ecospold.activityDataset.activityDescription.geography[0]"""
+        """Synonym for ecospold.activityDataset.activityDescription.geography[0]."""
         return self.activityDataset.activityDescription.geography[0]
 
     @property
     def geographyShortName(self) -> str:
         """Synonym
-        for ecospold.activityDataset.activityDescription.geography.shortNames[0]
+        for ecospold.activityDataset.activityDescription.geography.shortNames[0].
         """
         return self.geography.shortNames[0]
 
     @property
     def activity(self) -> "Activity":
-        """Synonym for ecospold.activityDataset.activityDescription.activity[0]"""
+        """Synonym for ecospold.activityDataset.activityDescription.activity[0]."""
         return self.activityDataset.activityDescription.activity[0]
 
     @property
     def activityName(self) -> str:
         """Synonym for
-        ecospold.activityDataset.activityDescription.activity[0].activityNames[0]
+        ecospold.activityDataset.activityDescription.activity[0].activityNames[0].
         """
         return self.activity.activityNames[0]
 
     def elementary_exchange(self, i: int) -> "ElementaryExchange":
-        """Synonym for ecospold.activityDataset.flowData.elementaryExchanges[i]"""
+        """Synonym for ecospold.activityDataset.flowData.elementaryExchanges[i]."""
         return self.activityDataset.flowData.elementaryExchanges[i]
 
     def elementary_exchange_compartment(self, i: int, j: int) -> str:
         """Synonym for
         ecospold.activityDataset.flowData.elementaryExchanges[i]
-        .compartment.compartments[j]
+        .compartment.compartments[j].
         """
         return self.elementary_exchange(i).compartment.compartments[j]
 
     def elementary_exchange_sub_compartment(self, i: int, j: int) -> str:
         """Synonym for
         ecospold.activityDataset.flowData.elementaryExchanges[i]
-        .compartment.subCompartments[j]
+        .compartment.subCompartments[j].
         """
         return self.elementary_exchange(i).compartment.subCompartments[j]
 
     def elementary_exchange_name(self, i: int, j: int) -> str:
         """Synonym for
-        ecospold.activityDataset.flowData.elementaryExchanges[i].names[j]
+        ecospold.activityDataset.flowData.elementaryExchanges[i].names[j].
         """
         return self.elementary_exchange(i).names[j]
 
     def elementary_exchange_unit_name(self, i: int, j: int) -> str:
         """Synonym for
-        ecospold.activityDataset.flowData.elementaryExchanges[i].unitNames[j]
+        ecospold.activityDataset.flowData.elementaryExchanges[i].unitNames[j].
         """
         return self.elementary_exchange(i).unitNames[j]
 
     def intermediate_exchange(self, i: int) -> "IntermediateExchange":
-        """Synonym for ecospold.activityDataset.flowData.intermediateExchanges[i]"""
+        """Synonym for ecospold.activityDataset.flowData.intermediateExchanges[i]."""
         return self.activityDataset.flowData.intermediateExchanges[i]
 
     def intermediate_exchange_name(self, i: int, j: int) -> str:
         """Synonym for
-        ecospold.activityDataset.flowData.intermediateExchanges[i].names[j]
+        ecospold.activityDataset.flowData.intermediateExchanges[i].names[j].
         """
         return self.intermediate_exchange(i).names[j]
 
     def intermediate_exchange_unit_name(self, i: int, j: int) -> str:
         """Synonym for
-        ecospold.activityDataset.flowData.intermediateExchanges[i].unitNames[j]
+        ecospold.activityDataset.flowData.intermediateExchanges[i].unitNames[j].
         """
         return self.intermediate_exchange(i).unitNames[j]
 
@@ -154,7 +154,7 @@ class ActivityDescription(etree.ElementBase):
 
     @property
     def classification(self) -> list["Classification"]:
-        """Contains classification pairs to specify the activity.)"""
+        """Contains classification pairs to specify the activity."""
         return get_element_list(self, "classification")
 
     @property
@@ -210,7 +210,7 @@ class FlowData(etree.ElementBase):
 
     @property
     def impactIndicators(self) -> list["ImpactIndicator"]:
-        """Calculated impact indicators"""
+        """Calculated impact indicators."""
         return get_element_list(self, "impactIndicator")
 
 
@@ -524,7 +524,7 @@ class Activity(etree.ElementBase):
     @property
     def typeStr(self) -> str:
         """String representation for type. See type for explanations.
-        1 = Unit process; 2 = System terminated
+        1 = Unit process; 2 = System terminated.
         """
         return Activity.TYPE_MAP[self.type]
 
@@ -534,7 +534,7 @@ class Activity(etree.ElementBase):
         for explanations. 0 = ordinary transforming activity (default),
         1 = market activity, 2 = IO activity, 3 = Residual activity,
         4 = production mix, 5 = import activity, 6 = supply mix, 7 = export activity,
-        8 = re-export activity, 9 = correction activity, 10 = market group
+        8 = re-export activity, 9 = correction activity, 10 = market group.
         """
         return Activity.SPECIAL_ACTIVITY_TYPE_MAP[self.specialActivityType]
 
@@ -548,7 +548,7 @@ class Activity(etree.ElementBase):
 
 
 class Classification(etree.ElementBase):
-    """Contains classification pairs to specify the activity.)"""
+    """Contains classification pairs to specify the activity."""
 
     classificationId = create_attribute_v2("classificationId", str)
     """str: Reference to the value of a classification system. Must be defined
@@ -661,7 +661,7 @@ class Technology(etree.ElementBase):
     def technologyLevelStr(self) -> str:
         """String representation for technologyLevel. See technologyLevel for
         explanations. 0 = undefined, 1 = New, 2 = Modern, 3 = Current (default),
-        4 = Old, 5 = Outdated
+        4 = Old, 5 = Outdated.
         """
         return self.TECHNOLOGY_LEVEL_MAP[self.technologyLevel]
 
@@ -871,7 +871,7 @@ class Uncertainty(etree.ElementBase):
     def lognormal(self) -> "Lognormal":
         """The Lognormal-distribution with average value μ (Mu parameter) and
         variance σ (Variance parameter) is a Normal-distribution, shaping the
-        natural logarithm of the characteristic values ln(x) instead of x-values
+        natural logarithm of the characteristic values ln(x) instead of x-values.
         """
         return get_element(self, "lognormal")
 
@@ -947,7 +947,7 @@ class Uncertainty(etree.ElementBase):
 class Lognormal(etree.ElementBase):
     """The Lognormal-distribution with average value μ (Mu parameter) and variance
     σ (Variance parameter) is a Normal-distribution, shaping the natural logarithm
-    of the characteristic values ln(x) instead of x-values
+    of the characteristic values ln(x) instead of x-values.
     """
 
     meanValue = create_attribute_v2("meanValue", float)
@@ -1412,14 +1412,14 @@ class ElementaryExchange(CustomExchange):
     @property
     def _inputGroupStr(self) -> str:
         """String representation for _inputGroup. See _inputGroup for
-        explanations. 4=FromEnvironment
+        explanations. 4=FromEnvironment.
         """
         return "FromEnvironment"
 
     @property
     def _outputGroupStr(self) -> str:
         """String representation for _outputGroup. See _outputGroup for
-        explanations. 4=ToEnvironment
+        explanations. 4=ToEnvironment.
         """
         return "ToEnvironment"
 
@@ -1505,7 +1505,7 @@ class Parameter(etree.ElementBase):
 
 
 class ImpactIndicator(etree.ElementBase):
-    """Calculated impact indicators"""
+    """Calculated impact indicators."""
 
     impactMethodNames = create_attribute_list_v2("impactMethodName", str)
     """list[str]: Name of the impact method."""
@@ -1760,7 +1760,7 @@ class DataGeneratorAndPublication(etree.ElementBase):
         """String representation for dataPublishedIn. See dataPublishedIn
         for explanations. 0=Data as such not published (default). 1=The data
         of some unit processes or subsystems are published. 2=Data has been
-        published entirely in 'referenceToPublishedSource'
+        published entirely in 'referenceToPublishedSource'.
         """
         return DataGeneratorAndPublication.DATA_PUBLISHED_IN_MAP[self.dataPublishedIn]
 
@@ -2009,7 +2009,7 @@ class PedigreeMatrix(etree.ElementBase):
         1=Verified data based on measurements 2=Verified data partly based on
         assumptions OR nonverified data based on measurements 3=Non-verified data partly
         based on qualified estimates 4=Qualified estimate (e.g. by industrial expert)
-        5=Non-qualified estimate (default)
+        5=Non-qualified estimate (default).
         """
         return PedigreeMatrix.RELIABILITY_MAP[self.reliability]
 
@@ -2023,7 +2023,7 @@ class PedigreeMatrix(etree.ElementBase):
         sites (<<50%) relevant for the market considered OR >50% of sites but from
         shorter periods 4=Representative data from only one site relevant for the
         market considered OR some sites but from shorter periods 5=Representativeness
-        unknown or data from a small number of sites AND from shorter periods)
+        unknown or data from a small number of sites AND from shorter periods).
         """
         return PedigreeMatrix.COMPLETENESS_MAP[self.completeness]
 
@@ -2036,7 +2036,7 @@ class PedigreeMatrix(etree.ElementBase):
         period of the dataset (fields 600-610) 4=Less than 15 years of difference to
         the time period of the dataset (fields 600-610) 5=Age of data unknown or more
         than 15 years of difference to the time period of the dataset
-        (fields 600-610)
+        (fields 600-610).
         """
         return PedigreeMatrix.TEMPORAL_CORRELATION_MAP[self.temporalCorrelation]
 
@@ -2048,7 +2048,7 @@ class PedigreeMatrix(etree.ElementBase):
         3=Data from area with similar production conditions 4=Data from are with
         slightly similar production conditions 5=Data from unknown OR distinctly
         different area (north america instead of middle east, OECD-Europe instead of
-        Russia)
+        Russia).
         """
         return PedigreeMatrix.GEOGRAPHICAL_CORRELATION_MAP[self.geographicalCorrelation]
 
@@ -2060,7 +2060,7 @@ class PedigreeMatrix(etree.ElementBase):
         study (i.e. identical technology) but from different enterprises 3=Data from
         processes and materials under study but from different technology 4=Data on
         related processes or materials 5=Data on related processes on laboratory
-        scale or from different technology
+        scale or from different technology.
         """
         return PedigreeMatrix.FURTHER_TECHNOLOGY_CORRELATION_MAP[
             self.furtherTechnologyCorrelation

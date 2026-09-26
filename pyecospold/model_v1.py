@@ -443,7 +443,7 @@ class Exchange(etree.ElementBase):
     def _outputGroupsStr(self) -> list[str]:
         """String representation for outputGroups. See outputGroups for
         explanations. 0=ReferenceProduct, 1=Include avoided product system,
-        2=Allocated by product, 3=WasteToTreatment, 4=ToNature
+        2=Allocated by product, 3=WasteToTreatment, 4=ToNature.
         """
         return [
             Exchange.OUTPUT_GROUPS_MAP[outputGroup]
@@ -454,7 +454,7 @@ class Exchange(etree.ElementBase):
     def uncertaintyTypeStr(self) -> str:
         """String representation for uncertaintyType. See uncertaintyType for
         explanations. 0=undefined, 1=lognormal (default), 2=normal, 3=triang,
-        4=uniform
+        4=uniform.
         """
         return Exchange.UNCERTAINTY_TYPE_MAP[self.uncertaintyType]
 
@@ -1165,7 +1165,7 @@ class DataGeneratorAndPublication(etree.ElementBase):
         """String representation for dataPublishedIn. See dataPublishedIn for
         explanations. 0=Data as such not published (default). 1=The data of some unit
         processes or subsystems are published. 2=Data has been published entirely in
-        'referenceToPublishedSource'
+        'referenceToPublishedSource'.
         """
         return DataGeneratorAndPublication.DATA_PUBLISHED_IN_MAP[self.dataPublishedIn]
 

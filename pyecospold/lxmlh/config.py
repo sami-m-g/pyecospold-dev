@@ -1,3 +1,5 @@
+"""Type conversions and defaults for XML attribute values."""
+
 import math
 from collections.abc import Callable
 from datetime import datetime

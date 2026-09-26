@@ -1,3 +1,5 @@
+"""Parse, validate and save XML files, directories and zip archives."""
+
 import tempfile
 import zipfile
 from collections.abc import Callable
@@ -15,11 +17,11 @@ def parse_file(
     lookup: etree.CustomElementClassLookup,
 ) -> etree.ElementBase:
     """Parses an XML file to custom classes.
-    Parameters:
-    file: the str|Path path to the XML file or its StringIO representation.
-    schema_path: the path to the XSD schema file.
-    lookup: the lookup class for mapping XML elements to python classes.
-    Returns a custom ElementBase class representing the root of the XML file.
+
+    Parameters: file: the str|Path path to the XML file or its StringIO representation.
+    schema_path: the path to the XSD schema file. lookup: the lookup class for mapping
+    XML elements to python classes. Returns a custom ElementBase class representing the
+    root of the XML file.
     """
     schema = etree.XMLSchema(file=schema_path)
     parser = objectify.makeparser(schema=schema)
@@ -32,11 +34,11 @@ def validate_file(
     schema_path: str,
 ) -> None | list[str]:
     """Validate a file against a given schema.
+
     Needed because the default parser doesn't provide any usable error context.
-    Parameters:
-    file: the str|Path path to the XML file or its StringIO representation.
-    schema_path: the path to the XSD schema file.
-    Returns ``None`` if the file validates, or a list of errors as strings.
+    Parameters: file: the str|Path path to the XML file or its StringIO representation.
+    schema_path: the path to the XSD schema file. Returns ``None`` if the file
+    validates, or a list of errors as strings.
     """
     schema = etree.XMLSchema(file=schema_path)
     doc = etree.parse(file)
@@ -52,14 +54,13 @@ def parse_directory(
     valid_suffixes: list[str] | None = None,
 ) -> list[tuple[Path, etree.ElementBase]]:
     """Parses a directory of XML files to a list of custom Python classes.
-    Parameters:
-    dir_path: the directory path, should contain files of only the schema_path version.
-    schema_path: the path to the XSD schema file.
-    lookup: the lookup class for mapping XML elements to custom Python classes.
-    valid_suffixes: a list of valid file suffixes which will only be considered for
-    parsing. If None, defaults to [".xml"].
-    Returns a list of tuples of file paths and corresponding custom Python classes
-    representing the root of the XML file.
+
+    Parameters: dir_path: the directory path, should contain files of only the
+    schema_path version. schema_path: the path to the XSD schema file. lookup: the
+    lookup class for mapping XML elements to custom Python classes. valid_suffixes: a
+    list of valid file suffixes which will only be considered for parsing. If None,
+    defaults to [".xml"]. Returns a list of tuples of file paths and corresponding
+    custom Python classes representing the root of the XML file.
     """
     if valid_suffixes is None:
         valid_suffixes = [".xml"]
@@ -81,11 +82,11 @@ def validate_directory(
     valid_suffixes: list[str] | None = None,
 ) -> list[tuple[Path, None | list[str]]]:
     """Validates a directory of XML files against a given schema.
-    Parameters:
-    dir_path: the directory path, should contain files of only the schema_path version.
-    schema_path: the path to the XSD schema file.
-    valid_suffixes: a list of valid file suffixes which will only be considered for
-    validating. If None, defaults to [".xml"].
+
+    Parameters: dir_path: the directory path, should contain files of only the
+    schema_path version. schema_path: the path to the XSD schema file. valid_suffixes: a
+    list of valid file suffixes which will only be considered for validating. If None,
+    defaults to [".xml"].
     """
     if valid_suffixes is None:
         valid_suffixes = [".xml"]
@@ -105,14 +106,13 @@ def parse_zip_file(
     valid_suffixes: list[str] | None = None,
 ) -> list[tuple[Path, etree.ElementBase]]:
     """Parses a ZIP file of XML files to a list of custom Python classes.
-    Parameters:
-    file_path: the ZIP file path, should contain files of only the schema_path version.
-    schema_path: the path to the XSD schema file.
-    lookup: the lookup class for mapping XML elements to custom Python classes.
-    valid_suffixes: a list of valid file suffixes which will only be considered for
-    parsing. If None, defaults to [".xml"].
-    Returns a list of tuples of file paths and corresponding custom Python classes
-    representing the root of the XML file.
+
+    Parameters: file_path: the ZIP file path, should contain files of only the
+    schema_path version. schema_path: the path to the XSD schema file. lookup: the
+    lookup class for mapping XML elements to custom Python classes. valid_suffixes: a
+    list of valid file suffixes which will only be considered for parsing. If None,
+    defaults to [".xml"]. Returns a list of tuples of file paths and corresponding
+    custom Python classes representing the root of the XML file.
     """
     with tempfile.TemporaryDirectory() as unzipDir:
         with zipfile.ZipFile(file_path, "r") as zipFile:
@@ -126,11 +126,11 @@ def validate_zip_file(
     valid_suffixes: list[str] | None = None,
 ) -> None:
     """Validates a ZIP file of XML files against a given schema.
-    Parameters:
-    dir_path: the ZIP file path, should contain files of only the schema_path version.
-    schema_path: the path to the XSD schema file.
-    valid_suffixes: a list of valid file suffixes which will only be considered for
-    validating. If None, defaults to [".xml"].
+
+    Parameters: dir_path: the ZIP file path, should contain files of only the
+    schema_path version. schema_path: the path to the XSD schema file. valid_suffixes: a
+    list of valid file suffixes which will only be considered for validating. If None,
+    defaults to [".xml"].
     """
     with tempfile.TemporaryDirectory() as unzipDir:
         with zipfile.ZipFile(file_path, "r") as zipFile:
@@ -148,9 +148,9 @@ def save_file(
     dynamic_defaults: dict[str, dict[str, Callable[[etree.ElementBase], str]]] = None,
 ) -> None:
     """Saves a custom class to an XML file.
-    Parameters:
-    root: the custom class representing the root of the XML file.
-    path: the path to save the XML file.
+
+    Parameters: root: the custom class representing the root of the XML file. path: the
+    path to save the XML file.
     """
     if static_defaults is None:
         static_defaults = {}

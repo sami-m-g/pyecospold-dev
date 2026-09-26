@@ -1,3 +1,5 @@
+"""Property factories and accessors for XML attributes and elements."""
+
 import re
 from collections.abc import Callable
 from typing import Any
@@ -14,8 +16,9 @@ def set_attribute(
     schema_file: str,
     validator: Callable | None,
 ) -> None:
-    """Helper method for setting XML attributes. Raises DocumentInvalid
-    exception on inappropriate setting according to XSD schema.
+    """Helper method for setting XML attributes.
+
+    Raises DocumentInvalid exception on inappropriate setting according to XSD schema.
     """
     if validator is not None:
         value = validator(value)
@@ -27,8 +30,9 @@ def set_attribute(
 def set_attribute_list(
     element: etree.ElementBase, key: str, values: list[Any], schema_file: str
 ) -> None:
-    """Helper method for setting XML list attributes. Raises DocumentInvalid
-    exception on inappropriate setting according to XSD schema.
+    """Helper method for setting XML list attributes.
+
+    Raises DocumentInvalid exception on inappropriate setting according to XSD schema.
     """
     for oldValue in get_element_list(element, key):
         element.remove(oldValue)
@@ -45,8 +49,9 @@ def set_attribute_list(
 def set_element_text(
     parent: etree.ElementBase, element: str, value: str, schema_file: str
 ) -> None:
-    """Helper method for setting XML element text. Raises DocumentInvalid exception
-    on inappropriate setting according to XSD schema.
+    """Helper method for setting XML element text.
+
+    Raises DocumentInvalid exception on inappropriate setting according to XSD schema.
     """
     get_element(parent, element).text = str(value)
     schema = etree.XMLSchema(file=schema_file)
@@ -61,8 +66,10 @@ def get_element(parent: etree.ElementBase, element: str) -> etree.ElementBase:
 def get_element_list(
     parent: etree.ElementBase, element: str
 ) -> list[etree.ElementBase]:
-    """Helper wrapper method for retrieving XML list elements as a list
-    of custom XML classes.
+    """Return the child elements with the given name.
+
+    Helper wrapper method for retrieving XML list elements as a list of custom XML
+    classes.
     """
     return parent.findall(element, namespaces=parent.nsmap)
 
@@ -71,6 +78,7 @@ def get_element_text(
     parent: etree.ElementBase, element: str, element_type: type = str
 ) -> str:
     """Helper wrapper method for retrieving XML element text as a string.
+
     Returns TYPE_DEFAULTS[str] if no text exists or element is None.
     """
     return TYPE_FUNC_MAP.get(element_type, element_type)(
@@ -83,8 +91,10 @@ def get_element_text(
 
 
 def get_inner_text_list(parent: etree.ElementBase, element: str):
-    """Helper wrapper method for retrieving the list of last nodes in a chain
-    of XML elements.
+    """Return the texts of the last nodes in a chain of XML elements.
+
+    Helper wrapper method for retrieving the list of last nodes in a chain of XML
+    elements.
     """
     innerElements = get_element_list(parent, element)
     return [
@@ -96,8 +106,9 @@ def get_inner_text_list(parent: etree.ElementBase, element: str):
 def get_attribute(
     parent: etree.ElementBase, attribute: str, attr_type: type = str
 ) -> Any:
-    """Helper wrapper method for retrieving XML attributes. Returns
-    TYPE_DEFAULTS[type] if attribute doesn't exist.
+    """Helper wrapper method for retrieving XML attributes.
+
+    Returns TYPE_DEFAULTS[type] if attribute doesn't exist.
     """
     return TYPE_FUNC_MAP.get(attr_type, attr_type)(
         parent.get(attribute, TYPE_DEFAULTS.get(attr_type, None))
@@ -108,6 +119,7 @@ def get_attribute_list(
     parent: etree.ElementBase, attribute: str, attr_type: type = str
 ) -> list[Any]:
     """Helper wrapper method for retrieving XML list attributes.
+
     Returns empty list if attributes don't exist.
     """
     return list(
@@ -126,7 +138,7 @@ def create_attribute(
     schema_file: str,
     validator: Callable | None = None,
 ) -> property:
-    """Helper wrapper method for creating setters and getters for an attribute"""
+    """Helper wrapper method for creating setters and getters for an attribute."""
     return property(
         fget=lambda self: get_attribute(self, name, attr_type),
         fset=lambda self, value: set_attribute(
