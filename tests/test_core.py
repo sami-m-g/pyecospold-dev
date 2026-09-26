@@ -81,27 +81,28 @@ def test_parse_directory_v2(fixtures_dir: Path) -> None:
 def test_save_file(
     tmp_path: Path,
     fixtures_dir: Path,
-    compare_files: Callable[[Path, Path], bool],
+    canonical_xml: Callable[[Path], str],
 ) -> None:
     """It saves read file correctly."""
     input_path = fixtures_dir / "v1" / "v1_1.xml"
     output_path = tmp_path / "v1_1.xml"
     save_ecospold_file(parse_file_v1(input_path), output_path, fill_defaults=False)
 
-    assert compare_files(input_path, output_path)
+    assert canonical_xml(output_path) == canonical_xml(input_path)
 
 
 def test_save_file_defaults(
     tmp_path: Path,
     fixtures_dir: Path,
-    compare_files: Callable[[Path, Path], bool],
+    canonical_xml: Callable[[Path], str],
 ) -> None:
     """It saves read file correctly."""
     input_path = fixtures_dir / "v1" / "v1_1.xml"
     output_path = tmp_path / "v1_1.xml"
     save_ecospold_file(parse_file_v1(input_path), output_path, fill_defaults=True)
 
-    assert compare_files(fixtures_dir / "expected" / "v1_1_defaults.xml", output_path)
+    expected_path = fixtures_dir / "expected" / "v1_1_defaults.xml"
+    assert canonical_xml(output_path) == canonical_xml(expected_path)
 
 
 def _validate_directory(

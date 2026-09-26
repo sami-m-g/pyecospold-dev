@@ -5,6 +5,7 @@ import shutil
 from collections.abc import Callable
 from io import BytesIO
 from pathlib import Path
+from xml.etree.ElementTree import canonicalize
 
 import pytest
 
@@ -54,14 +55,7 @@ def make_zip(tmp_path: Path) -> Callable[[Path], Path]:
     return make
 
 
-@pytest.fixture
-def compare_files() -> Callable[[Path, Path], bool]:
-    """Compares two files ignoring whitespace."""
-
-    def compare(file1: Path, file2: Path) -> bool:
-        mapping = {ord(c): "" for c in [" ", "\t", "\n"]}
-        return file1.read_text(encoding="utf-8").translate(mapping) == file2.read_text(
-            encoding="utf-8"
-        ).translate(mapping)
-
-    return compare
+@pytest.fixture(scope="session")
+def canonical_xml() -> Callable[[Path], str]:
+    """Canonical form (C14N 2.0) of an XML file, ignoring formatting whitespace."""
+    return lambda path: canonicalize(from_file=path, strip_text=True)
