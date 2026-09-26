@@ -1,5 +1,6 @@
 import re
-from typing import Any, Callable, Dict, List, Optional
+from collections.abc import Callable
+from typing import Any
 
 from lxml import etree
 
@@ -11,7 +12,7 @@ def set_attribute(
     key: str,
     value: str,
     schema_file: str,
-    validator: Optional[Callable],
+    validator: Callable | None,
 ) -> None:
     """Helper method for setting XML attributes. Raises DocumentInvalid
     exception on inappropriate setting according to XSD schema."""
@@ -23,7 +24,7 @@ def set_attribute(
 
 
 def set_attribute_list(
-    element: etree.ElementBase, key: str, values: List[Any], schema_file: str
+    element: etree.ElementBase, key: str, values: list[Any], schema_file: str
 ) -> None:
     """Helper method for setting XML list attributes. Raises DocumentInvalid
     exception on inappropriate setting according to XSD schema."""
@@ -56,7 +57,7 @@ def get_element(parent: etree.ElementBase, element: str) -> etree.ElementBase:
 
 def get_element_list(
     parent: etree.ElementBase, element: str
-) -> List[etree.ElementBase]:
+) -> list[etree.ElementBase]:
     """Helper wrapper method for retrieving XML list elements as a list
     of custom XML classes."""
     return parent.findall(element, namespaces=parent.nsmap)
@@ -98,7 +99,7 @@ def get_attribute(
 
 def get_attribute_list(
     parent: etree.ElementBase, attribute: str, attr_type: type = str
-) -> List[Any]:
+) -> list[Any]:
     """Helper wrapper method for retrieving XML list attributes.
     Returns empty list if attributes don't exist."""
     return list(
@@ -115,7 +116,7 @@ def create_attribute(
     name: str,
     attr_type: type,
     schema_file: str,
-    validator: Optional[Callable] = None,
+    validator: Callable | None = None,
 ) -> property:
     """Helper wrapper method for creating setters and getters for an attribute"""
     return property(
@@ -144,8 +145,8 @@ def create_attribute_list(name: str, attr_type: type, schema_file: str) -> prope
 
 def fill_in_defaults(
     node: etree.ElementBase,
-    static_defaults: Dict[str, Dict[str, str]],
-    dynamic_defaults: Dict[str, Dict[str, Callable[[etree.ElementBase], str]]],
+    static_defaults: dict[str, dict[str, str]],
+    dynamic_defaults: dict[str, dict[str, Callable[[etree.ElementBase], str]]],
 ) -> None:
     """Helper method for filling in defaults in all tree given any node."""
     root = node.getroottree()

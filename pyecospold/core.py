@@ -4,7 +4,6 @@ from __future__ import annotations
 
 from io import StringIO
 from pathlib import Path
-from typing import List, Tuple, Union
 
 from lxml import etree
 
@@ -35,7 +34,11 @@ from .model_v1 import Source
 from .model_v1 import Technology as TechnologyV1
 from .model_v1 import TimePeriod as TimePeriodV1
 from .model_v1 import Validation
-from .model_v2 import Activity, ActivityDataset, ActivityDescription
+from .model_v2 import (
+    Activity,
+    ActivityDataset,
+    ActivityDescription,
+)
 from .model_v2 import AdministrativeInformation as AdministrativeInformationV2
 from .model_v2 import Beta, Classification, Compartment
 from .model_v2 import DataEntryBy as DataEntryByV2
@@ -144,7 +147,7 @@ class EcospoldLookupV2(etree.CustomElementClassLookup):
             return None
 
 
-def parse_file_v1(file: Union[str, Path, StringIO]) -> EcoSpoldV1:
+def parse_file_v1(file: str | Path | StringIO) -> EcoSpoldV1:
     """Parses an Ecospold V1 XML file to custom Ecospold classes.
 
     Parameters:
@@ -155,7 +158,7 @@ def parse_file_v1(file: Union[str, Path, StringIO]) -> EcoSpoldV1:
     return parse_file(file, Defaults.SCHEMA_V1_FILE, EcospoldLookupV1())
 
 
-def parse_file_v2(file: Union[str, Path, StringIO]) -> EcoSpoldV2:
+def parse_file_v2(file: str | Path | StringIO) -> EcoSpoldV2:
     """Parses an Ecospold V2 XML file to custom Ecospold classes.
 
     Parameters:
@@ -166,7 +169,7 @@ def parse_file_v2(file: Union[str, Path, StringIO]) -> EcoSpoldV2:
     return parse_file(file, Defaults.SCHEMA_V2_FILE, EcospoldLookupV2())
 
 
-def validate_file_v1(file: Union[str, Path, StringIO]) -> Union[None, List[str]]:
+def validate_file_v1(file: str | Path | StringIO) -> None | list[str]:
     """Validates an Ecospold V1 XML file to custom Ecospold classes.
 
     Parameters:
@@ -177,7 +180,7 @@ def validate_file_v1(file: Union[str, Path, StringIO]) -> Union[None, List[str]]
     return validate_file(file, Defaults.SCHEMA_V1_FILE)
 
 
-def validate_file_v2(file: Union[str, Path, StringIO]) -> Union[None, List[str]]:
+def validate_file_v2(file: str | Path | StringIO) -> None | list[str]:
     """Parses an Ecospold V2 XML file to custom Ecospold classes.
 
     Parameters:
@@ -189,8 +192,8 @@ def validate_file_v2(file: Union[str, Path, StringIO]) -> Union[None, List[str]]
 
 
 def parse_directory_v1(
-    dir_path: Union[str, Path], valid_suffixes: Union[List[str], None] = None
-) -> List[Tuple[Path, EcoSpoldV1]]:
+    dir_path: str | Path, valid_suffixes: list[str] | None = None
+) -> list[tuple[Path, EcoSpoldV1]]:
     """Parses a directory of Ecospold XML files to a list of custom Ecospold classes.
 
     Parameters:
@@ -213,8 +216,8 @@ def parse_directory_v1(
 
 
 def parse_directory_v2(
-    dir_path: Union[str, Path], valid_suffixes: Union[List[str], None] = None
-) -> List[Tuple[Path, EcoSpoldV2]]:
+    dir_path: str | Path, valid_suffixes: list[str] | None = None
+) -> list[tuple[Path, EcoSpoldV2]]:
     """Parses a directory of Ecospold XML files to a list of custom Ecospold classes.
 
     Parameters:
@@ -237,8 +240,8 @@ def parse_directory_v2(
 
 
 def validate_directory_v1(
-    dir_path: Union[str, Path, StringIO], valid_suffixes: Union[List[str], None] = None
-) -> List[Tuple[Path, Union[None, List[str]]]]:
+    dir_path: str | Path | StringIO, valid_suffixes: list[str] | None = None
+) -> list[tuple[Path, None | list[str]]]:
     """Validates an Ecospold V1 XML file to custom Ecospold classes.
 
     Parameters:
@@ -258,8 +261,8 @@ def validate_directory_v1(
 
 
 def validate_directory_v2(
-    dir_path: Union[str, Path, StringIO], valid_suffixes: Union[List[str], None] = None
-) -> List[Tuple[Path, Union[None, List[str]]]]:
+    dir_path: str | Path | StringIO, valid_suffixes: list[str] | None = None
+) -> list[tuple[Path, None | list[str]]]:
     """Validates an Ecospold V1 XML file to custom Ecospold classes.
 
     Parameters:
@@ -279,8 +282,8 @@ def validate_directory_v2(
 
 
 def parse_zip_file_v1(
-    file_path: Union[str, Path], valid_suffixes: Union[List[str], None] = None
-) -> List[Tuple[Path, EcoSpoldV1]]:
+    file_path: str | Path, valid_suffixes: list[str] | None = None
+) -> list[tuple[Path, EcoSpoldV1]]:
     """Parses a directory of Ecospold XML files to a list of custom Ecospold classes.
 
     Parameters:
@@ -303,8 +306,8 @@ def parse_zip_file_v1(
 
 
 def parse_zip_file_v2(
-    file_path: Union[str, Path], valid_suffixes: Union[List[str], None] = None
-) -> List[Tuple[Path, EcoSpoldV2]]:
+    file_path: str | Path, valid_suffixes: list[str] | None = None
+) -> list[tuple[Path, EcoSpoldV2]]:
     """Parses a directory of Ecospold XML files to a list of custom Ecospold classes.
 
     Parameters:
@@ -327,8 +330,8 @@ def parse_zip_file_v2(
 
 
 def validate_zip_file_v1(
-    file_path: Union[str, Path, StringIO], valid_suffixes: Union[List[str], None] = None
-) -> List[Tuple[Path, Union[None, List[str]]]]:
+    file_path: str | Path | StringIO, valid_suffixes: list[str] | None = None
+) -> list[tuple[Path, None | list[str]]]:
     """Validates an Ecospold V1 XML file to custom Ecospold classes.
 
     Parameters:
@@ -348,8 +351,8 @@ def validate_zip_file_v1(
 
 
 def validate_zip_file_v2(
-    file_path: Union[str, Path, StringIO], valid_suffixes: Union[List[str], None] = None
-) -> List[Tuple[Path, Union[None, List[str]]]]:
+    file_path: str | Path | StringIO, valid_suffixes: list[str] | None = None
+) -> list[tuple[Path, None | list[str]]]:
     """Validates an Ecospold V2 XML file to custom Ecospold classes.
 
     Parameters:

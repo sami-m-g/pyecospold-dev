@@ -1,7 +1,7 @@
 """Custom EcoSpold Python classes for v1 of EcoSpold schema."""
 
 from datetime import date, datetime
-from typing import ClassVar, Dict, List
+from typing import ClassVar
 
 from dateutil.parser import parse
 from dateutil.relativedelta import relativedelta
@@ -29,7 +29,7 @@ class EcoSpold(etree.ElementBase):
     """str:"""
 
     @property
-    def datasets(self) -> List["Dataset"]:
+    def datasets(self) -> list["Dataset"]:
         """Contains information about one individual unit process (or terminated
         system). Information is divided into metaInformation and flowData."""
         return get_element_list(self, "dataset")
@@ -112,13 +112,13 @@ class FlowData(etree.ElementBase):
     factors)."""
 
     @property
-    def exchanges(self) -> List["Exchange"]:
+    def exchanges(self) -> list["Exchange"]:
         """Comprises all inputs and outputs (both elementary flows and
         intermediate product flows) registered in a unit process."""
         return get_element_list(self, "exchange")
 
     @property
-    def allocations(self) -> List["Allocation"]:
+    def allocations(self) -> list["Allocation"]:
         """Comprises all referenceToInputOutput."""
         return get_element_list(self, "allocation")
 
@@ -175,7 +175,7 @@ class ModellingAndValidation(etree.ElementBase):
         return get_element(self, "representativeness")
 
     @property
-    def sources(self) -> List["Source"]:
+    def sources(self) -> list["Source"]:
         """Contains information about author(s), title, kind of publication,
         place of publication, name of editors (if any), etc.."""
         return get_element_list(self, "source")
@@ -208,7 +208,7 @@ class AdministrativeInformation(etree.ElementBase):
         return get_element(self, "dataGeneratorAndPublication")
 
     @property
-    def persons(self) -> List["Person"]:
+    def persons(self) -> list["Person"]:
         """Used for the identification of members of the organisation institute
         co-operating within a quality network (e.g., ecoinvent) referred to in
         the areas Validation, dataEntryBy and dataGeneratorAndPublication."""
@@ -220,7 +220,7 @@ class Exchange(etree.ElementBase):
     intermediate product flows) recorded in a unit process and its
     related information."""
 
-    INPUT_GROUPS_MAP: ClassVar[Dict[int, str]] = {
+    INPUT_GROUPS_MAP: ClassVar[dict[int, str]] = {
         1: "Materials/Fuels",
         2: "Electricity/Heat",
         3: "Services",
@@ -228,7 +228,7 @@ class Exchange(etree.ElementBase):
         5: "FromTechnosphere",
     }
 
-    OUTPUT_GROUPS_MAP: ClassVar[Dict[int, str]] = {
+    OUTPUT_GROUPS_MAP: ClassVar[dict[int, str]] = {
         0: "ReferenceProduct",
         1: "Include avoided product system",
         2: "Allocated by product",
@@ -236,7 +236,7 @@ class Exchange(etree.ElementBase):
         4: "ToNature",
     }
 
-    UNCERTAINTY_TYPE_MAP: ClassVar[Dict[int, str]] = {
+    UNCERTAINTY_TYPE_MAP: ClassVar[dict[int, str]] = {
         0: "undefined",
         1: "lognormal",
         2: "normal",
@@ -390,13 +390,13 @@ class Exchange(etree.ElementBase):
     and enter it into the field "meanValue")."""
 
     @property
-    def groups(self) -> List[int]:
+    def groups(self) -> list[int]:
         """Choice between _inputGroups and _outputGroups. Check their documentation
         for more information."""
         return self._inputGroups if self._inputGroups != [] else self._outputGroups
 
     @property
-    def groupsStr(self) -> List[str]:
+    def groupsStr(self) -> list[str]:
         """Choice between _inputGroupsStr and _outputGroupsStr. Check their
         documentation for more information."""
         return (
@@ -404,7 +404,7 @@ class Exchange(etree.ElementBase):
         )
 
     @property
-    def _inputGroupsStr(self) -> List[str]:
+    def _inputGroupsStr(self) -> list[str]:
         """String representation for inputGroups. See inputGroups for
         explanations. 1=Materials/Fuels, 2=Electricity/Heat, 3=Services,
         4=FromNature, 5=FromTechnosphere."""
@@ -413,7 +413,7 @@ class Exchange(etree.ElementBase):
         ]
 
     @property
-    def _outputGroupsStr(self) -> List[str]:
+    def _outputGroupsStr(self) -> list[str]:
         """String representation for outputGroups. See outputGroups for
         explanations. 0=ReferenceProduct, 1=Include avoided product system,
         2=Allocated by product, 3=WasteToTreatment, 4=ToNature"""
@@ -434,7 +434,7 @@ class Allocation(etree.ElementBase):
     """Contains all information about allocation procedure, allocation
     parameters and allocation factors applied on a multi-output process."""
 
-    ALLOCATION_METHOD_MAP: ClassVar[Dict[int, str]] = {
+    ALLOCATION_METHOD_MAP: ClassVar[dict[int, str]] = {
         -1: "Undefined",
         0: "Physical causality",
         1: "Economic causality",
@@ -661,7 +661,7 @@ class DataSetInformation(etree.ElementBase):
     timestamp, version and internalVersion number as well as language and localLanguage
     code."""
 
-    TYPE_MAP: Dict[int, str] = {
+    TYPE_MAP: dict[int, str] = {
         0: "System non-terminated",
         1: "Unit process",
         2: "System terminated",
@@ -670,7 +670,7 @@ class DataSetInformation(etree.ElementBase):
         5: "Multioutput process",
     }
 
-    ENERGY_VALUES_MAP: Dict[int, str] = {
+    ENERGY_VALUES_MAP: dict[int, str] = {
         0: "Undefined",
         1: "Net values",
         2: "Gross values",
@@ -910,7 +910,7 @@ class Source(etree.ElementBase):
     """Contains information about author(s), title, kind of publication, place of
     publication, name of editors (if any), etc.."""
 
-    SOURCE_TYPE_MAP: Dict[int, str] = {
+    SOURCE_TYPE_MAP: dict[int, str] = {
         0: "Undefined (default)",
         1: "Article",
         2: "Chapters in anthology",
@@ -1043,13 +1043,13 @@ class DataGeneratorAndPublication(etree.ElementBase):
     database. Furthermore contains information about kind of publication underlying
     the dataset and the accessibility of the dataset."""
 
-    DATA_PUBLISHED_IN_MAP: Dict[int, str] = {
+    DATA_PUBLISHED_IN_MAP: dict[int, str] = {
         0: "Data as such notpublished (default)",
         1: "The data of some unit processes or subsystems are published",
         2: "Data has been published entirely in 'referenceToPublishedSource'",
     }
 
-    ACCESS_RESTRICTED_TO_MAP: Dict[int, str] = {
+    ACCESS_RESTRICTED_TO_MAP: dict[int, str] = {
         0: "Public",
         1: "ETH Domain",
         2: "ecoinvent 2000",

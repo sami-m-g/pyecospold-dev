@@ -1,8 +1,8 @@
 import tempfile
 import zipfile
+from collections.abc import Callable
 from io import StringIO
 from pathlib import Path
-from typing import Callable, Dict, List, Tuple, Union
 
 from lxml import etree, objectify
 
@@ -10,7 +10,7 @@ from .helpers import fill_in_defaults
 
 
 def parse_file(
-    file: Union[str, Path, StringIO],
+    file: str | Path | StringIO,
     schema_path: str,
     lookup: etree.CustomElementClassLookup,
 ) -> etree.ElementBase:
@@ -28,9 +28,9 @@ def parse_file(
 
 
 def validate_file(
-    file: Union[str, Path, StringIO],
+    file: str | Path | StringIO,
     schema_path: str,
-) -> Union[None, List[str]]:
+) -> None | list[str]:
     """Validate a file against a given schema.
     Needed because the default parser doesn't provide any usable error context.
     Parameters:
@@ -46,11 +46,11 @@ def validate_file(
 
 
 def parse_directory(
-    dir_path: Union[str, Path],
+    dir_path: str | Path,
     schema_path: str,
     lookup: etree.CustomElementClassLookup,
-    valid_suffixes: Union[List[str], None] = None,
-) -> List[Tuple[Path, etree.ElementBase]]:
+    valid_suffixes: list[str] | None = None,
+) -> list[tuple[Path, etree.ElementBase]]:
     """Parses a directory of XML files to a list of custom Python classes.
     Parameters:
     dir_path: the directory path, should contain files of only the schema_path version.
@@ -76,10 +76,10 @@ def parse_directory(
 
 
 def validate_directory(
-    dir_path: Union[str, Path],
+    dir_path: str | Path,
     schema_path: str,
-    valid_suffixes: Union[List[str], None] = None,
-) -> List[Tuple[Path, Union[None, List[str]]]]:
+    valid_suffixes: list[str] | None = None,
+) -> list[tuple[Path, None | list[str]]]:
     """Validates a directory of XML files against a given schema.
     Parameters:
     dir_path: the directory path, should contain files of only the schema_path version.
@@ -99,11 +99,11 @@ def validate_directory(
 
 
 def parse_zip_file(
-    file_path: Union[str, Path],
+    file_path: str | Path,
     schema_path: str,
     lookup: etree.CustomElementClassLookup,
-    valid_suffixes: Union[List[str], None] = None,
-) -> List[Tuple[Path, etree.ElementBase]]:
+    valid_suffixes: list[str] | None = None,
+) -> list[tuple[Path, etree.ElementBase]]:
     """Parses a ZIP file of XML files to a list of custom Python classes.
     Parameters:
     file_path: the ZIP file path, should contain files of only the schema_path version.
@@ -121,9 +121,9 @@ def parse_zip_file(
 
 
 def validate_zip_file(
-    file_path: Union[str, Path],
+    file_path: str | Path,
     schema_path: str,
-    valid_suffixes: Union[List[str], None] = None,
+    valid_suffixes: list[str] | None = None,
 ) -> None:
     """Validates a ZIP file of XML files against a given schema.
     Parameters:
@@ -144,8 +144,8 @@ def save_file(
     pretty_print: bool = True,
     xml_declaration: bool = True,
     encoding: str = "UTF-8",
-    static_defaults: Dict[str, Dict[str, str]] = None,
-    dynamic_defaults: Dict[str, Dict[str, Callable[[etree.ElementBase], str]]] = None,
+    static_defaults: dict[str, dict[str, str]] = None,
+    dynamic_defaults: dict[str, dict[str, Callable[[etree.ElementBase], str]]] = None,
 ) -> None:
     """Saves a custom class to an XML file.
     Parameters:

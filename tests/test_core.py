@@ -2,9 +2,9 @@
 
 import os
 import zipfile
+from collections.abc import Callable
 from io import StringIO
 from pathlib import Path
-from typing import Callable, List, Tuple, Union
 
 from lxml import etree
 
@@ -110,7 +110,7 @@ def test_save_file_defaults(tmpdir, fixtures_dir) -> None:
 def _validate_directory(
     dataset_version: int,
     validator: Callable[
-        [Union[str, Path], Union[List[str], None]], List[Tuple[Path, etree.ElementBase]]
+        [str | Path, list[str] | None], list[tuple[Path, etree.ElementBase]]
     ],
 ) -> None:
     """It reads all files successfully."""
@@ -149,7 +149,7 @@ def __zip_data(tmpdir, data_dir: str, file_name: str = "data.zip") -> str:
 def _parse_zip_file(
     file_path: str,
     parser: Callable[
-        [Union[str, Path], Union[List[str], None]], List[Tuple[Path, etree.ElementBase]]
+        [str | Path, list[str] | None], list[tuple[Path, etree.ElementBase]]
     ],
     root_class: etree.ElementBase,
 ) -> None:

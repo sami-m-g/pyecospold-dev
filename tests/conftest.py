@@ -3,7 +3,6 @@
 import os
 import zipfile
 from pathlib import Path
-from typing import List
 
 import pytest
 from lxml import etree
@@ -20,8 +19,8 @@ ERROR_STR = (
 )
 
 
+from collections.abc import Callable
 from io import BytesIO
-from typing import Callable
 
 from pyecospold.core import parse_file_v1
 from pyecospold.lxmlh import (
@@ -77,7 +76,7 @@ class Item(etree.ElementBase):
     """Item element."""
 
     @property
-    def notes(self) -> List[str]:
+    def notes(self) -> list[str]:
         """Notes."""
         return get_inner_text_list(self, "note")
 
@@ -97,7 +96,7 @@ class ShipOrder(etree.ElementBase):
         return get_element(self, "shipto")
 
     @property
-    def itemsList(self) -> List["Item"]:
+    def itemsList(self) -> list["Item"]:
         "Items."
         return get_element_list(self, "item")
 
@@ -148,7 +147,7 @@ def compare_files(file1: str, file2: str) -> bool:
             return translatedOutput == translatedInput
 
 
-def confirm_validation_results(validation_results: List) -> None:
+def confirm_validation_results(validation_results: list) -> None:
     """Tests validation results."""
     for validationResult in validation_results:
         if validationResult[0].name == FILE_SAMPLE_INVALID.name:

@@ -1,20 +1,20 @@
 """Internal helper classes."""
 
-from typing import Callable, Optional
+from collections.abc import Callable
 
 from .config import Defaults
 from .lxmlh import create_attribute, create_attribute_list, create_element_text
 
 
 def create_attribute_v1(
-    name: str, attr_type: type, validator: Optional[Callable] = None
+    name: str, attr_type: type, validator: Callable | None = None
 ) -> property:
     """Helper wrapper method for creating setters and getters for a V1 attribute"""
     return create_attribute(name, attr_type, Defaults.SCHEMA_V1_FILE, validator)
 
 
 def create_attribute_v2(
-    name: str, attr_type: type, validator: Optional[Callable] = None
+    name: str, attr_type: type, validator: Callable | None = None
 ) -> property:
     """Helper wrapper method for creating setters and getters for a V2 attribute"""
     return create_attribute(name, attr_type, Defaults.SCHEMA_V2_FILE, validator)

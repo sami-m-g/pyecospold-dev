@@ -2,9 +2,10 @@
 
 import configparser
 import os
+from collections.abc import Callable
 from dataclasses import dataclass
 from pathlib import Path
-from typing import Any, Callable, ClassVar, Dict
+from typing import Any, ClassVar
 
 from lxml import etree
 
@@ -23,16 +24,16 @@ class Defaults:
     )
     SCHEMA_V2_FILE: ClassVar[str] = os.path.join(SCHEMA_DIR, "v2", "EcoSpold02.xsd")
 
-    TYPE_DEFAULTS: ClassVar[Dict[type, Any]] = lxmlh.TYPE_DEFAULTS
+    TYPE_DEFAULTS: ClassVar[dict[type, Any]] = lxmlh.TYPE_DEFAULTS
 
     DYNAMIC_DEFAULTS: ClassVar[
-        Dict[str, Dict[str, Callable[[etree.ElementBase], str]]]
+        dict[str, dict[str, Callable[[etree.ElementBase], str]]]
     ] = {
         "Dataset": {
             "generator": lambda node: f"pyecospold.{__version__}",
         },
     }
-    STATIC_DEFAULTS: ClassVar[Dict[str, Dict[str, str]]] = {
+    STATIC_DEFAULTS: ClassVar[dict[str, dict[str, str]]] = {
         "Allocation": {
             "allocationMethod": "-1",
         },

@@ -1,7 +1,6 @@
 """Custom EcoSpold Python classes for v1 of EcoSpold schema."""
 
 from datetime import datetime
-from typing import Dict, List
 
 from lxml import etree
 
@@ -134,35 +133,35 @@ class ActivityDescription(etree.ElementBase):
     """Contains content-related metainformation for the activity."""
 
     @property
-    def activity(self) -> List["Activity"]:
+    def activity(self) -> list["Activity"]:
         """Contains the identifying information of an activity dataset including name
         and classification."""
         return get_element_list(self, "activity")
 
     @property
-    def classification(self) -> List["Classification"]:
+    def classification(self) -> list["Classification"]:
         """Contains classification pairs to specify the activity.)"""
         return get_element_list(self, "classification")
 
     @property
-    def geography(self) -> List["Geography"]:
+    def geography(self) -> list["Geography"]:
         """Describes the geographic location for which the dataset is supposed to be
         valid."""
         return get_element_list(self, "geography")
 
     @property
-    def technology(self) -> List["Technology"]:
+    def technology(self) -> list["Technology"]:
         """Describes the technological properties of the unit process."""
         return get_element_list(self, "technology")
 
     @property
-    def timePeriod(self) -> List["TimePeriod"]:
+    def timePeriod(self) -> list["TimePeriod"]:
         """Characterises the temporal properties of the unit activity
         (or system terminated) at issue."""
         return get_element_list(self, "timePeriod")
 
     @property
-    def macroEconomicScenario(self) -> List["MacroEconomicScenario"]:
+    def macroEconomicScenario(self) -> list["MacroEconomicScenario"]:
         """References the macro-economic scenario used in this dataset."""
         return get_element_list(self, "macroEconomicScenario")
 
@@ -174,24 +173,24 @@ class FlowData(etree.ElementBase):
     mathematical formulas."""
 
     @property
-    def intermediateExchanges(self) -> List["IntermediateExchange"]:
+    def intermediateExchanges(self) -> list["IntermediateExchange"]:
         """Comprises intermediate product and waste inputs and outputs for the
         activity."""
         return get_element_list(self, "intermediateExchange")
 
     @property
-    def elementaryExchanges(self) -> List["ElementaryExchange"]:
+    def elementaryExchanges(self) -> list["ElementaryExchange"]:
         """Comprises elementary inputs and outputs (exchanges with the environment)
         for the activity."""
         return get_element_list(self, "elementaryExchange")
 
     @property
-    def parameters(self) -> List["Parameter"]:
+    def parameters(self) -> list["Parameter"]:
         """Comprises all parameters of the activity."""
         return get_element_list(self, "parameter")
 
     @property
-    def impactIndicators(self) -> List["ImpactIndicator"]:
+    def impactIndicators(self) -> list["ImpactIndicator"]:
         """Calculated impact indicators"""
         return get_element_list(self, "impactIndicator")
 
@@ -244,19 +243,19 @@ class Activity(etree.ElementBase):
     """Contains the identifying information of an activity dataset including name and
     classification."""
 
-    INHERITANCE_DEPTH_MAP: Dict[int, str] = {
+    INHERITANCE_DEPTH_MAP: dict[int, str] = {
         0: "not a child",
         1: "a geography child",
         2: "a temporal child",
         3: "a macro-economic scenario child",
     }
 
-    TYPE_MAP: Dict[int, str] = {
+    TYPE_MAP: dict[int, str] = {
         1: "Unit process",
         2: "System terminated",
     }
 
-    SPECIAL_ACTIVITY_TYPE_MAP: Dict[int, str] = {
+    SPECIAL_ACTIVITY_TYPE_MAP: dict[int, str] = {
         0: "ordinary transforming activity (default)",
         1: "market activity",
         2: "IO activity",
@@ -270,7 +269,7 @@ class Activity(etree.ElementBase):
         10: "market group",
     }
 
-    ENERGY_VALUES_MAP: Dict[int, str] = {
+    ENERGY_VALUES_MAP: dict[int, str] = {
         0: "Undefined (default)",
         1: "Net values",
         2: "Gross values",
@@ -554,7 +553,7 @@ class Geography(etree.ElementBase):
     e.g. the regional codes of EcoSpold version 1."""
 
     @property
-    def comments(self) -> List["TextAndImage"]:
+    def comments(self) -> list["TextAndImage"]:
         """Text and image field for further explanations of the geography.
         Especially for area descriptions, the nature of the geographical
         delimitation may be given, especially when this is not an administrative
@@ -573,7 +572,7 @@ class Geography(etree.ElementBase):
 class Technology(etree.ElementBase):
     """Describes the technological properties of the unit process."""
 
-    TECHNOLOGY_LEVEL_MAP: Dict[int, str] = {
+    TECHNOLOGY_LEVEL_MAP: dict[int, str] = {
         0: "undefined",
         1: "New",
         2: "Modern",
@@ -606,7 +605,7 @@ class Technology(etree.ElementBase):
     same year."""
 
     @property
-    def comments(self) -> List["TextAndImage"]:
+    def comments(self) -> list["TextAndImage"]:
         """Text and image field to describe the technology of the activity. The
         text should cover information necessary to identify the properties and
         particularities of the technology(ies) underlying the activity data.
@@ -650,7 +649,7 @@ class TimePeriod(etree.ElementBase):
     'comment'."""
 
     @property
-    def comments(self) -> List["TextAndImage"]:
+    def comments(self) -> list["TextAndImage"]:
         """Text and image field for additional explanations concerning
         the temporal validity of the data reported. It may e.g. include
         information about:- how strong the temporal correlation is for
@@ -800,20 +799,20 @@ class CustomExchange(etree.ElementBase):
     error) if a tag entry cannot be found in the validTags master file."""
 
     @property
-    def uncertainties(self) -> List["Uncertainty"]:
+    def uncertainties(self) -> list["Uncertainty"]:
         """Uncertainty information in the form of distribution functions and their
         parameters and/or pedigree data. For the format definition see the complex
         type section below."""
         return get_element_list(self, "uncertainty")
 
     @property
-    def properties(self) -> List["Property"]:
+    def properties(self) -> list["Property"]:
         """Properties of the exchange, e.g. dry mass, water content, price, content of
         specific elements or substances."""
         return get_element_list(self, "property")
 
     @property
-    def transferCoefficients(self) -> List["TransferCoefficient"]:
+    def transferCoefficients(self) -> list["TransferCoefficient"]:
         """Transfer coefficients relate specific inputs to specific outputs and record
         the share of this specific input that contributes to this specific output."""
         return get_element_list(self, "transferCoefficient")
@@ -885,7 +884,7 @@ class Uncertainty(etree.ElementBase):
         return get_element(self, "undefined")
 
     @property
-    def pedigreeMatrices(self) -> List["PedigreeMatrix"]:
+    def pedigreeMatrices(self) -> list["PedigreeMatrix"]:
         """The data quality indicators provides a qualitative assessment of
         data quality. This can be converted to a quantitative additional
         uncertainty, which can be added to the basic uncertainty. The
@@ -1094,7 +1093,7 @@ class Property(etree.ElementBase):
     the communicating person is mentioned here."""
 
     @property
-    def uncertainties(self) -> List["Uncertainty"]:
+    def uncertainties(self) -> list["Uncertainty"]:
         """Uncertainty of the property value."""
         return get_element_list(self, "uncertainty")
 
@@ -1148,7 +1147,7 @@ class TransferCoefficient(etree.ElementBase):
     the communicating person is mentioned here."""
 
     @property
-    def uncertainties(self) -> List["Uncertainty"]:
+    def uncertainties(self) -> list["Uncertainty"]:
         """Uncertainty of the transfer coefficient amount."""
         return get_element_list(self, "uncertainty")
 
@@ -1156,14 +1155,14 @@ class TransferCoefficient(etree.ElementBase):
 class IntermediateExchange(CustomExchange):
     """Comprises intermediate product and waste inputs and outputs for the activity."""
 
-    INPUT_GROUP_MAP: Dict[int, str] = {
+    INPUT_GROUP_MAP: dict[int, str] = {
         1: "Materials/Fuels",
         2: "Electricity/Heat",
         3: "Services",
         5: "From Technosphere (unspecified)",
     }
 
-    OUTPUT_GROUP_MAP: Dict[int, str] = {
+    OUTPUT_GROUP_MAP: dict[int, str] = {
         0: "ReferenceProduct",
         2: "By-product",
         3: "MaterialForTreatment",
@@ -1272,7 +1271,7 @@ class IntermediateExchange(CustomExchange):
         return self.OUTPUT_GROUP_MAP[self._outputGroup]
 
     @property
-    def group(self) -> List[int]:
+    def group(self) -> list[int]:
         """Choice between _inputGroup and _outputGroup. Check their documentation
         for more information."""
         return (
@@ -1287,7 +1286,7 @@ class IntermediateExchange(CustomExchange):
         return "input" if self.find("inputGroup", self.nsmap) is not None else "output"
 
     @property
-    def groupStr(self) -> List[str]:
+    def groupStr(self) -> list[str]:
         """Choice between _inputGroupStr and _outputGroupStr. Check their
         documentation for more information."""
         return (
@@ -1297,13 +1296,13 @@ class IntermediateExchange(CustomExchange):
         )
 
     @property
-    def productionVolumeUncertainties(self) -> List["Uncertainty"]:
+    def productionVolumeUncertainties(self) -> list["Uncertainty"]:
         """Uncertainty information in the form of distribution functions and their
         parameters and/or pedigree data."""
         return get_element_list(self, "productionVolumeUncertainty")
 
     @property
-    def classifications(self) -> List["Classification"]:
+    def classifications(self) -> list["Classification"]:
         """Contains classification pairs to specify the product."""
         return get_element_list(self, "classification")
 
@@ -1357,7 +1356,7 @@ class ElementaryExchange(CustomExchange):
         return "ToEnvironment"
 
     @property
-    def group(self) -> List[int]:
+    def group(self) -> list[int]:
         """Choice between _inputGroup and _outputGroup. Check their documentation
         for more information."""
         return (
@@ -1372,7 +1371,7 @@ class ElementaryExchange(CustomExchange):
         return "input" if self.find("inputGroup", self.nsmap) is not None else "output"
 
     @property
-    def groupStr(self) -> List[str]:
+    def groupStr(self) -> list[str]:
         """Choice between _inputGroupStr and _outputGroupStr. Check their
         documentation for more information."""
         return (
@@ -1430,7 +1429,7 @@ class Parameter(etree.ElementBase):
     omitted the context of the dataset itself will be used instead."""
 
     @property
-    def uncertainties(self) -> List["Uncertainty"]:
+    def uncertainties(self) -> list["Uncertainty"]:
         """Uncertainty of the parameter amount."""
         return get_element_list(self, "uncertainty")
 
@@ -1589,13 +1588,13 @@ class DataGeneratorAndPublication(etree.ElementBase):
     contains information about kind of publication underlying the dataset and the
     accessibility of the dataset."""
 
-    DATA_PUBLISHED_IN_MAP: Dict[int, str] = {
+    DATA_PUBLISHED_IN_MAP: dict[int, str] = {
         0: "Data as such not published (default).",
         1: "The data of some unit processes or subsystems are published.",
         2: "Data has been published entirely in 'referenceToPublishedSource'.",
     }
 
-    ACCESS_RESTRICTED_TO_MAP: Dict[int, str] = {
+    ACCESS_RESTRICTED_TO_MAP: dict[int, str] = {
         0: "Public",
         1: "Licensees",
         2: "Results only",
@@ -1774,7 +1773,7 @@ class FileAttributes(etree.ElementBase):
     file."""
 
     @property
-    def requiredContexts(self) -> List["RequiredContextReference"]:
+    def requiredContexts(self) -> list["RequiredContextReference"]:
         """This type allows to specify which context(s) must be known if a dataset
         is to be read using the master data referenced by it. It can be used signal
         that master data entries from different contexts are needed to read this
@@ -1792,12 +1791,12 @@ class TextAndImage(etree.ElementBase):
     value of variables."""
 
     @property
-    def texts(self) -> List[str]:
+    def texts(self) -> list[str]:
         """Texts."""
         return get_inner_text_list(self, "text")
 
     @property
-    def imageUrls(self) -> List[str]:
+    def imageUrls(self) -> list[str]:
         """Image URLs."""
         return get_inner_text_list(self, "imageUrl")
 
@@ -1828,7 +1827,7 @@ class PedigreeMatrix(etree.ElementBase):
     to the basic uncertainty. The pedigreeMatrix element groups the 5 data quality
     indicators and contains no data itself."""
 
-    RELIABILITY_MAP: Dict[int, str] = {
+    RELIABILITY_MAP: dict[int, str] = {
         1: "Verified data based on measurements",
         2: "Verified data partly based on assumptions OR nonverified data based on "
         + "measurements",
@@ -1837,7 +1836,7 @@ class PedigreeMatrix(etree.ElementBase):
         5: "Non-qualified estimate (default)",
     }
 
-    COMPLETENESS_MAP: Dict[int, str] = {
+    COMPLETENESS_MAP: dict[int, str] = {
         1: "Representative data from all sites relevant for the market considered "
         + "over an adequate period to even out normal fluctuations",
         2: "Representative data from >50% of the sites relevant for the market "
@@ -1850,7 +1849,7 @@ class PedigreeMatrix(etree.ElementBase):
         + "shorter periods",
     }
 
-    TEMPORAL_CORRELATION_MAP: Dict[int, str] = {
+    TEMPORAL_CORRELATION_MAP: dict[int, str] = {
         1: "Less than 3 years of difference to the time period of the dataset "
         + "(fields 600-610)",
         2: "Less than 6 years of difference to the time period of the dataset "
@@ -1863,7 +1862,7 @@ class PedigreeMatrix(etree.ElementBase):
         + "period of the dataset (fields 600-610)",
     }
 
-    GEOGRAPHICAL_CORRELATION_MAP: Dict[int, str] = {
+    GEOGRAPHICAL_CORRELATION_MAP: dict[int, str] = {
         1: "Data from area under study",
         2: "Average data from larger area in which the area under study is included",
         3: "Data from area with similar production conditions",
@@ -1872,7 +1871,7 @@ class PedigreeMatrix(etree.ElementBase):
         + "middle east, OECD-Europe instead of Russia)",
     }
 
-    FURTHER_TECHNOLOGY_CORRELATION_MAP: Dict[int, str] = {
+    FURTHER_TECHNOLOGY_CORRELATION_MAP: dict[int, str] = {
         1: "Data from enterprises, processes and materials under study",
         2: "Data from processes and materials under study (i.e. identical technology) "
         + "but from different enterprises",
