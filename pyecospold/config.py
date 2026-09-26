@@ -1,7 +1,6 @@
 """Defaults configuration."""
 
 import configparser
-import os
 from collections.abc import Callable
 from dataclasses import dataclass
 from pathlib import Path
@@ -20,11 +19,9 @@ class Defaults:
     set_defaults method
     """
 
-    SCHEMA_DIR: ClassVar[str] = os.path.join(Path(__file__).parent.resolve(), "schemas")
-    SCHEMA_V1_FILE: ClassVar[str] = os.path.join(
-        SCHEMA_DIR, "v1", "EcoSpold01Dataset.xsd"
-    )
-    SCHEMA_V2_FILE: ClassVar[str] = os.path.join(SCHEMA_DIR, "v2", "EcoSpold02.xsd")
+    SCHEMA_DIR: ClassVar[str] = str(Path(__file__).parent.resolve() / "schemas")
+    SCHEMA_V1_FILE: ClassVar[str] = str(Path(SCHEMA_DIR, "v1", "EcoSpold01Dataset.xsd"))
+    SCHEMA_V2_FILE: ClassVar[str] = str(Path(SCHEMA_DIR, "v2", "EcoSpold02.xsd"))
 
     TYPE_DEFAULTS: ClassVar[dict[type, Any]] = lxmlh.TYPE_DEFAULTS
 
