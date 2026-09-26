@@ -1,4 +1,4 @@
-default_install_hook_types: [pre-commit, pre-push]
+default_install_hook_types: [pre-commit, commit-msg, pre-push]
 default_stages: [pre-commit]
 exclude: ^(pyecospold/schemas|tests/fixtures|docs/_static)/
 
@@ -15,6 +15,12 @@ repos:
   - id: mixed-line-ending
     args: [--fix=lf]
   - id: trailing-whitespace
+
+- repo: https://github.com/commitizen-tools/commitizen
+  rev: v4.19.0
+  hooks:
+  - id: commitizen
+  - id: commitizen-branch
 
 - repo: https://github.com/python-jsonschema/check-jsonschema
   rev: 0.38.2
