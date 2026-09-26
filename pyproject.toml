@@ -41,7 +41,7 @@ tracker = "https://github.com/brightway-lca/pyecospold/issues"
 
 [dependency-groups]
 test = [
-    "pytest>=8",
+    "pytest>=9",
     "pytest-cov>=5",
 ]
 docs = [
@@ -60,14 +60,19 @@ required-version = ">=0.12.19"
 [tool.uv.build-backend]
 module-root = ""
 
-[tool.pytest.ini_options]
-addopts = "--cov pyecospold --cov-report term-missing --verbose"
-norecursedirs = [
-    "dist",
-    "build",
-    ".tox"
-]
-testpaths = ["tests/*.py"]
+[tool.pytest]
+addopts = ["-ra", "--import-mode=importlib", "--cov", "--cov-report=term-missing"]
+testpaths = ["tests"]
+strict = true
+filterwarnings = ["error"]
+
+[tool.coverage.run]
+source = ["pyecospold"]
+branch = true
+
+[tool.coverage.report]
+fail_under = 99
+skip_covered = true
 
 [tool.ruff.lint]
 select = ["ALL"]
