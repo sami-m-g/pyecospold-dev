@@ -58,7 +58,7 @@ def test_validate_file_success(fixtures_dir: Path, version: str, api: Callable) 
 
 
 def test_validate_file_v1_fail() -> None:
-    """It validates file successfully."""
+    """It reports why an invalid file fails validation."""
     xml = StringIO("<ecoSpold></ecoSpold>")
     error_expected = (
         "<string>:1:0:ERROR:SCHEMASV:SCHEMAV_CVC_ELT_1: Element 'ecoSpold': "
@@ -94,7 +94,7 @@ def test_save_file(
     api: Callable,
     canonical_xml: Callable[[Path], str],
 ) -> None:
-    """It saves read file correctly."""
+    """It writes back the file it read."""
     input_path = fixtures_dir / version / f"{version}_1.xml"
     output_path = tmp_path / input_path.name
     save_ecospold_file(api("parse_file")(input_path), output_path, fill_defaults=False)
@@ -107,7 +107,7 @@ def test_save_file_defaults(
     fixtures_dir: Path,
     canonical_xml: Callable[[Path], str],
 ) -> None:
-    """It saves read file correctly."""
+    """It fills default values when saving."""
     input_path = fixtures_dir / "v1" / "v1_1.xml"
     output_path = tmp_path / "v1_1.xml"
     save_ecospold_file(parse_file_v1(input_path), output_path, fill_defaults=True)
