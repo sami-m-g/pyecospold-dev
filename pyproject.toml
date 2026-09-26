@@ -51,7 +51,6 @@ docs = [
 dev = [
     { include-group = "test" },
     "pre-commit>=4",
-    "pylint>=3",
     "pytest-randomly>=3.15",
 ]
 
