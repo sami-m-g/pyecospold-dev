@@ -68,17 +68,10 @@ Your pull request needs to meet the following guidelines for acceptance:
 - Include unit tests.
 - If your changes add functionality, update the documentation accordingly.
 
-To run linting and code formatting checks before committing your change, you can install pre-commit as a Git hook by running one of following commands, depending on your dependencies manager:
+Install the Git hooks once, so the checks run on every commit:
 
 ```console
-# conda or mamba
-$ conda install pre-commit
-```
-
-or
-
-```
-$ pip install pre-commit
+$ uv run prek install
 ```
 
 
