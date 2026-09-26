@@ -51,6 +51,7 @@ docs = [
 ]
 dev = [
     { include-group = "test" },
+    "deptry>=0.25.1",
     "prek>=0.5.3",
     "pyrefly>=1.3.1",
     "types-lxml-multi-subclass>=2026.2.16",

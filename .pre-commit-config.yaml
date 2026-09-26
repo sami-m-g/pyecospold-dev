@@ -38,6 +38,12 @@ repos:
     language: system
     types: [python]
     pass_filenames: false
+  - id: deptry
+    name: deptry
+    entry: uv run --frozen deptry .
+    language: system
+    files: (\.py|pyproject\.toml)$
+    pass_filenames: false
   - id: pytest
     name: pytest
     entry: uv run --frozen pytest
