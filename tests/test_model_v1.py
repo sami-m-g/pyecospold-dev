@@ -2,8 +2,8 @@
 
 import math
 from collections.abc import Callable
-from datetime import date, datetime
-from io import StringIO
+from datetime import date, datetime, timedelta, timezone
+from io import BytesIO, StringIO
 from pathlib import Path
 
 import pytest
@@ -32,6 +32,26 @@ from pyecospold.model_v1 import (
     TimePeriod,
     Validation,
 )
+
+
+@pytest.mark.parametrize(
+    ("value", "expected"),
+    [
+        ("2023-03-29T18:04:18", datetime(2023, 3, 29, 18, 4, 18)),
+        (
+            "2023-03-29T18:04:18.534+02:00",
+            datetime(2023, 3, 29, 18, 4, 18, 534000, timezone(timedelta(hours=2))),
+        ),
+    ],
+)
+def test_parse_file_v1_timestamp(
+    fixtures_dir: Path, value: str, expected: datetime
+) -> None:
+    """It parses ISO 8601 timestamps, including fractions and offsets."""
+    xml = (fixtures_dir / "v1" / "v1_1.xml").read_text(encoding="utf-8")
+    xml = xml.replace('timestamp="2006-10-31T20:34:59"', f'timestamp="{value}"')
+
+    assert parse_file_v1(BytesIO(xml.encode("utf-8"))).datasets[0].timestamp == expected
 
 
 def test_parse_file_v1_fail(fixtures_dir: Path) -> None:
