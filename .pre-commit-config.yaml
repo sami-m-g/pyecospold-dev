@@ -20,7 +20,7 @@ repos:
   rev: 0.38.2
   hooks:
   - id: check-readthedocs
-  - id: check-renovate
+  - id: check-dependabot
 
 - repo: https://github.com/astral-sh/uv-pre-commit
   rev: 0.12.19
