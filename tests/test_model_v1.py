@@ -1,9 +1,9 @@
 """Test cases for the __model_v1__ module."""
 
+import math
 from datetime import date, datetime
 from io import StringIO
 
-import numpy as np
 import pytest
 from lxml import etree
 
@@ -152,9 +152,9 @@ def test_parse_file_v1_exchange(eco_spold: EcoSpold) -> None:
     generalComment = "(2,3,1,1,1,5)"
     localName = "Entsorgung, Gebäude, Armierungseisen, ins Recycling"
     infrastructureProcess = False
-    minValue = np.nan
-    maxValue = np.nan
-    mostLikelyValue = np.nan
+    minValue = math.nan
+    maxValue = math.nan
+    mostLikelyValue = math.nan
     inputGroups = [5]
     inputGroupsStr = ["FromTechnosphere"]
     outputGroups = [0]
@@ -416,7 +416,7 @@ def test_parse_file_v1_dataset_information(eco_spold: EcoSpold) -> None:
 
 def test_parse_file_v1_representativeness(eco_spold: EcoSpold) -> None:
     """It parses attributes correctly."""
-    percent = np.nan
+    percent = math.nan
     productionVolume = ""
     samplingProcedure = "Data come from one compost plant in Switzerland."
     extrapolations = "none"

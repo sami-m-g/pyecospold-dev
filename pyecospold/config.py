@@ -6,10 +6,9 @@ from dataclasses import dataclass
 from pathlib import Path
 from typing import Any, Callable, ClassVar, Dict
 
-import numpy as np
 from lxml import etree
 
-from . import __version__
+from . import __version__, lxmlh
 
 
 @dataclass
@@ -24,12 +23,7 @@ class Defaults:
     )
     SCHEMA_V2_FILE: ClassVar[str] = os.path.join(SCHEMA_DIR, "v2", "EcoSpold02.xsd")
 
-    TYPE_DEFAULTS: ClassVar[Dict[type, Any]] = {
-        int: np.nan_to_num(np.nan),
-        float: np.nan,
-        bool: "false",
-        str: "",
-    }
+    TYPE_DEFAULTS: ClassVar[Dict[type, Any]] = lxmlh.TYPE_DEFAULTS
 
     DYNAMIC_DEFAULTS: ClassVar[
         Dict[str, Dict[str, Callable[[etree.ElementBase], str]]]

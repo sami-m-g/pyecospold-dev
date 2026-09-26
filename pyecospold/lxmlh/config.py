@@ -1,7 +1,6 @@
+import math
 from datetime import datetime
 from typing import Any, Callable, Dict
-
-import numpy as np
 
 TIMESTAMP_FORMAT: str = "%Y-%m-%dT%H:%M:%S"
 
@@ -11,8 +10,8 @@ TYPE_FUNC_MAP: Dict[type, Callable[[str], Any]] = {
 }
 
 TYPE_DEFAULTS: Dict[type, Any] = {
-    int: np.nan_to_num(np.nan),
-    float: np.nan,
+    int: 0.0,
+    float: math.nan,
     bool: "false",
     str: "",
 }
