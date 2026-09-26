@@ -70,8 +70,8 @@ referenceFunction.amount = 2.0
 referenceFunction.amount
 >> 2.0
 
-# Save final EcoSpold class as an XML file, make sure root directory exists.
-save_ecospold_file(ecoSpold, "out/00001_new.xml")  # Replace with your own path
+# Save final EcoSpold class as an XML file.
+save_ecospold_file(ecoSpold, "00001_new.xml")  # Replace with your own path
 ```
 
 # Config file

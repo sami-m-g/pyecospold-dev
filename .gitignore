@@ -135,9 +135,6 @@ pyrightconfig.json
 schema-documentation.sh
 xs3p-master
 
-# Output directory
-out
-
 # VSCode
 .vscode
 
