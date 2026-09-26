@@ -19,6 +19,12 @@ def fixtures_dir() -> Path:
     return Path(__file__).parent / "fixtures"
 
 
+@pytest.fixture(params=["v1", "v2"])
+def version(request: pytest.FixtureRequest) -> str:
+    """EcoSpold format version; tests using it run once per version."""
+    return request.param
+
+
 @pytest.fixture
 def eco_spold(fixtures_dir: Path) -> EcoSpold:
     """Parsed EcoSpold v1 sample file."""

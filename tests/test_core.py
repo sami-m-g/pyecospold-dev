@@ -1,36 +1,60 @@
 """Test cases for the __core__ module."""
 
+import re
+import shutil
 from collections.abc import Callable
+from importlib import import_module
 from io import StringIO
 from pathlib import Path
 
-from lxml import etree
+import pytest
 
 import pyecospold
-from pyecospold import (
-    parse_directory_v1,
-    parse_directory_v2,
-    parse_file_v1,
-    parse_zip_file_v1,
-    parse_zip_file_v2,
-    save_ecospold_file,
-    validate_directory_v1,
-    validate_directory_v2,
-    validate_file_v1,
-    validate_file_v2,
-    validate_zip_file_v1,
-    validate_zip_file_v2,
-)
+from pyecospold import parse_file_v1, save_ecospold_file, validate_file_v1
 from pyecospold.config import Defaults
 from pyecospold.core import EcospoldLookupV1
 from pyecospold.lxmlh import parse_directory, validate_directory
-from pyecospold.model_v1 import EcoSpold as EcoSpoldV1
-from pyecospold.model_v2 import EcoSpold as EcoSpoldV2
 
 
-def test_validate_file_v1_success(fixtures_dir: Path) -> None:
+@pytest.fixture
+def api(version: str) -> Callable[[str], Callable]:
+    """Public function for the current version, e.g. ``api("parse_file")``."""
+    return lambda name: getattr(pyecospold, f"{name}_{version}")
+
+
+@pytest.fixture
+def root_class(version: str) -> type:
+    """Root element class for the current version."""
+    return import_module(f"pyecospold.model_{version}").EcoSpold
+
+
+@pytest.fixture(params=["directory", "zip_file"])
+def kind(request: pytest.FixtureRequest) -> str:
+    """Source kind; tests using it run for a directory and a zip file."""
+    return request.param
+
+
+@pytest.fixture
+def as_source(kind: str, make_zip: Callable[[Path], Path]) -> Callable[[Path], Path]:
+    """Passes a directory through as-is or zipped, matching ``kind``."""
+    return make_zip if kind == "zip_file" else lambda directory: directory
+
+
+@pytest.fixture
+def files_with_invalid(fixtures_dir: Path, version: str, tmp_path: Path) -> Path:
+    """Copy of the version's files plus an invalid copy of the first one."""
+    directory = tmp_path / "files"
+    shutil.copytree(fixtures_dir / version, directory)
+    valid = (directory / f"{version}_1.xml").read_text(encoding="utf-8")
+    (directory / "invalid.xml").write_text(
+        re.sub(r'amount="[^"]*"', 'amount="abc"', valid, count=1), encoding="utf-8"
+    )
+    return directory
+
+
+def test_validate_file_success(fixtures_dir: Path, version: str, api: Callable) -> None:
     """It validates file successfully."""
-    assert validate_file_v1(fixtures_dir / "v1" / "v1_1.xml") is None
+    assert api("validate_file")(fixtures_dir / version / f"{version}_1.xml") is None
 
 
 def test_validate_file_v1_fail() -> None:
@@ -45,48 +69,35 @@ def test_validate_file_v1_fail() -> None:
     assert str(error_actual[0]) == error_expected
 
 
-def test_validate_file_v2_success(fixtures_dir: Path) -> None:
-    """It validates file successfully."""
-    assert validate_file_v2(fixtures_dir / "v2" / "v2_1.xml") is None
+def test_parse(
+    fixtures_dir: Path,
+    version: str,
+    kind: str,
+    api: Callable,
+    as_source: Callable[[Path], Path],
+    root_class: type,
+) -> None:
+    """It reads all files of a directory or zip file."""
+    results = sorted(api(f"parse_{kind}")(as_source(fixtures_dir / version)))
 
-
-def test_parse_directory_v1(fixtures_dir: Path) -> None:
-    """It reads all files successfully."""
-    dir_path = fixtures_dir / "v1"
-    files = [dir_path / "v1_1.xml", dir_path / "v1_2.spold"]
-    ecospold_list = sorted(parse_directory_v1(dir_path))
-
-    assert len(ecospold_list) == 2
-    assert ecospold_list[0][0] == files[0]
-    assert ecospold_list[1][0] == files[1]
-    assert ecospold_list[0][1].datasets[0].generator == "EcoAdmin 1.1.17.110"
-    assert ecospold_list[1][1].datasets[0].generator == "EcoAdmin 1.1.17.110"
-
-
-def test_parse_directory_v2(fixtures_dir: Path) -> None:
-    """It reads all files successfully."""
-    dir_path = fixtures_dir / "v2"
-    files = [dir_path / "v2_1.xml", dir_path / "v2_2.spold"]
-    ecospold_list = sorted(parse_directory_v2(dir_path))
-    activity1 = ecospold_list[0][1].activityDataset.activityDescription.activity[0]
-    activity2 = ecospold_list[1][1].activityDataset.activityDescription.activity[0]
-
-    assert len(ecospold_list) == 2
-    assert ecospold_list[0][0] == files[0]
-    assert ecospold_list[1][0] == files[1]
-    assert activity1.inheritanceDepth == 0
-    assert activity2.inheritanceDepth == 0
+    assert [path.name for path, _ in results] == [
+        f"{version}_1.xml",
+        f"{version}_2.spold",
+    ]
+    assert all(isinstance(root, root_class) for _, root in results)
 
 
 def test_save_file(
     tmp_path: Path,
     fixtures_dir: Path,
+    version: str,
+    api: Callable,
     canonical_xml: Callable[[Path], str],
 ) -> None:
     """It saves read file correctly."""
-    input_path = fixtures_dir / "v1" / "v1_1.xml"
-    output_path = tmp_path / "v1_1.xml"
-    save_ecospold_file(parse_file_v1(input_path), output_path, fill_defaults=False)
+    input_path = fixtures_dir / version / f"{version}_1.xml"
+    output_path = tmp_path / input_path.name
+    save_ecospold_file(api("parse_file")(input_path), output_path, fill_defaults=False)
 
     assert canonical_xml(output_path) == canonical_xml(input_path)
 
@@ -105,115 +116,22 @@ def test_save_file_defaults(
     assert canonical_xml(output_path) == canonical_xml(expected_path)
 
 
-def _validate_directory(
-    fixtures_dir: Path,
-    dataset_version: int,
-    validator: Callable[
-        [str | Path, list[str] | None], list[tuple[Path, etree.ElementBase]]
-    ],
+def test_validate(
+    files_with_invalid: Path,
+    version: str,
+    kind: str,
+    api: Callable,
+    as_source: Callable[[Path], Path],
 ) -> None:
-    """It reads all files successfully."""
-    dir_path = fixtures_dir / f"v{dataset_version}"
-    files = [
-        dir_path / f"v{dataset_version}_1.xml",
-        dir_path / f"v{dataset_version}_2.spold",
-    ]
-    result = sorted(validator(dir_path))
+    """It reports schema errors of invalid files only."""
+    results = {
+        path.name: errors
+        for path, errors in api(f"validate_{kind}")(as_source(files_with_invalid))
+    }
 
-    assert len(result) == len(files)
-    for i in range(2):
-        assert result[i][0] == files[i]
-        assert result[i][1] is None
-
-
-def test_validate_directory_v1(fixtures_dir: Path) -> None:
-    """It validates directory successfully."""
-    _validate_directory(fixtures_dir, 1, validate_directory_v1)
-
-
-def test_validate_directory_v2(fixtures_dir: Path) -> None:
-    """It validates directory successfully."""
-    _validate_directory(fixtures_dir, 2, validate_directory_v2)
-
-
-def _parse_zip_file(
-    file_path: str,
-    parser: Callable[
-        [str | Path, list[str] | None], list[tuple[Path, etree.ElementBase]]
-    ],
-    root_class: etree.ElementBase,
-) -> None:
-    """It reads zip file successfully."""
-    results = parser(file_path)
-
-    for result in results:
-        assert isinstance(result[1], root_class)
-
-
-def test_parse_zip_file_v1(
-    fixtures_dir: Path, make_zip: Callable[[Path], Path]
-) -> None:
-    """It reads zip file successfully."""
-    zip_file_path = make_zip(fixtures_dir / "v1")
-    _parse_zip_file(zip_file_path, parse_zip_file_v1, EcoSpoldV1)
-
-
-def test_parse_zip_file_v2(
-    fixtures_dir: Path, make_zip: Callable[[Path], Path]
-) -> None:
-    """It reads zip file successfully."""
-    zip_file_path = make_zip(fixtures_dir / "v2")
-    _parse_zip_file(zip_file_path, parse_zip_file_v2, EcoSpoldV2)
-
-
-def test_validate_zip_file_v1(
-    fixtures_dir: Path, make_zip: Callable[[Path], Path]
-) -> None:
-    """It validates zip file successfully."""
-    zip_file_path = make_zip(fixtures_dir / "v1")
-    for result in validate_zip_file_v1(zip_file_path):
-        assert result[1] is None
-
-
-def test_validate_zip_file_v2(
-    fixtures_dir: Path, make_zip: Callable[[Path], Path]
-) -> None:
-    """It validates zip file successfully."""
-    zip_file_path = make_zip(fixtures_dir / "v2")
-    for result in validate_zip_file_v2(zip_file_path):
-        assert result[1] is None
-
-
-def _with_invalid_file(fixtures_dir: Path, directory: Path) -> Path:
-    """Directory holding a valid v1 file and a copy with an invalid amount."""
-    directory.mkdir()
-    valid = (fixtures_dir / "v1" / "v1_1.xml").read_text(encoding="utf-8")
-    (directory / "valid.xml").write_text(valid, encoding="utf-8")
-    (directory / "invalid.xml").write_text(
-        valid.replace('amount="1"', 'amount="abc"'), encoding="utf-8"
-    )
-    return directory
-
-
-def test_validate_directory_reports_invalid_file(
-    fixtures_dir: Path, tmp_path: Path
-) -> None:
-    """It reports the schema error of the invalid file only."""
-    directory = _with_invalid_file(fixtures_dir, tmp_path / "files")
-    results = dict(validate_directory_v1(directory))
-
-    assert results[directory / "valid.xml"] is None
-    assert "'abc'" in str(results[directory / "invalid.xml"][0])
-
-
-def test_validate_zip_file_reports_invalid_file(
-    fixtures_dir: Path, tmp_path: Path, make_zip: Callable[[Path], Path]
-) -> None:
-    """It reports the schema error of the invalid archived file only."""
-    zip_path = make_zip(_with_invalid_file(fixtures_dir, tmp_path / "files"))
-    results = {path.name: errors for path, errors in validate_zip_file_v1(zip_path)}
-
-    assert results["valid.xml"] is None
+    assert results.keys() == {f"{version}_1.xml", f"{version}_2.spold", "invalid.xml"}
+    assert results[f"{version}_1.xml"] is None
+    assert results[f"{version}_2.spold"] is None
     assert "'abc'" in str(results["invalid.xml"][0])
 
 
