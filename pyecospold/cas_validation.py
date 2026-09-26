@@ -26,7 +26,7 @@ Similarly, for 110-63-4:
 import math
 
 
-def validate_cas(cas: str | int | float) -> str:
+def validate_cas(cas: str | float) -> str:
     """Return valid CAS number as a correctly validate string, or raise ``ValueError``.
 
     Will check the check digit, re-hyphenate, and convert from a number if necessary.
@@ -63,7 +63,7 @@ def _check_digit(cas_str: str) -> None:
         raise ValueError(f"CAS not valid: {cas_str} ({error})")
 
 
-def _convert_numeric_cas(cas: int | float) -> str:
+def _convert_numeric_cas(cas: float) -> str:
     if math.isnan(cas):
         raise ValueError("Given CAS value is Not-a-Number")
     casStr = str(int(cas))

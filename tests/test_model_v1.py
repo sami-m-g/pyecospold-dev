@@ -220,18 +220,18 @@ def test_parse_file_v1_reference_function(eco_spold: EcoSpold) -> None:
     amount = 1
     includedProcesses = (
         "Building materials required for a compost plant and its "
-        + "construction as well as the disposal of these materials "
-        + "were included. Land use during construction and use is "
-        + "considered. The lifetime of the plant was assumed as 25 "
-        + "years. Transport of the building materials to the "
-        + "construction site were included."
+        "construction as well as the disposal of these materials "
+        "were included. Land use during construction and use is "
+        "considered. The lifetime of the plant was assumed as 25 "
+        "years. Transport of the building materials to the "
+        "construction site were included."
     )
     generalComment = (
         "The inventory refers to a compost plant over the lifetime of "
-        + "25 years. The compost plant is constructed for a treating "
-        + "capactiy of 10‘000 tons biogenic waste per year. The total "
-        + "turnover of the plant over the entire lifetime of 25 years "
-        + "amounts thus 250‘000 tons biogenic waste."
+        "25 years. The compost plant is constructed for a treating "
+        "capactiy of 10‘000 tons biogenic waste per year. The total "
+        "turnover of the plant over the entire lifetime of 25 years "
+        "amounts thus 250‘000 tons biogenic waste."
     )
     formula = "0"
     infrastructureIncluded = True
@@ -441,7 +441,7 @@ def test_parse_file_v1_source(eco_spold: EcoSpold) -> None:
     firstAuthor = "Nemecek, T."
     additionalAuthors = (
         "Heil A., Huguenin, O., Meier, S., Erzinger S., "
-        + "Blaser S., Dux. D., Zimmermann A.,"
+        "Blaser S., Dux. D., Zimmermann A.,"
     )
     year = 2003
     title = "Life Cycle Inventories of Agricultural Production Systems"

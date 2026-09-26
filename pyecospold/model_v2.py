@@ -19,7 +19,8 @@ class EcoSpold(etree.ElementBase):
     @property
     def activityDataset(self) -> "ActivityDataset":
         """Contains information about one individual activity. Information is divided
-        into metaInformation and flowData."""
+        into metaInformation and flowData.
+        """
         return (
             self._activityDataset
             if self._activityDataset is not None
@@ -36,70 +37,79 @@ class EcoSpold(etree.ElementBase):
 
     @property
     def geography(self) -> "Geography":
-        """synonym for ecospold.activityDataset.activityDescription.geography[0]"""
+        """Synonym for ecospold.activityDataset.activityDescription.geography[0]"""
         return self.activityDataset.activityDescription.geography[0]
 
     @property
     def geographyShortName(self) -> str:
-        """synonym
-        for ecospold.activityDataset.activityDescription.geography.shortNames[0]"""
+        """Synonym
+        for ecospold.activityDataset.activityDescription.geography.shortNames[0]
+        """
         return self.geography.shortNames[0]
 
     @property
     def activity(self) -> "Activity":
-        """synonym for ecospold.activityDataset.activityDescription.activity[0]"""
+        """Synonym for ecospold.activityDataset.activityDescription.activity[0]"""
         return self.activityDataset.activityDescription.activity[0]
 
     @property
     def activityName(self) -> str:
-        """synonym for
-        ecospold.activityDataset.activityDescription.activity[0].activityNames[0]"""
+        """Synonym for
+        ecospold.activityDataset.activityDescription.activity[0].activityNames[0]
+        """
         return self.activity.activityNames[0]
 
     def elementary_exchange(self, i: int) -> "ElementaryExchange":
-        """synonym for ecospold.activityDataset.flowData.elementaryExchanges[i]"""
+        """Synonym for ecospold.activityDataset.flowData.elementaryExchanges[i]"""
         return self.activityDataset.flowData.elementaryExchanges[i]
 
     def elementary_exchange_compartment(self, i: int, j: int) -> str:
-        """synonym for
+        """Synonym for
         ecospold.activityDataset.flowData.elementaryExchanges[i]
-        .compartment.compartments[j]"""
+        .compartment.compartments[j]
+        """
         return self.elementary_exchange(i).compartment.compartments[j]
 
     def elementary_exchange_sub_compartment(self, i: int, j: int) -> str:
-        """synonym for
+        """Synonym for
         ecospold.activityDataset.flowData.elementaryExchanges[i]
-        .compartment.subCompartments[j]"""
+        .compartment.subCompartments[j]
+        """
         return self.elementary_exchange(i).compartment.subCompartments[j]
 
     def elementary_exchange_name(self, i: int, j: int) -> str:
-        """synonym for
-        ecospold.activityDataset.flowData.elementaryExchanges[i].names[j]"""
+        """Synonym for
+        ecospold.activityDataset.flowData.elementaryExchanges[i].names[j]
+        """
         return self.elementary_exchange(i).names[j]
 
     def elementary_exchange_unit_name(self, i: int, j: int) -> str:
-        """synonym for
-        ecospold.activityDataset.flowData.elementaryExchanges[i].unitNames[j]"""
+        """Synonym for
+        ecospold.activityDataset.flowData.elementaryExchanges[i].unitNames[j]
+        """
         return self.elementary_exchange(i).unitNames[j]
 
     def intermediate_exchange(self, i: int) -> "IntermediateExchange":
-        """synonym for ecospold.activityDataset.flowData.intermediateExchanges[i]"""
+        """Synonym for ecospold.activityDataset.flowData.intermediateExchanges[i]"""
         return self.activityDataset.flowData.intermediateExchanges[i]
 
     def intermediate_exchange_name(self, i: int, j: int) -> str:
-        """synonym for
-        ecospold.activityDataset.flowData.intermediateExchanges[i].names[j]"""
+        """Synonym for
+        ecospold.activityDataset.flowData.intermediateExchanges[i].names[j]
+        """
         return self.intermediate_exchange(i).names[j]
 
     def intermediate_exchange_unit_name(self, i: int, j: int) -> str:
-        """synonym for
-        ecospold.activityDataset.flowData.intermediateExchanges[i].unitNames[j]"""
+        """Synonym for
+        ecospold.activityDataset.flowData.intermediateExchanges[i].unitNames[j]
+        """
         return self.intermediate_exchange(i).unitNames[j]
 
 
 class ActivityDataset(etree.ElementBase):
     """Contains information about one individual activity. Information is divided into
-    metaInformation and flowData."""
+    metaInformation and flowData.
+    """
 
     @property
     def activityDescription(self) -> "ActivityDescription":
@@ -111,13 +121,15 @@ class ActivityDataset(etree.ElementBase):
         """Contains information about inputs and outputs of the given activity
         (exchanges with environment as well as intermediate exchanges) as well
         as their properties, allocations, transfer coefficients, uncertainties
-        and parameters for the use in mathematical formulas."""
+        and parameters for the use in mathematical formulas.
+        """
         return get_element(self, "flowData")
 
     @property
     def modellingAndValidation(self) -> "ModellingAndValidation":
         """Contains metainformation about how unit processes are modelled and about the
-        review/validation of the dataset."""
+        review/validation of the dataset.
+        """
         return get_element(self, "modellingAndValidation")
 
     @property
@@ -125,7 +137,8 @@ class ActivityDataset(etree.ElementBase):
         """Contains the administrative information about the dataset at issue: The
         persons that compiled and entered the dataset in the database and about kind
         of publication and the accessibility of the dataset, timestamp, version and
-        internalVersion number as well as language and localLanguage code."""
+        internalVersion number as well as language and localLanguage code.
+        """
         return get_element(self, "administrativeInformation")
 
 
@@ -135,7 +148,8 @@ class ActivityDescription(etree.ElementBase):
     @property
     def activity(self) -> list["Activity"]:
         """Contains the identifying information of an activity dataset including name
-        and classification."""
+        and classification.
+        """
         return get_element_list(self, "activity")
 
     @property
@@ -146,7 +160,8 @@ class ActivityDescription(etree.ElementBase):
     @property
     def geography(self) -> list["Geography"]:
         """Describes the geographic location for which the dataset is supposed to be
-        valid."""
+        valid.
+        """
         return get_element_list(self, "geography")
 
     @property
@@ -157,7 +172,8 @@ class ActivityDescription(etree.ElementBase):
     @property
     def timePeriod(self) -> list["TimePeriod"]:
         """Characterises the temporal properties of the unit activity
-        (or system terminated) at issue."""
+        (or system terminated) at issue.
+        """
         return get_element_list(self, "timePeriod")
 
     @property
@@ -170,18 +186,21 @@ class FlowData(etree.ElementBase):
     """Contains information about inputs and outputs of the given activity (exchanges
     with environment as well as intermediate exchanges) as well as their properties,
     allocations, transfer coefficients, uncertainties and parameters for the use in
-    mathematical formulas."""
+    mathematical formulas.
+    """
 
     @property
     def intermediateExchanges(self) -> list["IntermediateExchange"]:
         """Comprises intermediate product and waste inputs and outputs for the
-        activity."""
+        activity.
+        """
         return get_element_list(self, "intermediateExchange")
 
     @property
     def elementaryExchanges(self) -> list["ElementaryExchange"]:
         """Comprises elementary inputs and outputs (exchanges with the environment)
-        for the activity."""
+        for the activity.
+        """
         return get_element_list(self, "elementaryExchange")
 
     @property
@@ -197,12 +216,14 @@ class FlowData(etree.ElementBase):
 
 class ModellingAndValidation(etree.ElementBase):
     """Contains metainformation about how unit processes are modelled and about the
-    review/validation of the dataset."""
+    review/validation of the dataset.
+    """
 
     @property
     def representativeness(self) -> "Representativeness":
         """Contains information about the representativeness of the unit process data
-        (meta information and flow data)."""
+        (meta information and flow data).
+        """
         return get_element(self, "representativeness")
 
     @property
@@ -215,13 +236,15 @@ class AdministrativeInformation(etree.ElementBase):
     """Contains the administrative information about the dataset at issue: The
     persons that compiled and entered the dataset in the database and about kind
     of publication and the accessibility of the dataset, timestamp, version and
-    internalVersion number as well as language and localLanguage code."""
+    internalVersion number as well as language and localLanguage code.
+    """
 
     @property
     def dataEntryBy(self) -> "DataEntryBy":
         """Contains information about the author of the dataset, i.e. the person
         that entered the dataset into the database format and thereby is the
-        person responsible for the data."""
+        person responsible for the data.
+        """
         return get_element(self, "dataEntryBy")
 
     @property
@@ -229,19 +252,22 @@ class AdministrativeInformation(etree.ElementBase):
         """Contains information about who collected, compiled or published
         the original data. This may or may not be the same person as under
         'DataEntryBy'. Furthermore contains information about kind of
-        publication underlying the dataset and the accessibility of the dataset."""
+        publication underlying the dataset and the accessibility of the dataset.
+        """
         return get_element(self, "dataGeneratorAndPublication")
 
     @property
     def fileAttributes(self) -> "FileAttributes":
         """This constraint ensures that each xml:lang attribute is only used once
-        in this context. I.e. there must be only one translation of the element."""
+        in this context. I.e. there must be only one translation of the element.
+        """
         return get_element(self, "fileAttributes")
 
 
 class Activity(etree.ElementBase):
     """Contains the identifying information of an activity dataset including name and
-    classification."""
+    classification.
+    """
 
     INHERITANCE_DEPTH_MAP: dict[int, str] = {
         0: "not a child",
@@ -466,7 +492,8 @@ class Activity(etree.ElementBase):
         which may be used in the text as {{variablename}}. If a parent text field
         includes a variable, this variable may be redefined by the child activity
         dataset while keeping the rest of the parent text intact. This allows easy
-        changes of text parts in child processes."""
+        changes of text parts in child processes.
+        """
         return get_element(self, "allocationComment")
 
     @property
@@ -482,20 +509,23 @@ class Activity(etree.ElementBase):
         used in the text as {{variablename}}. If a parent text field includes a
         variable, this variable may be redefined by the child activity dataset while
         keeping the rest of the parent text intact. This allows easy changes of text
-        parts in child processes."""
+        parts in child processes.
+        """
         return get_element(self, "generalComment")
 
     @property
     def inheritanceDepthStr(self) -> str:
         """String representation for inheritanceDepth. See inheritanceDepth for
         explanations. 0 = not a child, 1 = a geography child, 2 = a temporal child,
-        3 = a macro-economic scenario child."""
+        3 = a macro-economic scenario child.
+        """
         return Activity.INHERITANCE_DEPTH_MAP[self.inheritanceDepth]
 
     @property
     def typeStr(self) -> str:
         """String representation for type. See type for explanations.
-        1 = Unit process; 2 = System terminated"""
+        1 = Unit process; 2 = System terminated
+        """
         return Activity.TYPE_MAP[self.type]
 
     @property
@@ -504,14 +534,16 @@ class Activity(etree.ElementBase):
         for explanations. 0 = ordinary transforming activity (default),
         1 = market activity, 2 = IO activity, 3 = Residual activity,
         4 = production mix, 5 = import activity, 6 = supply mix, 7 = export activity,
-        8 = re-export activity, 9 = correction activity, 10 = market group"""
+        8 = re-export activity, 9 = correction activity, 10 = market group
+        """
         return Activity.SPECIAL_ACTIVITY_TYPE_MAP[self.specialActivityType]
 
     @property
     def energyValuesStr(self) -> str:
         """String representation for energyValues. See energyValues for explanations.
         0=Undefined (default). 1=Net (lower) heating value. 2=Gross (higher) heating
-        value. This data field is by default set to 0."""
+        value. This data field is by default set to 0.
+        """
         return Activity.ENERGY_VALUES_MAP[self.energyValues]
 
 
@@ -539,7 +571,8 @@ class Classification(etree.ElementBase):
 
 class Geography(etree.ElementBase):
     """Describes the geographic location for which the dataset is supposed
-    to be valid."""
+    to be valid.
+    """
 
     geographyId = create_attribute_v2("geographyId", str)
     """str: Reference to valid locations file with detailed geography information."""
@@ -565,7 +598,8 @@ class Geography(etree.ElementBase):
         {{variablename}}. If a parent text field includes a variable, this variable
         may be redefined by the child activity dataset while keeping the rest of the
         parent text intact. This allows easy changes of text parts in child
-        processes."""
+        processes.
+        """
         return get_element_list(self, "comment")
 
 
@@ -619,20 +653,23 @@ class Technology(etree.ElementBase):
         be used in the text as {{variablename}}. If a parent text field includes
         a variable, this variable may be redefined by the child activity dataset
         while keeping the rest of the parent text intact. This allows easy changes
-        of text parts in child processes."""
+        of text parts in child processes.
+        """
         return get_element_list(self, "comment")
 
     @property
     def technologyLevelStr(self) -> str:
         """String representation for technologyLevel. See technologyLevel for
         explanations. 0 = undefined, 1 = New, 2 = Modern, 3 = Current (default),
-        4 = Old, 5 = Outdated"""
+        4 = Old, 5 = Outdated
+        """
         return self.TECHNOLOGY_LEVEL_MAP[self.technologyLevel]
 
 
 class TimePeriod(etree.ElementBase):
     """Characterises the temporal properties of the unit activity
-    (or system terminated) at issue."""
+    (or system terminated) at issue.
+    """
 
     startDate = create_attribute_v2("startDate", str)
     """str: Start date of the time period for which the dataset is valid,
@@ -664,7 +701,8 @@ class TimePeriod(etree.ElementBase):
         {{variablename}}. If a parent text field includes a variable, this
         variable may be redefined by the child activity dataset while
         keeping the rest of the parent text intact. This allows easy
-        changes of text parts in child processes."""
+        changes of text parts in child processes.
+        """
         return get_element_list(self, "comment")
 
 
@@ -692,7 +730,8 @@ class MacroEconomicScenario(etree.ElementBase):
 class CustomExchange(etree.ElementBase):
     """This class contains elements used in both exchange types. Elements unique
     to either Intermediate exchanges or Exchanges with environment are listed in
-    their own classes."""
+    their own classes.
+    """
 
     id = create_attribute_v2("id", str)
     """str: Unique identifier for this exchange. The intermediateExchangeId
@@ -802,19 +841,22 @@ class CustomExchange(etree.ElementBase):
     def uncertainties(self) -> list["Uncertainty"]:
         """Uncertainty information in the form of distribution functions and their
         parameters and/or pedigree data. For the format definition see the complex
-        type section below."""
+        type section below.
+        """
         return get_element_list(self, "uncertainty")
 
     @property
     def properties(self) -> list["Property"]:
         """Properties of the exchange, e.g. dry mass, water content, price, content of
-        specific elements or substances."""
+        specific elements or substances.
+        """
         return get_element_list(self, "property")
 
     @property
     def transferCoefficients(self) -> list["TransferCoefficient"]:
         """Transfer coefficients relate specific inputs to specific outputs and record
-        the share of this specific input that contributes to this specific output."""
+        the share of this specific input that contributes to this specific output.
+        """
         return get_element_list(self, "transferCoefficient")
 
 
@@ -822,13 +864,15 @@ class Uncertainty(etree.ElementBase):
     """Of the following uncertainty methods (lognormal, normal, ..., undefined)
     exactly one must be selected. The TUncertainty complex type is used in several
     places, so one dataset may contain several uncertainty elements in distinct
-    places. But each element which has uncertainty may only contain one."""
+    places. But each element which has uncertainty may only contain one.
+    """
 
     @property
     def lognormal(self) -> "Lognormal":
         """The Lognormal-distribution with average value μ (Mu parameter) and
         variance σ (Variance parameter) is a Normal-distribution, shaping the
-        natural logarithm of the characteristic values ln(x) instead of x-values"""
+        natural logarithm of the characteristic values ln(x) instead of x-values
+        """
         return get_element(self, "lognormal")
 
     @property
@@ -836,7 +880,8 @@ class Uncertainty(etree.ElementBase):
         """Normal (also known as "Gaussian") distribution. It is a family of
         distributions of the same general form, differing in thei location and
         scale parameters: the mean ("MeanValue") and standard deviation
-        ("Deviation"), respectively."""
+        ("Deviation"), respectively.
+        """
         return get_element(self, "normal")
 
     @property
@@ -844,14 +889,16 @@ class Uncertainty(etree.ElementBase):
         """Parameter are minValue, mostLikelyValue, maxValue. In case of triangular
         uncertainty distribution, the meanValue shall be calculated from the
         mostLikelyValue. The field mostLikelyValue (#3797) must not be used in the
-        ecoinvent context."""
+        ecoinvent context.
+        """
         return get_element(self, "triangular")
 
     @property
     def uniform(self) -> "Uniform":
         """Uniform distribution of values between the minValue and the maxValue
         parameter. If the maxValue parameter is smaller than the minValue parameter
-        their values will be swapped."""
+        their values will be swapped.
+        """
         return get_element(self, "uniform")
 
     @property
@@ -861,14 +908,16 @@ class Uncertainty(etree.ElementBase):
         of the underlying Gamma distributions. The parameters must follow this
         condition: ((a <= m) and (m <= b)) or (a = b). The shape values
         will be calculated by these formulas: Shape1 = 1 + 4 * ((m-a) / (b-a)).
-        Shape2 = 6 - Shape1."""
+        Shape2 = 6 - Shape1.
+        """
         return get_element(self, "beta")
 
     @property
     def gamma(self) -> "Gamma":
         """Gamma distribution using scale and shape parameter. Absolute values
         of the values entered here will be used. The value of the minimum
-        parameter will be added to all samples."""
+        parameter will be added to all samples.
+        """
         return get_element(self, "gamma")
 
     @property
@@ -880,7 +929,8 @@ class Uncertainty(etree.ElementBase):
     def undefined(self) -> "Undefined":
         """This "distribution" can be used to hold legacy data of
         the EcoSpold01 format which reused the minValue, maxValue and
-        standardDeviation95 fields to store undefined distribution data."""
+        standardDeviation95 fields to store undefined distribution data.
+        """
         return get_element(self, "undefined")
 
     @property
@@ -889,14 +939,16 @@ class Uncertainty(etree.ElementBase):
         data quality. This can be converted to a quantitative additional
         uncertainty, which can be added to the basic uncertainty. The
         pedigreeMatrix element groups the 5 data quality indicators and
-        contains no data itself."""
+        contains no data itself.
+        """
         return get_element_list(self, "pedigreeMatrix")
 
 
 class Lognormal(etree.ElementBase):
     """The Lognormal-distribution with average value μ (Mu parameter) and variance
     σ (Variance parameter) is a Normal-distribution, shaping the natural logarithm
-    of the characteristic values ln(x) instead of x-values"""
+    of the characteristic values ln(x) instead of x-values
+    """
 
     meanValue = create_attribute_v2("meanValue", float)
     """float: Geometric mean"""
@@ -917,7 +969,8 @@ class Lognormal(etree.ElementBase):
 class Normal(etree.ElementBase):
     """Normal (also known as "Gaussian") distribution. It is a family of distributions
     of the same general form, differing in thei location and scale parameters: the mean
-    ("MeanValue") and standard deviation ("Deviation"), respectively."""
+    ("MeanValue") and standard deviation ("Deviation"), respectively.
+    """
 
     meanValue = create_attribute_v2("meanValue", float)
     """float: Arithmetic mean"""
@@ -935,7 +988,8 @@ class Triangular(etree.ElementBase):
     """Parameter are minValue, mostLikelyValue, maxValue. In case of triangular
     uncertainty distribution, the meanValue shall be calculated from the
     mostLikelyValue. The field mostLikelyValue (#3797) must not be used in the
-    ecoinvent context."""
+    ecoinvent context.
+    """
 
     minValue = create_attribute_v2("minValue", float)
     """float: Minimum value"""
@@ -950,7 +1004,8 @@ class Triangular(etree.ElementBase):
 class Uniform(etree.ElementBase):
     """Uniform distribution of values between the minValue and the maxValue
     parameter. If the maxValue parameter is smaller than the minValue parameter
-    their values will be swapped."""
+    their values will be swapped.
+    """
 
     minValue = create_attribute_v2("minValue", float)
     """float: Minimum value"""
@@ -965,7 +1020,8 @@ class Beta(etree.ElementBase):
     of the underlying Gamma distributions. The parameters must follow this
     condition: ((a <= m) and (m <= b)) or (a = b). The shape values
     will be calculated by these formulas: Shape1 = 1 + 4 * ((m-a) / (b-a)).
-    Shape2 = 6 - Shape1."""
+    Shape2 = 6 - Shape1.
+    """
 
     minValue = create_attribute_v2("minValue", float)
     """float: Minimum value (a)"""
@@ -980,7 +1036,8 @@ class Beta(etree.ElementBase):
 class Gamma(etree.ElementBase):
     """Gamma distribution using scale and shape parameter. Absolute values
     of the values entered here will be used. The value of the minimum
-    parameter will be added to all samples."""
+    parameter will be added to all samples.
+    """
 
     shape = create_attribute_v2("shape", float)
     """float: Shape parameter"""
@@ -1005,7 +1062,8 @@ class Binomial(etree.ElementBase):
 class Undefined(etree.ElementBase):
     """This "distribution" can be used to hold legacy data of
     the EcoSpold01 format which reused the minValue, maxValue and
-    standardDeviation95 fields to store undefined distribution data."""
+    standardDeviation95 fields to store undefined distribution data.
+    """
 
     minValue = create_attribute_v2("minValue", float)
     """float: Minimum value."""
@@ -1100,7 +1158,8 @@ class Property(etree.ElementBase):
 
 class TransferCoefficient(etree.ElementBase):
     """Transfer coefficients for calculating amounts of outputs from amounts
-    of inputs."""
+    of inputs.
+    """
 
     comments = create_attribute_list_v2("comment", str)
     """list[str]: A general comment can be made about each individual transfer
@@ -1261,19 +1320,22 @@ class IntermediateExchange(CustomExchange):
     def _inputGroupStr(self) -> str:
         """String representation for _inputGroup. See _inputGroup for explanations.
         1=Materials/Fuels, 2=Electricity/Heat, 3=Services, 5=From Technosphere
-        (unspecified)."""
+        (unspecified).
+        """
         return self.INPUT_GROUP_MAP[self._inputGroup]
 
     @property
     def _outputGroupStr(self) -> str:
         """String representation for _outputGroup. See _outputGroup for explanations.
-        0=ReferenceProduct, 2=By-product, 3=MaterialForTreatment, 5=Stock Additions."""
+        0=ReferenceProduct, 2=By-product, 3=MaterialForTreatment, 5=Stock Additions.
+        """
         return self.OUTPUT_GROUP_MAP[self._outputGroup]
 
     @property
     def group(self) -> list[int]:
         """Choice between _inputGroup and _outputGroup. Check their documentation
-        for more information."""
+        for more information.
+        """
         return (
             self._inputGroup
             if self.find("inputGroup", self.nsmap) is not None
@@ -1288,7 +1350,8 @@ class IntermediateExchange(CustomExchange):
     @property
     def groupStr(self) -> list[str]:
         """Choice between _inputGroupStr and _outputGroupStr. Check their
-        documentation for more information."""
+        documentation for more information.
+        """
         return (
             self._inputGroupStr
             if self.find("inputGroup", self.nsmap) is not None
@@ -1298,7 +1361,8 @@ class IntermediateExchange(CustomExchange):
     @property
     def productionVolumeUncertainties(self) -> list["Uncertainty"]:
         """Uncertainty information in the form of distribution functions and their
-        parameters and/or pedigree data."""
+        parameters and/or pedigree data.
+        """
         return get_element_list(self, "productionVolumeUncertainty")
 
     @property
@@ -1309,7 +1373,8 @@ class IntermediateExchange(CustomExchange):
 
 class ElementaryExchange(CustomExchange):
     """Comprises elementary inputs and outputs (exchanges with the environment)
-    for the activity."""
+    for the activity.
+    """
 
     _inputGroup = create_element_text_v2("inputGroup", int)
     """int: Indicates the kind of input flow. The codes are: 4=From Environment
@@ -1340,25 +1405,29 @@ class ElementaryExchange(CustomExchange):
     def compartment(self) -> "Compartment":
         """Name of the compartment and subcompartment of the exchange.
         The xml document referenced by validCompartments contains definitions
-        of valid compartment/subcompartment pairs for a given language."""
+        of valid compartment/subcompartment pairs for a given language.
+        """
         return get_element(self, "compartment")
 
     @property
     def _inputGroupStr(self) -> str:
         """String representation for _inputGroup. See _inputGroup for
-        explanations. 4=FromEnvironment"""
+        explanations. 4=FromEnvironment
+        """
         return "FromEnvironment"
 
     @property
     def _outputGroupStr(self) -> str:
         """String representation for _outputGroup. See _outputGroup for
-        explanations. 4=ToEnvironment"""
+        explanations. 4=ToEnvironment
+        """
         return "ToEnvironment"
 
     @property
     def group(self) -> list[int]:
         """Choice between _inputGroup and _outputGroup. Check their documentation
-        for more information."""
+        for more information.
+        """
         return (
             self._inputGroup
             if self.find("inputGroup", self.nsmap) is not None
@@ -1373,7 +1442,8 @@ class ElementaryExchange(CustomExchange):
     @property
     def groupStr(self) -> list[str]:
         """Choice between _inputGroupStr and _outputGroupStr. Check their
-        documentation for more information."""
+        documentation for more information.
+        """
         return (
             self._inputGroupStr
             if self.find("inputGroup", self.nsmap) is not None
@@ -1476,7 +1546,8 @@ class ImpactIndicator(etree.ElementBase):
 
 class Representativeness(etree.ElementBase):
     """Contains information about the representativeness of the unit process data
-    (meta information and flow data)."""
+    (meta information and flow data).
+    """
 
     systemModelNames = create_attribute_list_v2("systemModelName", str)
     """list[str]: This is the plaintext value of the referenced system model
@@ -1560,7 +1631,8 @@ class Review(etree.ElementBase):
 class DataEntryBy(etree.ElementBase):
     """Contains information about the author of the dataset, i.e. the person that
     entered the dataset into the database format and thereby is the person
-    responsible for the data."""
+    responsible for the data.
+    """
 
     personId = create_attribute_v2("personId", str)
     """str: ID number for the person that prepared the dataset and enters the
@@ -1586,7 +1658,8 @@ class DataGeneratorAndPublication(etree.ElementBase):
     """Contains information about who collected, compiled or published the original
     data. This may or may not be the same person as under 'DataEntryBy'. Furthermore
     contains information about kind of publication underlying the dataset and the
-    accessibility of the dataset."""
+    accessibility of the dataset.
+    """
 
     DATA_PUBLISHED_IN_MAP: dict[int, str] = {
         0: "Data as such not published (default).",
@@ -1687,7 +1760,8 @@ class DataGeneratorAndPublication(etree.ElementBase):
         """String representation for dataPublishedIn. See dataPublishedIn
         for explanations. 0=Data as such not published (default). 1=The data
         of some unit processes or subsystems are published. 2=Data has been
-        published entirely in 'referenceToPublishedSource'"""
+        published entirely in 'referenceToPublishedSource'
+        """
         return DataGeneratorAndPublication.DATA_PUBLISHED_IN_MAP[self.dataPublishedIn]
 
     @property
@@ -1700,7 +1774,8 @@ class DataGeneratorAndPublication(etree.ElementBase):
         access to LCI results but not to unit process raw data. Database
         administrator have full access. accessRestrictedTo=3: only the
         organisation specified by 'companyCode' and the database administrator
-        have access."""
+        have access.
+        """
         return DataGeneratorAndPublication.ACCESS_RESTRICTED_TO_MAP[
             self.accessRestrictedTo
         ]
@@ -1708,7 +1783,8 @@ class DataGeneratorAndPublication(etree.ElementBase):
 
 class FileAttributes(etree.ElementBase):
     """This constraint ensures that each xml:lang attribute is only used once in this
-    context. I.e. there must be only one translation of the element."""
+    context. I.e. there must be only one translation of the element.
+    """
 
     contextNames = create_attribute_list_v2("contextName", str)
     """list[str]: The name of the context referenced by field 3880. The context
@@ -1778,7 +1854,8 @@ class FileAttributes(etree.ElementBase):
         is to be read using the master data referenced by it. It can be used signal
         that master data entries from different contexts are needed to read this
         dataset. The software reading the dataset must be aware of those contexts
-        and must know where to find the actual master data files of each context."""
+        and must know where to find the actual master data files of each context.
+        """
         return get_element_list(self, "requiredContext")
 
 
@@ -1825,12 +1902,13 @@ class PedigreeMatrix(etree.ElementBase):
     """The data quality indicators provides a qualitative assessment of data quality.
     This can be converted to a quantitative additional uncertainty, which can be added
     to the basic uncertainty. The pedigreeMatrix element groups the 5 data quality
-    indicators and contains no data itself."""
+    indicators and contains no data itself.
+    """
 
     RELIABILITY_MAP: dict[int, str] = {
         1: "Verified data based on measurements",
         2: "Verified data partly based on assumptions OR nonverified data based on "
-        + "measurements",
+        "measurements",
         3: "Non-verified data partly based on qualified estimates",
         4: "Qualified estimate (e.g. by industrial expert)",
         5: "Non-qualified estimate (default)",
@@ -1838,28 +1916,28 @@ class PedigreeMatrix(etree.ElementBase):
 
     COMPLETENESS_MAP: dict[int, str] = {
         1: "Representative data from all sites relevant for the market considered "
-        + "over an adequate period to even out normal fluctuations",
+        "over an adequate period to even out normal fluctuations",
         2: "Representative data from >50% of the sites relevant for the market "
-        + "considered over an adequate period to even out normal fluctuations",
+        "considered over an adequate period to even out normal fluctuations",
         3: "Representative data from only some sites (<<50%) relevant for the market "
-        + "considered OR >50% of sites but from shorter periods",
+        "considered OR >50% of sites but from shorter periods",
         4: "Representative data from only one site relevant for the market considered "
-        + "OR some sites but from shorter periods",
+        "OR some sites but from shorter periods",
         5: "Representativeness unknown or data from a small number of sites AND from "
-        + "shorter periods",
+        "shorter periods",
     }
 
     TEMPORAL_CORRELATION_MAP: dict[int, str] = {
         1: "Less than 3 years of difference to the time period of the dataset "
-        + "(fields 600-610)",
+        "(fields 600-610)",
         2: "Less than 6 years of difference to the time period of the dataset "
-        + "(fields 600-610)",
+        "(fields 600-610)",
         3: "Less than 10 years of difference to the time period of the dataset "
-        + "(fields 600-610)",
+        "(fields 600-610)",
         4: "Less than 15 years of difference to the time period of the dataset "
-        + "(fields 600-610)",
+        "(fields 600-610)",
         5: "Age of data unknown or more than 15 years of difference to the time "
-        + "period of the dataset (fields 600-610)",
+        "period of the dataset (fields 600-610)",
     }
 
     GEOGRAPHICAL_CORRELATION_MAP: dict[int, str] = {
@@ -1868,15 +1946,15 @@ class PedigreeMatrix(etree.ElementBase):
         3: "Data from area with similar production conditions",
         4: "Data from are with slightly similar production conditions",
         5: "Data from unknown OR distinctly different area (north america instead of "
-        + "middle east, OECD-Europe instead of Russia)",
+        "middle east, OECD-Europe instead of Russia)",
     }
 
     FURTHER_TECHNOLOGY_CORRELATION_MAP: dict[int, str] = {
         1: "Data from enterprises, processes and materials under study",
         2: "Data from processes and materials under study (i.e. identical technology) "
-        + "but from different enterprises",
+        "but from different enterprises",
         3: "Data from processes and materials under study but from different "
-        + "technology",
+        "technology",
         4: "Data on related processes or materials",
         5: "Data on related processes on laboratory scale or from different technology",
     }
@@ -1931,7 +2009,8 @@ class PedigreeMatrix(etree.ElementBase):
         1=Verified data based on measurements 2=Verified data partly based on
         assumptions OR nonverified data based on measurements 3=Non-verified data partly
         based on qualified estimates 4=Qualified estimate (e.g. by industrial expert)
-        5=Non-qualified estimate (default)"""
+        5=Non-qualified estimate (default)
+        """
         return PedigreeMatrix.RELIABILITY_MAP[self.reliability]
 
     @property
@@ -1944,7 +2023,8 @@ class PedigreeMatrix(etree.ElementBase):
         sites (<<50%) relevant for the market considered OR >50% of sites but from
         shorter periods 4=Representative data from only one site relevant for the
         market considered OR some sites but from shorter periods 5=Representativeness
-        unknown or data from a small number of sites AND from shorter periods)"""
+        unknown or data from a small number of sites AND from shorter periods)
+        """
         return PedigreeMatrix.COMPLETENESS_MAP[self.completeness]
 
     @property
@@ -1956,7 +2036,8 @@ class PedigreeMatrix(etree.ElementBase):
         period of the dataset (fields 600-610) 4=Less than 15 years of difference to
         the time period of the dataset (fields 600-610) 5=Age of data unknown or more
         than 15 years of difference to the time period of the dataset
-        (fields 600-610)"""
+        (fields 600-610)
+        """
         return PedigreeMatrix.TEMPORAL_CORRELATION_MAP[self.temporalCorrelation]
 
     @property
@@ -1967,7 +2048,8 @@ class PedigreeMatrix(etree.ElementBase):
         3=Data from area with similar production conditions 4=Data from are with
         slightly similar production conditions 5=Data from unknown OR distinctly
         different area (north america instead of middle east, OECD-Europe instead of
-        Russia)"""
+        Russia)
+        """
         return PedigreeMatrix.GEOGRAPHICAL_CORRELATION_MAP[self.geographicalCorrelation]
 
     @property
@@ -1978,7 +2060,8 @@ class PedigreeMatrix(etree.ElementBase):
         study (i.e. identical technology) but from different enterprises 3=Data from
         processes and materials under study but from different technology 4=Data on
         related processes or materials 5=Data on related processes on laboratory
-        scale or from different technology"""
+        scale or from different technology
+        """
         return PedigreeMatrix.FURTHER_TECHNOLOGY_CORRELATION_MAP[
             self.furtherTechnologyCorrelation
         ]
@@ -1989,7 +2072,8 @@ class RequiredContextReference(etree.ElementBase):
     is to be read using the master data referenced by it. It can be used signal
     that master data entries from different contexts are needed to read this
     dataset. The software reading the dataset must be aware of those contexts
-    and must know where to find the actual master data files of each context."""
+    and must know where to find the actual master data files of each context.
+    """
 
     requiredContextNames = create_attribute_v2("requiredContextName", int)
     """list[str]: The name of the context referenced by field 7850."""

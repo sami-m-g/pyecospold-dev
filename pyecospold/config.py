@@ -16,7 +16,8 @@ from . import __version__, lxmlh
 class Defaults:
     """Stores default values for Ecospold attributes used when no value exists.
     Defaults can be fully/ partially overridden by providing a config file or by
-    using set_defaults method"""
+    using set_defaults method
+    """
 
     SCHEMA_DIR: ClassVar[str] = os.path.join(Path(__file__).parent.resolve(), "schemas")
     SCHEMA_V1_FILE: ClassVar[str] = os.path.join(

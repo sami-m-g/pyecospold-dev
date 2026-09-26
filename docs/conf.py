@@ -10,7 +10,6 @@ import datetime
 
 from pyecospold import __version__
 
-
 project = "pyecospold"
 copyright = f"{datetime.date.today().year}, Mina Sami"
 author = "Mina Sami"

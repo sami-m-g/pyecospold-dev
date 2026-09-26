@@ -18,50 +18,63 @@ from .lxmlh import (
     validate_zip_file,
 )
 from .model_v1 import AdministrativeInformation as AdministrativeInformationV1
-from .model_v1 import Allocation
+from .model_v1 import (
+    Allocation,
+    Dataset,
+    DataSetInformation,
+    Exchange,
+    MetaInformation,
+    Person,
+    ProcessInformation,
+    ReferenceFunction,
+    Source,
+    Validation,
+)
 from .model_v1 import DataEntryBy as DataEntryByV1
 from .model_v1 import DataGeneratorAndPublication as DataGeneratorAndPublicationV1
-from .model_v1 import Dataset, DataSetInformation
 from .model_v1 import EcoSpold as EcoSpoldV1
-from .model_v1 import Exchange
 from .model_v1 import FlowData as FlowDataV1
 from .model_v1 import Geography as GeographyV1
-from .model_v1 import MetaInformation
 from .model_v1 import ModellingAndValidation as ModellingAndValidationV1
-from .model_v1 import Person, ProcessInformation, ReferenceFunction
 from .model_v1 import Representativeness as RepresentativenessV1
-from .model_v1 import Source
 from .model_v1 import Technology as TechnologyV1
 from .model_v1 import TimePeriod as TimePeriodV1
-from .model_v1 import Validation
 from .model_v2 import (
     Activity,
     ActivityDataset,
     ActivityDescription,
-)
-from .model_v2 import AdministrativeInformation as AdministrativeInformationV2
-from .model_v2 import Beta, Classification, Compartment
-from .model_v2 import DataEntryBy as DataEntryByV2
-from .model_v2 import DataGeneratorAndPublication as DataGeneratorAndPublicationV2
-from .model_v2 import EcoSpold as EcoSpoldV2
-from .model_v2 import ElementaryExchange, FileAttributes
-from .model_v2 import FlowData as FlowDataV2
-from .model_v2 import Gamma
-from .model_v2 import Geography as GeographyV2
-from .model_v2 import (
+    Beta,
+    Classification,
+    Compartment,
+    ElementaryExchange,
+    FileAttributes,
+    Gamma,
     ImpactIndicator,
     IntermediateExchange,
     Lognormal,
     MacroEconomicScenario,
+    Normal,
+    Parameter,
+    PedigreeMatrix,
+    Property,
+    RequiredContextReference,
+    Review,
+    TextAndImage,
+    TransferCoefficient,
+    Triangular,
+    Uncertainty,
+    Uniform,
 )
+from .model_v2 import AdministrativeInformation as AdministrativeInformationV2
+from .model_v2 import DataEntryBy as DataEntryByV2
+from .model_v2 import DataGeneratorAndPublication as DataGeneratorAndPublicationV2
+from .model_v2 import EcoSpold as EcoSpoldV2
+from .model_v2 import FlowData as FlowDataV2
+from .model_v2 import Geography as GeographyV2
 from .model_v2 import ModellingAndValidation as ModellingAndValidationV2
-from .model_v2 import Normal, Parameter, PedigreeMatrix, Property
 from .model_v2 import Representativeness as RepresentativenessV2
-from .model_v2 import RequiredContextReference, Review
 from .model_v2 import Technology as TechnologyV2
-from .model_v2 import TextAndImage
 from .model_v2 import TimePeriod as TimePeriodV2
-from .model_v2 import TransferCoefficient, Triangular, Uncertainty, Uniform
 
 
 class EcospoldLookupV1(etree.CustomElementClassLookup):
@@ -169,7 +182,7 @@ def parse_file_v2(file: str | Path | StringIO) -> EcoSpoldV2:
     return parse_file(file, Defaults.SCHEMA_V2_FILE, EcospoldLookupV2())
 
 
-def validate_file_v1(file: str | Path | StringIO) -> None | list[str]:
+def validate_file_v1(file: str | Path | StringIO) -> list[str] | None:
     """Validates an Ecospold V1 XML file to custom Ecospold classes.
 
     Parameters:
@@ -180,7 +193,7 @@ def validate_file_v1(file: str | Path | StringIO) -> None | list[str]:
     return validate_file(file, Defaults.SCHEMA_V1_FILE)
 
 
-def validate_file_v2(file: str | Path | StringIO) -> None | list[str]:
+def validate_file_v2(file: str | Path | StringIO) -> list[str] | None:
     """Parses an Ecospold V2 XML file to custom Ecospold classes.
 
     Parameters:
@@ -241,7 +254,7 @@ def parse_directory_v2(
 
 def validate_directory_v1(
     dir_path: str | Path | StringIO, valid_suffixes: list[str] | None = None
-) -> list[tuple[Path, None | list[str]]]:
+) -> list[tuple[Path, list[str] | None]]:
     """Validates an Ecospold V1 XML file to custom Ecospold classes.
 
     Parameters:
@@ -262,7 +275,7 @@ def validate_directory_v1(
 
 def validate_directory_v2(
     dir_path: str | Path | StringIO, valid_suffixes: list[str] | None = None
-) -> list[tuple[Path, None | list[str]]]:
+) -> list[tuple[Path, list[str] | None]]:
     """Validates an Ecospold V1 XML file to custom Ecospold classes.
 
     Parameters:
@@ -331,7 +344,7 @@ def parse_zip_file_v2(
 
 def validate_zip_file_v1(
     file_path: str | Path | StringIO, valid_suffixes: list[str] | None = None
-) -> list[tuple[Path, None | list[str]]]:
+) -> list[tuple[Path, list[str] | None]]:
     """Validates an Ecospold V1 XML file to custom Ecospold classes.
 
     Parameters:
@@ -352,7 +365,7 @@ def validate_zip_file_v1(
 
 def validate_zip_file_v2(
     file_path: str | Path | StringIO, valid_suffixes: list[str] | None = None
-) -> list[tuple[Path, None | list[str]]]:
+) -> list[tuple[Path, list[str] | None]]:
     """Validates an Ecospold V2 XML file to custom Ecospold classes.
 
     Parameters:

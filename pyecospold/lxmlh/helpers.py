@@ -15,7 +15,8 @@ def set_attribute(
     validator: Callable | None,
 ) -> None:
     """Helper method for setting XML attributes. Raises DocumentInvalid
-    exception on inappropriate setting according to XSD schema."""
+    exception on inappropriate setting according to XSD schema.
+    """
     if validator is not None:
         value = validator(value)
     element.set(key, str(value))
@@ -27,7 +28,8 @@ def set_attribute_list(
     element: etree.ElementBase, key: str, values: list[Any], schema_file: str
 ) -> None:
     """Helper method for setting XML list attributes. Raises DocumentInvalid
-    exception on inappropriate setting according to XSD schema."""
+    exception on inappropriate setting according to XSD schema.
+    """
     for oldValue in get_element_list(element, key):
         element.remove(oldValue)
     elements = []
@@ -44,7 +46,8 @@ def set_element_text(
     parent: etree.ElementBase, element: str, value: str, schema_file: str
 ) -> None:
     """Helper method for setting XML element text. Raises DocumentInvalid exception
-    on inappropriate setting according to XSD schema."""
+    on inappropriate setting according to XSD schema.
+    """
     get_element(parent, element).text = str(value)
     schema = etree.XMLSchema(file=schema_file)
     schema.assertValid(parent.getroottree())
@@ -59,7 +62,8 @@ def get_element_list(
     parent: etree.ElementBase, element: str
 ) -> list[etree.ElementBase]:
     """Helper wrapper method for retrieving XML list elements as a list
-    of custom XML classes."""
+    of custom XML classes.
+    """
     return parent.findall(element, namespaces=parent.nsmap)
 
 
@@ -67,7 +71,8 @@ def get_element_text(
     parent: etree.ElementBase, element: str, element_type: type = str
 ) -> str:
     """Helper wrapper method for retrieving XML element text as a string.
-    Returns TYPE_DEFAULTS[str] if no text exists or element is None."""
+    Returns TYPE_DEFAULTS[str] if no text exists or element is None.
+    """
     return TYPE_FUNC_MAP.get(element_type, element_type)(
         getattr(
             get_element(parent, element),
@@ -79,7 +84,8 @@ def get_element_text(
 
 def get_inner_text_list(parent: etree.ElementBase, element: str):
     """Helper wrapper method for retrieving the list of last nodes in a chain
-    of XML elements."""
+    of XML elements.
+    """
     innerElements = get_element_list(parent, element)
     return [
         re.sub("[ ]{2,}", "", str(innerElement.text)).replace("\n", " ")
@@ -91,7 +97,8 @@ def get_attribute(
     parent: etree.ElementBase, attribute: str, attr_type: type = str
 ) -> Any:
     """Helper wrapper method for retrieving XML attributes. Returns
-    TYPE_DEFAULTS[type] if attribute doesn't exist."""
+    TYPE_DEFAULTS[type] if attribute doesn't exist.
+    """
     return TYPE_FUNC_MAP.get(attr_type, attr_type)(
         parent.get(attribute, TYPE_DEFAULTS.get(attr_type, None))
     )
@@ -101,7 +108,8 @@ def get_attribute_list(
     parent: etree.ElementBase, attribute: str, attr_type: type = str
 ) -> list[Any]:
     """Helper wrapper method for retrieving XML list attributes.
-    Returns empty list if attributes don't exist."""
+    Returns empty list if attributes don't exist.
+    """
     return list(
         map(
             lambda x: TYPE_FUNC_MAP.get(attr_type, attr_type)(

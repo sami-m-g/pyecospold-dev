@@ -22,23 +22,27 @@ def create_attribute_v2(
 
 def create_attribute_list_v1(name: str, attr_type: type) -> property:
     """Helper wrapper method for creating setters and getters for
-    a V1 attribute list"""
+    a V1 attribute list
+    """
     return create_attribute_list(name, attr_type, Defaults.SCHEMA_V1_FILE)
 
 
 def create_attribute_list_v2(name: str, attr_type: type) -> property:
     """Helper wrapper method for creating setters and getters for
-    a V2 attribute list"""
+    a V2 attribute list
+    """
     return create_attribute_list(name, attr_type, Defaults.SCHEMA_V2_FILE)
 
 
 def create_element_text_v1(name: str, element_type: type) -> property:
     """Helper wrapper method for creating setters and getters for
-    a V1 element text"""
+    a V1 element text
+    """
     return create_element_text(name, element_type, Defaults.SCHEMA_V1_FILE)
 
 
 def create_element_text_v2(name: str, element_type: type) -> property:
     """Helper wrapper method for creating setters and getters for
-    a V2 element text"""
+    a V2 element text
+    """
     return create_element_text(name, element_type, Defaults.SCHEMA_V2_FILE)

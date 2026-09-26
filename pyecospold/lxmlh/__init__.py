@@ -19,11 +19,13 @@ from .parsers import (
 )
 
 __all__ = (
+    "TYPE_DEFAULTS",
+    "TYPE_FUNC_MAP",
     "__version__",
-    "fill_in_defaults",
     "create_attribute",
-    "create_element_text",
     "create_attribute_list",
+    "create_element_text",
+    "fill_in_defaults",
     "get_element",
     "get_element_list",
     "get_inner_text_list",
@@ -31,8 +33,6 @@ __all__ = (
     "parse_file",
     "parse_zip_file",
     "save_file",
-    "TYPE_DEFAULTS",
-    "TYPE_FUNC_MAP",
     "validate_directory",
     "validate_file",
     "validate_zip_file",
