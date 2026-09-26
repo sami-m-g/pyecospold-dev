@@ -30,8 +30,8 @@ classifiers = [
 ]
 requires-python = ">=3.10"
 dependencies = [
-    "lxml",
-    "python-dateutil",
+    "lxml>=4.8",
+    "python-dateutil>=2.7",
 ]
 
 [project.urls]
@@ -41,8 +41,8 @@ tracker = "https://github.com/brightway-lca/pyecospold/issues"
 
 [dependency-groups]
 test = [
-    "pytest",
-    "pytest-cov",
+    "pytest>=8",
+    "pytest-cov>=5",
 ]
 docs = [
     "sphinx==7.1.2",
@@ -50,9 +50,9 @@ docs = [
 ]
 dev = [
     { include-group = "test" },
-    "pre-commit",
-    "pylint",
-    "pytest-randomly",
+    "pre-commit>=4",
+    "pylint>=3",
+    "pytest-randomly>=3.15",
 ]
 
 [tool.uv]

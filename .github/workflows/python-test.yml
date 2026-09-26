@@ -34,6 +34,9 @@ jobs:
       matrix:
         os: [ubuntu-latest, windows-latest, macos-latest]
         py-version: ["3.10", "3.11", "3.12", "3.13", "3.14"]
+        uv-args: ["--locked"]
+        include:
+          - { os: ubuntu-latest, py-version: "3.10", uv-args: "--resolution lowest-direct" }
 
     steps:
       - uses: actions/checkout@v4
@@ -45,7 +48,8 @@ jobs:
           enable-cache: true
 
       - name: Test with pytest
-        run: uv run --locked --no-default-groups --group test pytest
+        run: uv run ${{ matrix.uv-args }} --no-default-groups --group test pytest
 
       - name: Upload coverage to Codecov
         uses: codecov/codecov-action@v4
+
