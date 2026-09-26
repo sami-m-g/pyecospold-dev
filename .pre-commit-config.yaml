@@ -1,3 +1,5 @@
+default_install_hook_types: [pre-commit, commit-msg]
+
 repos:
 - repo: https://github.com/pre-commit/pre-commit-hooks
   rev: v4.4.0
@@ -21,3 +23,11 @@ repos:
   - id: ruff-check
     args: [--fix]
   - id: ruff-format
+
+- repo: local
+  hooks:
+  - id: commitizen
+    name: conventional commit message
+    entry: uv run --frozen cz check --commit-msg-file
+    language: system
+    stages: [commit-msg]
