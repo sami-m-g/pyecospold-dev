@@ -125,7 +125,7 @@ def get_attribute_list(
     return list(
         map(
             lambda x: TYPE_FUNC_MAP.get(attr_type, attr_type)(
-                re.sub("[\n]{1,}", " ", re.sub("[ ]{2,}", "", x.text))
+                re.sub("[\n]{1,}", " ", re.sub("[ ]{2,}", "", x.text or ""))
             ),
             get_element_list(parent, attribute),
         )

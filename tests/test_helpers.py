@@ -6,7 +6,7 @@ from pathlib import Path
 import pytest
 from lxml.etree import DocumentInvalid
 
-from pyecospold.core import parse_file_v1
+from pyecospold.core import parse_file_v1, parse_file_v2
 from pyecospold.model_v1 import ProcessInformation
 
 
@@ -54,3 +54,12 @@ def test_set_element_text_success(process_information: ProcessInformation) -> No
     process_information.timePeriod.startDate = start_date
 
     assert process_information.timePeriod.startDate == start_date
+
+
+def test_get_attribute_list_empty_element(fixtures_dir: Path) -> None:
+    """An empty list element reads as an empty string instead of crashing."""
+    eco_spold = parse_file_v2(fixtures_dir / "v2" / "v2_1.xml")
+    exchanges = eco_spold.activityDataset.flowData.elementaryExchanges
+    hydrogen_chloride = next(e for e in exchanges if e.names == ["Hydrogen chloride"])
+
+    assert hydrogen_chloride.synonyms == [""]
