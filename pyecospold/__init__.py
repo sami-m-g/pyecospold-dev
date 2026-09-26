@@ -16,7 +16,9 @@ __all__ = (
     "Defaults",
 )
 
-__version__ = "4.0.1"
+from importlib.metadata import version
+
+__version__ = version("pyecospold")
 
 from .config import Defaults
 from .core import (

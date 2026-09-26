@@ -7,18 +7,6 @@
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#project-information
 
 import datetime
-import os
-import sys
-from unittest.mock import MagicMock
-
-MOCK_MODULES = [
-    'lxml',
-    'numpy',
-]
-
-sys.modules.update((module, MagicMock()) for module in MOCK_MODULES)
-sys.path.insert(0, os.path.abspath('../'))
-
 
 from pyecospold import __version__
 
