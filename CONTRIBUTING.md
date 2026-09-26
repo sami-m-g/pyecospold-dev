@@ -37,25 +37,19 @@ Request features on the [Issue Tracker][Issue Tracker].
 
 ## How to set up your development environment
 
-Install the package with development requirements:
+Install [uv](https://docs.astral.sh/uv/), then create the environment with the package and development requirements:
 
 ```console
-$ pip install -e ".[dev]"
+$ uv sync
 ```
 
 ## How to test the project
 
 
-1. Install the package with development requirements:
+Run the full test suite:
 
 ```console
-$ pip install -e ".[testing]"
-```
-
-2. Run the full test suite:
-
-```console
-$ pytest
+$ uv run pytest
 ```
 
 List the available Nox sessions:

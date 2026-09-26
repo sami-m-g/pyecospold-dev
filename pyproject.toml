@@ -40,26 +40,24 @@ source = "https://github.com/brightway-lca/pyecospold"
 homepage = "https://github.com/brightway-lca/pyecospold"
 tracker = "https://github.com/brightway-lca/pyecospold/issues"
 
-[project.optional-dependencies]
-# Getting recursive dependencies to work is a pain, this
-# seems to work, at least for now
-testing = [
-    "pyecospold",
+[dependency-groups]
+test = [
     "pytest",
     "pytest-cov",
-    "python-coveralls"
+]
+docs = [
+    "sphinx==7.1.2",
+    "sphinx-rtd-theme==1.3.0rc1",
 ]
 dev = [
-    "build",
+    { include-group = "test" },
     "pre-commit",
     "pylint",
-    "pytest",
-    "pytest-cov",
     "pytest-randomly",
-    "setuptools",
-    "sphinx",
-    "sphinx-rtd-theme",
 ]
+
+[tool.uv]
+required-version = ">=0.12.19"
 
 [tool.uv.build-backend]
 module-root = ""
