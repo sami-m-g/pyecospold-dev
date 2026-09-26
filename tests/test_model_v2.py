@@ -1,6 +1,7 @@
 """Test cases for the __model_v2__ module."""
 
 from datetime import datetime
+from pathlib import Path
 
 import pytest
 
@@ -30,9 +31,9 @@ from pyecospold.model_v2 import (
 )
 
 
-@pytest.fixture(name="eco_spold")
-def _eco_spold() -> EcoSpold:
-    return parse_file_v2("data/v2/v2_2.spold")
+@pytest.fixture
+def eco_spold(fixtures_dir: Path) -> EcoSpold:
+    return parse_file_v2(fixtures_dir / "v2" / "v2_2.spold")
 
 
 def test_parse_file_v2_eco_spold(eco_spold: EcoSpold) -> None:
@@ -71,9 +72,9 @@ def test_parse_file_v2_eco_spold(eco_spold: EcoSpold) -> None:
     )
 
 
-def test_parse_file_v2_activity_dataset() -> None:
+def test_parse_file_v2_activity_dataset(fixtures_dir: Path) -> None:
     """It parses attributes correctly."""
-    eco_spold = parse_file_v2("data/v2/v2_1.xml")
+    eco_spold = parse_file_v2(fixtures_dir / "v2" / "v2_1.xml")
     activity_dataset = eco_spold.activityDataset
 
     assert isinstance(activity_dataset.activityDescription, ActivityDescription)

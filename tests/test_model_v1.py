@@ -1,8 +1,10 @@
 """Test cases for the __model_v1__ module."""
 
 import math
+from collections.abc import Callable
 from datetime import date, datetime
 from io import StringIO
+from pathlib import Path
 
 import pytest
 from lxml import etree
@@ -32,10 +34,9 @@ from pyecospold.model_v1 import (
 )
 
 
-def test_parse_file_v1_fail(fixtures_dir) -> None:
+def test_parse_file_v1_fail(fixtures_dir: Path) -> None:
     """It fails on schema violation."""
-    with open(fixtures_dir / "v1" / "v1_1.xml", encoding="utf-8") as file:
-        xml_str = file.read()
+    xml_str = (fixtures_dir / "v1" / "v1_1.xml").read_text(encoding="utf-8")
     xml_str = xml_str.replace('amount="1"', 'amount="abc"')
     xml_str = xml_str.replace("<?xml version='1.0' encoding='UTF-8'?>", "")
 
@@ -281,23 +282,27 @@ def test_parse_file_v1_technology(eco_spold: EcoSpold) -> None:
     assert technology.text == text
 
 
-def test_parse_file_v1_time_period_start_year(v1_timeperiod_fixture):
+def test_parse_file_v1_time_period_start_year(
+    parse_time_period: Callable[[str], TimePeriod],
+) -> None:
     xml_text = """<timePeriod dataValidForEntirePeriod="true" text="foo bar">
         <startYear>1995</startYear>
         <endYear>1995</endYear>
     </timePeriod>"""
-    tp = v1_timeperiod_fixture(xml_text)
+    tp = parse_time_period(xml_text)
 
     assert tp.startDate == date(1995, 1, 1)
     assert tp.endDate == date(1995, 12, 31)
 
 
-def test_parse_file_v1_time_period_validity(v1_timeperiod_fixture):
+def test_parse_file_v1_time_period_validity(
+    parse_time_period: Callable[[str], TimePeriod],
+) -> None:
     xml_text = """<timePeriod dataValidForEntirePeriod="true" text="foo bar">
         <startYear>1995</startYear>
         <endYear>1995</endYear>
     </timePeriod>"""
-    tp = v1_timeperiod_fixture(xml_text)
+    tp = parse_time_period(xml_text)
 
     assert tp.dataValidForEntirePeriod
     assert tp.text == "foo bar"
@@ -306,62 +311,72 @@ def test_parse_file_v1_time_period_validity(v1_timeperiod_fixture):
         <startYear>1995</startYear>
         <endYear>1995</endYear>
     </timePeriod>"""
-    tp = v1_timeperiod_fixture(xml_text)
+    tp = parse_time_period(xml_text)
 
     assert not tp.dataValidForEntirePeriod
     assert not tp.text
 
 
-def test_parse_file_v1_time_period_date(v1_timeperiod_fixture):
+def test_parse_file_v1_time_period_date(
+    parse_time_period: Callable[[str], TimePeriod],
+) -> None:
     xml_text = """<timePeriod dataValidForEntirePeriod="true" text="foo bar">
         <startDate>1995-02-03</startDate>
         <endDate>1995-04-21</endDate>
     </timePeriod>"""
-    tp = v1_timeperiod_fixture(xml_text)
+    tp = parse_time_period(xml_text)
 
     assert tp.startDate == date(1995, 2, 3)
     assert tp.endDate == date(1995, 4, 21)
 
 
-def test_parse_file_v1_time_period_year_month_january(v1_timeperiod_fixture):
+def test_parse_file_v1_time_period_year_month_january(
+    parse_time_period: Callable[[str], TimePeriod],
+) -> None:
     xml_text = """<timePeriod dataValidForEntirePeriod="true" text="foo bar">
         <startYearMonth>1995-01</startYearMonth>
         <endYearMonth>1995-01</endYearMonth>
     </timePeriod>"""
-    tp = v1_timeperiod_fixture(xml_text)
+    tp = parse_time_period(xml_text)
 
     assert tp.startDate == date(1995, 1, 1)
     assert tp.endDate == date(1995, 1, 31)
 
 
-def test_parse_file_v1_time_period_year_month_december(v1_timeperiod_fixture):
+def test_parse_file_v1_time_period_year_month_december(
+    parse_time_period: Callable[[str], TimePeriod],
+) -> None:
     xml_text = """<timePeriod dataValidForEntirePeriod="true" text="foo bar">
         <startYearMonth>1995-12</startYearMonth>
         <endYearMonth>1995-12</endYearMonth>
     </timePeriod>"""
-    tp = v1_timeperiod_fixture(xml_text)
+    tp = parse_time_period(xml_text)
 
     assert tp.startDate == date(1995, 12, 1)
     assert tp.endDate == date(1995, 12, 31)
 
 
-def test_parse_file_v1_time_period_year_month_february(v1_timeperiod_fixture):
+def test_parse_file_v1_time_period_year_month_february(
+    parse_time_period: Callable[[str], TimePeriod],
+) -> None:
     xml_text = """<timePeriod dataValidForEntirePeriod="true" text="foo bar">
         <startYearMonth>1995-02</startYearMonth>
         <endYearMonth>1995-02</endYearMonth>
     </timePeriod>"""
-    tp = v1_timeperiod_fixture(xml_text)
+    tp = parse_time_period(xml_text)
 
     assert tp.startDate == date(1995, 2, 1)
     assert tp.endDate == date(1995, 2, 28)
 
 
-def test_parse_file_v1_time_period_set_new_values(v1_timeperiod_fixture):
+def test_parse_file_v1_time_period_set_new_values(
+    parse_time_period: Callable[[str], TimePeriod],
+) -> None:
     xml_text = """<timePeriod dataValidForEntirePeriod="true" text="foo bar">
         <startDate>1995-02-03</startDate>
         <endDate>1995-04-05</endDate>
     </timePeriod>"""
-    tp = v1_timeperiod_fixture(xml_text)
+    tp = parse_time_period(xml_text)
 
     tp.startDate = date(1990, 5, 6)
     tp.endDate = date(2012, 1, 2)
@@ -372,19 +387,21 @@ def test_parse_file_v1_time_period_set_new_values(v1_timeperiod_fixture):
     assert tp._endDate == "2012-01-02"
 
 
-def test_parse_file_v1_time_period_set_new_values_errors(v1_timeperiod_fixture):
+def test_parse_file_v1_time_period_set_new_values_errors(
+    parse_time_period: Callable[[str], TimePeriod],
+) -> None:
     xml_text = """<timePeriod dataValidForEntirePeriod="true" text="foo bar">
         <startDate>1995-02-03</startDate>
         <endDate>1995-04-05</endDate>
     </timePeriod>"""
-    tp = v1_timeperiod_fixture(xml_text)
-    with pytest.raises(ValueError):
+    tp = parse_time_period(xml_text)
+    with pytest.raises(ValueError, match="must be a `datetime"):
         tp.startDate = "1990-05-06"
-    with pytest.raises(ValueError):
+    with pytest.raises(ValueError, match="is after `timePeriod"):
         tp.startDate = date(2022, 1, 2)
-    with pytest.raises(ValueError):
+    with pytest.raises(ValueError, match="must be a `datetime"):
         tp.endDate = "2012-01-02"
-    with pytest.raises(ValueError):
+    with pytest.raises(ValueError, match="is before `timePeriod"):
         tp.endDate = date(1970, 5, 6)
 
 

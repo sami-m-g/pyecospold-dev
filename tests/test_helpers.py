@@ -1,6 +1,7 @@
 """Test cases for the __helpers__ module."""
 
 from datetime import date
+from pathlib import Path
 
 import pytest
 from lxml.etree import DocumentInvalid
@@ -9,10 +10,10 @@ from pyecospold.core import parse_file_v1
 from pyecospold.model_v1 import ProcessInformation
 
 
-@pytest.fixture(name="process_information")
-def _process_information() -> ProcessInformation:
+@pytest.fixture
+def process_information(fixtures_dir: Path) -> ProcessInformation:
     """Fixture for getting ReferenceFunction element."""
-    eco_spold = parse_file_v1("data/v1/v1_1.xml")
+    eco_spold = parse_file_v1(fixtures_dir / "v1" / "v1_1.xml")
     return eco_spold.datasets[0].metaInformation.processInformation
 
 

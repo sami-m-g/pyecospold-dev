@@ -47,7 +47,7 @@ def validate_cas(cas: str | float) -> str:
         )
 
     if not cas_str:
-        raise ValueError("Given CAS is empty: {cas}.")
+        raise ValueError(f"Given CAS is empty: {cas!r}.")
 
     cas_str = _rehyphenate_cas(cas_str)
 

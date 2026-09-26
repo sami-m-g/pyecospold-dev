@@ -1,34 +1,32 @@
 """Test cases for the __config__ module."""
 
-import os
+import copy
 from pathlib import Path
+
+import pytest
 
 from pyecospold.config import Defaults
 
 
-def test_config_defaults() -> None:
+def test_config_defaults(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
     """It overrides defaults variables."""
-    root_dir = Path(__file__).parent.parent.resolve()
+    for name in ("SCHEMA_V1_FILE", "SCHEMA_V2_FILE", "STATIC_DEFAULTS"):
+        monkeypatch.setattr(Defaults, name, copy.deepcopy(getattr(Defaults, name)))
+    monkeypatch.setattr(Defaults, "static_defaults", None, raising=False)
 
-    config_file_dir = os.path.join(root_dir, "out", "tests")
-    config_file_path = os.path.join(config_file_dir, "config.ini")
-    os.makedirs(config_file_dir, exist_ok=True)
-
-    schema_dir = os.path.join(root_dir, "pyecospold", "schemas")
-    schema_v1_file = os.path.join(schema_dir, "v1", "EcoSpold01Dataset.xsd")
-    schema_v2_file = os.path.join(schema_dir, "v2", "EcoSpold02.xsd")
+    schema_dir = Path(Defaults.SCHEMA_DIR)
     valid_company_codes = "CompanyCodes.xml"
+    config_file = tmp_path / "config.ini"
+    config_file.write_text(
+        "[parameters]\n"
+        f"SCHEMA_V1_FILE={schema_dir / 'v1' / 'EcoSpold01Dataset.xsd'}\n"
+        f"SCHEMA_V2_FILE={schema_dir / 'v2' / 'EcoSpold02.xsd'}\n\n"
+        f"[Dataset]\nvalidCompanyCodes={valid_company_codes}\n",
+        encoding="utf-8",
+    )
 
-    with open(config_file_path, "w", encoding="utf-8") as config_file:
-        config_file.write("[parameters]\n")
-        config_file.write(f"SCHEMA_V1_FILE={schema_v1_file}\n")
-        config_file.write(f"SCHEMA_V2_FILE={schema_v2_file}\n\n")
-        config_file.write(f"[Dataset]\nvalidCompanyCodes={valid_company_codes}\n")
-
-    Defaults.config_defaults(config_file_path)
+    Defaults.config_defaults(config_file)
 
     assert (
         Defaults.STATIC_DEFAULTS["Dataset"]["validCompanyCodes"] == valid_company_codes
     )
-
-    Defaults.config_defaults("config.init")

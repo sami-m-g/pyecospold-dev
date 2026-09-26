@@ -9,7 +9,7 @@ from pyecospold.cas_validation import validate_cas
 
 def test_nan():
     """It raises ValueError."""
-    with pytest.raises(ValueError):
+    with pytest.raises(ValueError, match="Not-a-Number"):
         validate_cas(math.nan)
 
 
@@ -38,17 +38,19 @@ def test_extra_whitespace():
 
 def test_invalid_characters():
     """It validates CAS with invalid characters."""
-    with pytest.raises(ValueError):
+    with pytest.raises(ValueError, match="invalid characters"):
         validate_cas("0000110-63-4a")
 
-    with pytest.raises(ValueError):
+    with pytest.raises(ValueError, match="invalid characters"):
         validate_cas("ε0000110-63-4")
 
 
 def test_empty_cas():
     """It validates empty CAS."""
-    with pytest.raises(ValueError):
+    with pytest.raises(ValueError, match="CAS is empty: ''"):
         validate_cas("")
+    with pytest.raises(ValueError, match="CAS is empty: '   '"):
+        validate_cas("   ")
 
 
 def test_hyphenation():
@@ -70,9 +72,9 @@ def test_check_digit():
     cas_invalid12 = "0000110635"
 
     assert validate_cas(cas_valid)
-    with pytest.raises(ValueError):
+    with pytest.raises(ValueError, match="Check Digit error"):
         validate_cas(cas_invalid1)
-    with pytest.raises(ValueError):
+    with pytest.raises(ValueError, match="Check Digit error"):
         validate_cas(cas_invalid12)
 
 
