@@ -8,9 +8,10 @@ from pathlib import Path
 from xml.etree.ElementTree import canonicalize
 
 import pytest
+from lxml import etree
 
 from pyecospold.core import parse_file_v1
-from pyecospold.model_v1 import EcoSpold, TimePeriod
+from pyecospold.model_v1 import TimePeriod
 
 
 @pytest.fixture(scope="session")
@@ -23,12 +24,6 @@ def fixtures_dir() -> Path:
 def version(request: pytest.FixtureRequest) -> str:
     """EcoSpold format version; tests using it run once per version."""
     return request.param
-
-
-@pytest.fixture
-def eco_spold(fixtures_dir: Path) -> EcoSpold:
-    """Parsed EcoSpold v1 sample file."""
-    return parse_file_v1(fixtures_dir / "v1" / "v1_1.xml")
 
 
 @pytest.fixture
@@ -47,6 +42,25 @@ def parse_time_period(fixtures_dir: Path) -> Callable[[str], TimePeriod]:
         )
 
     return parse
+
+
+@pytest.fixture(scope="session")
+def as_data() -> Callable[[object], object]:
+    """Converts a parsed element into nested data of its public properties."""
+
+    def convert(value: object) -> object:
+        if isinstance(value, list):
+            return [convert(item) for item in value]
+        if not isinstance(value, etree.ElementBase):
+            return value
+        cls = type(value)
+        return {"class": cls.__name__} | {
+            name: convert(getattr(value, name))
+            for name in dir(cls)
+            if not name.startswith("_") and isinstance(getattr(cls, name), property)
+        }
+
+    return convert
 
 
 @pytest.fixture

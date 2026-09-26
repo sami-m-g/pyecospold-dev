@@ -8,12 +8,20 @@ from io import StringIO
 from pathlib import Path
 
 import pytest
+from syrupy.assertion import SnapshotAssertion
+from syrupy.extensions.single_file import SingleFileSnapshotExtension
 
 import pyecospold
 from pyecospold import parse_file_v1, save_ecospold_file, validate_file_v1
 from pyecospold.config import Defaults
 from pyecospold.core import EcospoldLookupV1
 from pyecospold.lxmlh import parse_directory, validate_directory
+
+
+class XMLSnapshotExtension(SingleFileSnapshotExtension):
+    """Stores a snapshot as a readable .xml file."""
+
+    file_extension = "xml"
 
 
 @pytest.fixture
@@ -87,15 +95,17 @@ def test_parse(
     assert all(isinstance(root, root_class) for _, root in results)
 
 
+@pytest.mark.parametrize("sample", ["1.xml", "2.spold"])
 def test_save_file(
     tmp_path: Path,
     fixtures_dir: Path,
     version: str,
+    sample: str,
     api: Callable,
     canonical_xml: Callable[[Path], str],
 ) -> None:
     """It writes back the file it read."""
-    input_path = fixtures_dir / version / f"{version}_1.xml"
+    input_path = fixtures_dir / version / f"{version}_{sample}"
     output_path = tmp_path / input_path.name
     save_ecospold_file(api("parse_file")(input_path), output_path, fill_defaults=False)
 
@@ -103,17 +113,15 @@ def test_save_file(
 
 
 def test_save_file_defaults(
-    tmp_path: Path,
-    fixtures_dir: Path,
-    canonical_xml: Callable[[Path], str],
+    tmp_path: Path, fixtures_dir: Path, snapshot: SnapshotAssertion
 ) -> None:
     """It fills default values when saving."""
-    input_path = fixtures_dir / "v1" / "v1_1.xml"
     output_path = tmp_path / "v1_1.xml"
-    save_ecospold_file(parse_file_v1(input_path), output_path, fill_defaults=True)
+    save_ecospold_file(
+        parse_file_v1(fixtures_dir / "v1" / "v1_1.xml"), output_path, fill_defaults=True
+    )
 
-    expected_path = fixtures_dir / "expected" / "v1_1_defaults.xml"
-    assert canonical_xml(output_path) == canonical_xml(expected_path)
+    assert output_path.read_bytes() == snapshot(extension_class=XMLSnapshotExtension)
 
 
 def test_validate(
