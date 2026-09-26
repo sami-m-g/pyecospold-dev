@@ -44,14 +44,6 @@ pyecospold.model\_v2 module
    :undoc-members:
    :show-inheritance:
 
-pyecospold.version module
--------------------------
-
-.. automodule:: pyecospold.version
-   :members:
-   :undoc-members:
-   :show-inheritance:
-
 Module contents
 ---------------
 
