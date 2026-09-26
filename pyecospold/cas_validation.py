@@ -72,7 +72,7 @@ def _convert_numeric_cas(cas: int | float) -> str:
 
 def _rehyphenate_cas(cas_str: str) -> str:
     cas_str = cas_str.replace("-", "")
-    return f"{cas_str[-10:-3]}-{ cas_str[-3:-1]}-{cas_str[-1]}"
+    return f"{cas_str[-10:-3]}-{cas_str[-3:-1]}-{cas_str[-1]}"
 
 
 def _zero_pad_cas(cas_str: str) -> str:

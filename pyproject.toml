@@ -70,28 +70,69 @@ norecursedirs = [
 ]
 testpaths = ["tests/*.py"]
 
-[tool.flake8]
-# Some sane defaults for the code style checker flake8
-max_line_length = 88
-extend_ignore = ["E203", "W503"]
-# ^  Black-compatible
-#    E203 and W503 have edge cases handled by black
-exclude = [
-    ".tox",
-    "build",
-    "dist",
-    ".eggs",
-    "docs/conf.py",
+[tool.ruff.lint]
+select = ["ALL"]
+ignore = [
+    "COM812", # conflicts with the formatter
+    "CPY001", # licence is declared once in pyproject
+    # temporary: existing violations; each is removed by the commit that fixes it
+    "ANN001",
+    "ANN201",
+    "ANN202",
+    "ANN401",
+    "ARG002",
+    "ARG005",
+    "B009",
+    "B905",
+    "C417",
+    "D100",
+    "D104",
+    "D205",
+    "D209",
+    "D212",
+    "D403",
+    "D415",
+    "DTZ001",
+    "DTZ011",
+    "E402",
+    "EM101",
+    "EM102",
+    "FBT001",
+    "FBT002",
+    "FURB171",
+    "I001",
+    "ISC003",
+    "ISC004",
+    "N802",
+    "N803",
+    "N806",
+    "N815",
+    "PLR0913",
+    "PLR0915",
+    "PLR0917",
+    "PLW0108",
+    "PT011",
+    "PTH103",
+    "PTH118",
+    "PTH123",
+    "PYI041",
+    "RUF001",
+    "RUF002",
+    "RUF012",
+    "RUF013",
+    "RUF022",
+    "RUF036",
+    "SIM117",
+    "SLF001",
+    "TC003",
+    "TRY003",
+    "TRY004",
 ]
 
-[tool.black]
-line-length = 88
+[tool.ruff.lint.per-file-ignores]
+"docs/conf.py" = ["A001", "INP001"] # Sphinx requires `copyright`; not a package
+"pyecospold/model_v*.py" = ["N802", "N815"] # public API names mirror the EcoSpold XML schema
+"tests/**" = ["ANN", "D", "INP001", "PLR2004", "S101"]
 
-[tool.isort]
-profile = "black"
-line_length = 88
-multi_line_output = 3
-include_trailing_comma = true
-force_grid_wrap = 0
-use_parentheses = true
-ensure_newline_before_comments = true
+[tool.ruff.lint.pydocstyle]
+convention = "google"
