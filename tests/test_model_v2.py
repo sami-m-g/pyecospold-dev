@@ -153,30 +153,36 @@ def test_parse_file_v2_activity(eco_spold: EcoSpold) -> None:
     """It parses attributes correctly."""
     activity_names = ["formic acid production, methyl formate route"]
     general_comment_texts = [
-        "This data represents the production of 1 kg of formic acid "
-        "from methyl formate. Raw materials and energy consumptions are "
-        "modelled with literature data. The emissions are estimated. "
-        "Infrastructure is included with a default value.",
-        "[This dataset was already contained in the ecoinvent database version 2. "
-        "It was not individually updated during the transfer to ecoinvent version 3. "
-        "Life Cycle Impact Assessment results may still have changed, as they are "
-        "affected by changes in the supply chain, i.e. in other datasets. This "
-        "dataset was generated following the ecoinvent quality guidelines for "
-        "version 2. It may have been subject to central changes described in the "
-        "ecoinvent version 3 change report "
-        "(http://www.ecoinvent.org/database/ecoinvent-version-3/reports-of-changes/),"
-        " and the results of the central updates were reviewed extensively. The "
-        "changes added e.g. consistent water flows and other information throughout "
-        "the database. The documentation of this dataset can be found in the "
-        "ecoinvent reports of version 2, which are still available via the ecoinvent "
-        "website. The change report linked above covers all central changes that were"
-        " made during the conversion process.]",
+        (
+            "This data represents the production of 1 kg of formic acid "
+            "from methyl formate. Raw materials and energy consumptions are "
+            "modelled with literature data. The emissions are estimated. "
+            "Infrastructure is included with a default value."
+        ),
+        (
+            "[This dataset was already contained in the ecoinvent database version 2. "
+            "It was not individually updated during the transfer to ecoinvent version "
+            "3. Life Cycle Impact Assessment results may still have changed, as they "
+            "are affected by changes in the supply chain, i.e. in other datasets. This "
+            "dataset was generated following the ecoinvent quality guidelines for "
+            "version 2. It may have been subject to central changes described in the "
+            "ecoinvent version 3 change report "
+            "(http://www.ecoinvent.org/database/ecoinvent-version-3/reports-of-changes/),"
+            " and the results of the central updates were reviewed extensively. The "
+            "changes added e.g. consistent water flows and other information "
+            "throughout the database. The documentation of this dataset can be found "
+            "in the ecoinvent reports of version 2, which are still available via the "
+            "ecoinvent website. The change report linked above covers all central "
+            "changes that were made during the conversion process.]"
+        ),
     ]
     general_comment_image_urls = []
     included_activities_ends = [
-        "This activity ends with 1 kg of formic acid, 100% af the factory gate. "
-        "The dataset includes the input materials, energy uses, "
-        "infrastructure and emissions."
+        (
+            "This activity ends with 1 kg of formic acid, 100% af the factory gate. "
+            "The dataset includes the input materials, energy uses, "
+            "infrastructure and emissions."
+        )
     ]
     included_activities_starts = [
         "From the reception of methyl formate at the factory gate."
@@ -269,14 +275,16 @@ def test_parse_file_v2_technology(eco_spold: EcoSpold) -> None:
     technology_level = 3
     technology_level_str = "Current (default)"
     comments_texts = [
-        "To keep undesirable reesterification as low as possible, the time of "
-        "direct contact between methanol and formic acid must be as short as "
-        "possible, and separation must be carried out at the lowest possible "
-        "temperature. Introduction of methyl formate into the lower part of "
-        "the column in which lower boiling methyl formate and methanol are "
-        "separated from water and formic acid, has also been suggested. This "
-        "largely prevents reesterification because of the excess methyl formate "
-        "present in the critical region of the column."
+        (
+            "To keep undesirable reesterification as low as possible, the time of "
+            "direct contact between methanol and formic acid must be as short as "
+            "possible, and separation must be carried out at the lowest possible "
+            "temperature. Introduction of methyl formate into the lower part of "
+            "the column in which lower boiling methyl formate and methanol are "
+            "separated from water and formic acid, has also been suggested. This "
+            "largely prevents reesterification because of the excess methyl formate "
+            "present in the critical region of the column."
+        )
     ]
     comments_image_url = (
         "https://db3.ecoinvent.org/images/2ddc19c0-905f-42c3-b14c-e68332befec9"
@@ -383,13 +391,15 @@ def test_parse_file_v2_elementary_exchange(eco_spold: EcoSpold) -> None:
     names = ["BOD5, Biological Oxygen Demand"]
     unit_names = ["kg"]
     comments = [
-        "Calculation. This value was calculated from the amount of methyl formate in "
-        "the treated waste water assuming a carbon conversion of 96% for COD. "
-        "The worst case scenario, BOD=COD, was used. "
-        "It is assumed that the manufacturing plant is located in an "
-        "urban/industrial area and consequently the emissions are categorised as "
-        "emanating in a high population density area. The emissions into water are "
-        "assumed to be emitted into rivers."
+        (
+            "Calculation. This value was calculated from the amount of methyl formate "
+            "in the treated waste water assuming a carbon conversion of 96% for COD. "
+            "The worst case scenario, BOD=COD, was used. It is assumed that the "
+            "manufacturing plant is located in an urban/industrial area and "
+            "consequently the emissions are categorised as emanating in a high "
+            "population density area. The emissions into water are assumed to be "
+            "emitted into rivers."
+        )
     ]
     group = 4
     group_type = "output"
@@ -529,9 +539,11 @@ def test_parse_file_v2_parameter(eco_spold: EcoSpold) -> None:
     amount = 0.771
     names = ["fraction, cooling water, recirculating system, to air"]
     comments = [
-        "Calculated based on literature value (Scown, C.D., 2011, Water Footprint "
-        "of U.S. Transportation Fuels and supplying information of the article) "
-        "(Vionnet, S., Quantis Water Database - Technical Report, 2012). "
+        (
+            "Calculated based on literature value (Scown, C.D., 2011, Water Footprint "
+            "of U.S. Transportation Fuels and supplying information of the article) "
+            "(Vionnet, S., Quantis Water Database - Technical Report, 2012). "
+        )
     ]
     mean_value = 0.771
     _mu = -0.26
@@ -562,8 +574,10 @@ def test_parse_file_v2_representativeness(eco_spold: EcoSpold) -> None:
     system_model_names = ["Allocation, ecoinvent default"]
     sampling_procedures = ["Literature data"]
     extrapolations = [
-        "This dataset has been extrapolated from year 2006 to the year of the "
-        "calculation (2014). The uncertainty has been adjusted accordingly."
+        (
+            "This dataset has been extrapolated from year 2006 to the year of the "
+            "calculation (2014). The uncertainty has been adjusted accordingly."
+        )
     ]
     modelling_and_validation = eco_spold.activityDataset.modellingAndValidation
     representativeness = modelling_and_validation.representativeness

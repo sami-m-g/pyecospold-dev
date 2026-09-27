@@ -82,18 +82,13 @@ select = ["ALL"]
 ignore = [
     "COM812", # conflicts with the formatter
     "CPY001", # licence is declared once in pyproject
+    "PLR09", # complexity thresholds are arbitrary
     # temporary: existing violations; each is removed by the commit that fixes it
-    "DTZ001",
     "DTZ011",
     "FBT001",
     "FBT002",
-    "ISC004",
-    "PLR0913",
-    "PLR0915",
-    "PLR0917",
     "RUF001",
     "RUF002",
-    "SLF001",
     "TRY004",
 ]
 
@@ -108,7 +103,14 @@ ignore = [
 "pyecospold/{helpers,lxmlh/*}.py" = [
     "ANN401", # values and element classes are resolved at runtime
 ]
-"tests/**" = ["ANN", "D", "INP001", "PLR2004", "S101"]
+"tests/**" = [
+    "ANN",
+    "D",
+    "DTZ001", # fixtures hold naive timestamps, which the models return as-is
+    "INP001",
+    "PLR2004",
+    "S101",
+]
 
 [tool.ruff.lint.pydocstyle]
 convention = "google"

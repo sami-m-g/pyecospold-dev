@@ -402,9 +402,9 @@ def test_parse_file_v1_time_period_set_new_values(
     tp.endDate = date(2012, 1, 2)
 
     assert tp.startDate == date(1990, 5, 6)
-    assert tp._startDate == "1990-05-06"
+    assert tp.findtext("{*}startDate") == "1990-05-06"
     assert tp.endDate == date(2012, 1, 2)
-    assert tp._endDate == "2012-01-02"
+    assert tp.findtext("{*}endDate") == "2012-01-02"
 
 
 def test_parse_file_v1_time_period_set_new_values_errors(
