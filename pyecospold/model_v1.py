@@ -841,9 +841,11 @@ class TimePeriod(etree.ElementBase):
     @startDate.setter
     def startDate(self, new_date: date) -> None:
         if not isinstance(new_date, date):
-            raise ValueError("`new_date` must be a `datetime.date` instance")
+            msg = "`new_date` must be a `datetime.date` instance"
+            raise ValueError(msg)
         if new_date > self.endDate:
-            raise ValueError("`new_date` is after `timePeriod.endDate`")
+            msg = "`new_date` is after `timePeriod.endDate`"
+            raise ValueError(msg)
         self._startDate = new_date.isoformat()
 
     @property
@@ -854,9 +856,11 @@ class TimePeriod(etree.ElementBase):
     @endDate.setter
     def endDate(self, new_date: date) -> None:
         if not isinstance(new_date, date):
-            raise ValueError("`new_date` must be a `datetime.date` instance")
+            msg = "`new_date` must be a `datetime.date` instance"
+            raise ValueError(msg)
         if new_date < self.startDate:
-            raise ValueError("`new_date` is before `timePeriod.startDate`")
+            msg = "`new_date` is before `timePeriod.startDate`"
+            raise ValueError(msg)
         self._endDate = new_date.isoformat()
 
     def _init(self) -> None:

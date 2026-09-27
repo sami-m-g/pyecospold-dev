@@ -85,8 +85,6 @@ ignore = [
     # temporary: existing violations; each is removed by the commit that fixes it
     "DTZ001",
     "DTZ011",
-    "EM101",
-    "EM102",
     "FBT001",
     "FBT002",
     "ISC004",
@@ -97,7 +95,6 @@ ignore = [
     "RUF002",
     "RUF012",
     "SLF001",
-    "TRY003",
     "TRY004",
 ]
 
