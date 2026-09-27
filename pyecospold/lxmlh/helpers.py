@@ -12,9 +12,9 @@ from .config import TYPE_DEFAULTS, TYPE_FUNC_MAP
 def set_attribute(
     element: etree.ElementBase,
     key: str,
-    value: str,
+    value: Any,
     schema_file: str,
-    validator: Callable | None,
+    validator: Callable[[Any], str] | None,
 ) -> None:
     """Helper method for setting XML attributes.
 
@@ -47,7 +47,7 @@ def set_attribute_list(
 
 
 def set_element_text(
-    parent: etree.ElementBase, element: str, value: str, schema_file: str
+    parent: etree.ElementBase, element: str, value: Any, schema_file: str
 ) -> None:
     """Helper method for setting XML element text.
 
@@ -132,7 +132,7 @@ def create_attribute(
     name: str,
     attr_type: type,
     schema_file: str,
-    validator: Callable | None = None,
+    validator: Callable[[Any], str] | None = None,
 ) -> Any:
     """Helper wrapper method for creating setters and getters for an attribute."""
     return property(

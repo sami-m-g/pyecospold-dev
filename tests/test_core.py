@@ -6,6 +6,7 @@ from collections.abc import Callable
 from importlib import import_module
 from io import StringIO
 from pathlib import Path
+from typing import Any
 
 import pytest
 
@@ -15,9 +16,11 @@ from pyecospold.config import Defaults
 from pyecospold.core import EcospoldLookupV1
 from pyecospold.lxmlh import parse_directory, validate_directory
 
+Api = Callable[[str], Callable[..., Any]]
+
 
 @pytest.fixture
-def api(version: str) -> Callable[[str], Callable]:
+def api(version: str) -> Api:
     """Public function for the current version, e.g. ``api("parse_file")``."""
     return lambda name: getattr(pyecospold, f"{name}_{version}")
 
@@ -52,7 +55,7 @@ def files_with_invalid(fixtures_dir: Path, version: str, tmp_path: Path) -> Path
     return directory
 
 
-def test_validate_file_success(fixtures_dir: Path, version: str, api: Callable) -> None:
+def test_validate_file_success(fixtures_dir: Path, version: str, api: Api) -> None:
     """It validates file successfully."""
     assert api("validate_file")(fixtures_dir / version / f"{version}_1.xml") is None
 
@@ -73,7 +76,7 @@ def test_parse(
     fixtures_dir: Path,
     version: str,
     kind: str,
-    api: Callable,
+    api: Api,
     as_source: Callable[[Path], Path],
     root_class: type,
 ) -> None:
@@ -91,7 +94,7 @@ def test_save_file(
     tmp_path: Path,
     fixtures_dir: Path,
     version: str,
-    api: Callable,
+    api: Api,
     canonical_xml: Callable[[Path], str],
 ) -> None:
     """It writes back the file it read."""
@@ -120,7 +123,7 @@ def test_validate(
     files_with_invalid: Path,
     version: str,
     kind: str,
-    api: Callable,
+    api: Api,
     as_source: Callable[[Path], Path],
 ) -> None:
     """It reports schema errors of invalid files only."""

@@ -6,6 +6,7 @@ from typing import ClassVar
 from dateutil.parser import parse
 from dateutil.relativedelta import relativedelta
 from lxml import etree
+from typing_extensions import override
 
 from .cas_validation import validate_cas
 from .helpers import (
@@ -863,6 +864,7 @@ class TimePeriod(etree.ElementBase):
             raise ValueError(msg)
         self._endDate = new_date.isoformat()
 
+    @override
     def _init(self) -> None:
         """Harmonize all possible date formats to actual dates.
 

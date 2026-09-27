@@ -176,7 +176,7 @@ def test_parse_file_v2_activity(eco_spold: EcoSpold) -> None:
             "changes that were made during the conversion process.]"
         ),
     ]
-    general_comment_image_urls = []
+    general_comment_image_urls: list[str] = []
     included_activities_ends = [
         (
             "This activity ends with 1 kg of formic acid, 100% af the factory gate. "
@@ -259,7 +259,7 @@ def test_parse_file_v2_geography(eco_spold: EcoSpold) -> None:
     geography_context_id = ""
     short_names = ["RER"]
     comments_texts = ["The inventory is modelled for Europe."]
-    comments_image_urls = []
+    comments_image_urls: list[str] = []
     activity_description = eco_spold.activityDataset.activityDescription
     geography = activity_description.geography[0]
 
@@ -304,7 +304,7 @@ def test_parse_file_v2_time_period(eco_spold: EcoSpold) -> None:
     end_date = "2014-12-31"
     is_data_valid_for_entire_period = True
     comments_texts = ["Time of publications"]
-    image_urls = []
+    image_urls: list[str] = []
     activity_description = eco_spold.activityDataset.activityDescription
     time_period = activity_description.timePeriod[0]
 
@@ -320,7 +320,7 @@ def test_parse_file_v2_macro_economic_scenario(eco_spold: EcoSpold) -> None:
     macro_economic_scenario_id = "d9f57f0a-a01f-42eb-a57b-8f18d6635801"
     macro_economic_scenario_context_id = ""
     names = ["Business-as-Usual"]
-    comments = []
+    comments: list[str] = []
     activity_description = eco_spold.activityDataset.activityDescription
     macro_economic_scenario = activity_description.macroEconomicScenario[0]
 
@@ -406,8 +406,8 @@ def test_parse_file_v2_elementary_exchange(eco_spold: EcoSpold) -> None:
     group_str = "ToEnvironment"
     in_group = 4
     in_group_str = "FromEnvironment"
-    synonyms = []
-    tags = []
+    synonyms: list[str] = []
+    tags: list[str] = []
     properties_len = 0
     transfer_coefficients_len = 0
     elementary_exchanges = eco_spold.activityDataset.flowData.elementaryExchanges

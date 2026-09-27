@@ -8,14 +8,14 @@ from .lxmlh import create_attribute, create_attribute_list, create_element_text
 
 
 def create_attribute_v1(
-    name: str, attr_type: type, validator: Callable | None = None
+    name: str, attr_type: type, validator: Callable[[Any], str] | None = None
 ) -> Any:
     """Helper wrapper method for creating setters and getters for a V1 attribute."""
     return create_attribute(name, attr_type, Defaults.SCHEMA_V1_FILE, validator)
 
 
 def create_attribute_v2(
-    name: str, attr_type: type, validator: Callable | None = None
+    name: str, attr_type: type, validator: Callable[[Any], str] | None = None
 ) -> Any:
     """Helper wrapper method for creating setters and getters for a V2 attribute."""
     return create_attribute(name, attr_type, Defaults.SCHEMA_V2_FILE, validator)
