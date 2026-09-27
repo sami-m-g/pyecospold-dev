@@ -9,13 +9,13 @@
 [![CI](https://github.com/brightway-lca/pyecospold/actions/workflows/ci.yml/badge.svg)][ci]
 
 [![pre-commit](https://img.shields.io/badge/pre--commit-enabled-brightgreen?logo=pre-commit&logoColor=white)][pre-commit]
-[![Black](https://img.shields.io/badge/code%20style-black-000000.svg)][black]
+[![Ruff](https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/astral-sh/ruff/main/assets/badge/v2.json)][ruff]
 
 [pypi status]: https://pypi.org/project/pyecospold/
 [read the docs]: https://pyecospold.readthedocs.io/
 [ci]: https://github.com/brightway-lca/pyecospold/actions/workflows/ci.yml
 [pre-commit]: https://github.com/pre-commit/pre-commit
-[black]: https://github.com/psf/black
+[ruff]: https://github.com/astral-sh/ruff
 
 ## Installation
 
@@ -122,6 +122,6 @@ please [file an issue][Issue Tracker] along with a detailed description.
 ## Credits
 
 
-[License]: https://github.com/sami-m-g/pyecospold/blob/main/LICENSE
-[Contributor Guide]: https://github.com/sami-m-g/pyecospold/blob/main/CONTRIBUTING.md
-[Issue Tracker]: https://github.com/sami-m-g/pyecospold/issues
+[License]: https://github.com/brightway-lca/pyecospold/blob/main/LICENSE
+[Contributor Guide]: https://github.com/brightway-lca/pyecospold/blob/main/.github/CONTRIBUTING.md
+[Issue Tracker]: https://github.com/brightway-lca/pyecospold/issues
