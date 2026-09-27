@@ -116,3 +116,6 @@ run.source = [ "pyecospold" ]
 run.branch = true
 report.fail_under = 99
 report.skip_covered = true
+
+[tool.rumdl]
+global.disable = [ "MD013" ]  # prose is soft-wrapped; ruff owns code-block line length

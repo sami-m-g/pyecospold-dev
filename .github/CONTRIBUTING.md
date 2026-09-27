@@ -40,23 +40,21 @@ Request features on the [Issue Tracker][Issue Tracker].
 Install [uv](https://docs.astral.sh/uv/), then create the environment with the package and development requirements:
 
 ```console
-$ uv sync
+uv sync
 ```
 
 ## How to test the project
 
-
 Run the full test suite:
 
 ```console
-$ uv run pytest
+uv run pytest
 ```
 
 List the available Nox sessions:
 
 Unit tests are located in the _tests_ directory,
 and are written using the [pytest][pytest] testing framework.
-
 
 ## How to submit changes
 
@@ -71,9 +69,8 @@ Your pull request needs to meet the following guidelines for acceptance:
 Install the Git hooks once, so the checks run on every commit:
 
 ```console
-$ uv run prek install
+uv run prek install
 ```
-
 
 It is recommended to open an issue before starting work on anything.
 This will allow a chance to talk it over with the owners and validate your approach.

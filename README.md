@@ -22,7 +22,7 @@
 You can install _pyecospold_ via [pip] from [PyPI]:
 
 ```console
-$ pip install pyecospold
+pip install pyecospold
 ```
 
 ## ecospold1 Schema Updates
@@ -72,7 +72,7 @@ referenceFunction.amount
 save_ecospold_file(ecoSpold, "00001_new.xml")  # Replace with your own path
 ```
 
-# Config file
+## Config file
 
 ```ini
 [parameters]
@@ -103,24 +103,22 @@ uncertaintyType=1
 infrastructureProcess=true
 ```
 
-## Contributing
+### Contributing
 
 Contributions are very welcome.
 To learn more, see the [Contributor Guide][Contributor Guide].
 
-## License
+### License
 
 Distributed under the terms of the [BSD license][License],
 _pyecospold_ is free and open source software.
 
-## Issues
+### Issues
 
 If you encounter any problems,
 please [file an issue][Issue Tracker] along with a detailed description.
 
-
-## Credits
-
+### Credits
 
 [License]: https://github.com/brightway-lca/pyecospold/blob/main/LICENSE
 [Contributor Guide]: https://github.com/brightway-lca/pyecospold/blob/main/.github/CONTRIBUTING.md
