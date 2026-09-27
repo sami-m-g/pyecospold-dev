@@ -415,11 +415,11 @@ def test_parse_file_v1_time_period_set_new_values_errors(
         <endDate>1995-04-05</endDate>
     </timePeriod>"""
     tp = parse_time_period(xml_text)
-    with pytest.raises(ValueError, match="must be a `datetime"):
+    with pytest.raises(TypeError, match="must be a `datetime"):
         tp.startDate = "1990-05-06"  # pyrefly: ignore[bad-argument-type]  # wrong type on purpose
     with pytest.raises(ValueError, match="is after `timePeriod"):
         tp.startDate = date(2022, 1, 2)
-    with pytest.raises(ValueError, match="must be a `datetime"):
+    with pytest.raises(TypeError, match="must be a `datetime"):
         tp.endDate = "2012-01-02"  # pyrefly: ignore[bad-argument-type]  # wrong type on purpose
     with pytest.raises(ValueError, match="is before `timePeriod"):
         tp.endDate = date(1970, 5, 6)

@@ -397,7 +397,7 @@ def validate_zip_file_v2(
 
 
 def save_ecospold_file(
-    root: etree.ElementBase, path: str | Path, fill_defaults: bool = False
+    root: etree.ElementBase, path: str | Path, *, fill_defaults: bool = False
 ) -> None:
     """Saves an Ecospold class to an XML file.
 

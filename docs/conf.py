@@ -8,12 +8,10 @@
 # -- Project information -----------------------------------------------------
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#project-information
 
-import datetime
-
 from pyecospold import __version__
 
 project = "pyecospold"
-copyright = f"{datetime.date.today().year}, Mina Sami"
+copyright = "Mina Sami and pyecospold contributors"
 author = "Mina Sami"
 version = release = __version__
 

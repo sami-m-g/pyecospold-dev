@@ -83,14 +83,8 @@ ignore = [
     "COM812", # conflicts with the formatter
     "CPY001", # licence is declared once in pyproject
     "PLR09", # complexity thresholds are arbitrary
-    # temporary: existing violations; each is removed by the commit that fixes it
-    "DTZ011",
-    "FBT001",
-    "FBT002",
-    "RUF001",
-    "RUF002",
-    "TRY004",
 ]
+allowed-confusables = ["–", "‘", "σ"] # verbatim text from the XSD and fixtures
 
 [tool.ruff.lint.per-file-ignores]
 "docs/conf.py" = ["A001", "INP001"] # Sphinx requires `copyright`; not a package

@@ -145,6 +145,7 @@ def validate_zip_file(
 def save_file(
     root: etree.ElementBase,
     path: str | Path,
+    *,
     pretty_print: bool = True,
     xml_declaration: bool = True,
     encoding: str = "UTF-8",
