@@ -111,3 +111,12 @@ convention = "google"
 
 [tool.pyrefly]
 project-includes = ["pyecospold", "tests"]
+
+[tool.typos.default.extend-words] # verbatim text from the fixtures
+formate = "formate"
+offen = "offen"
+situtation = "situtation"
+
+[tool.typos.type.xsd-docs] # model docstrings are copied 1:1 from the XSD
+extend-glob = ["model_v*.py"]
+extend-words = { additonal = "additonal", exhange = "exhange", exhanges = "exhanges", independant = "independant", occurences = "occurences", overriden = "overriden", refering = "refering", seperate = "seperate", varible = "varible" }

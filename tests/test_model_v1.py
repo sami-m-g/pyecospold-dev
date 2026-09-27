@@ -219,14 +219,14 @@ def test_parse_file_v1_allocation(eco_spold: EcoSpold) -> None:
     fraction = 97.6
     reference_to_input_outputs = [1]
     explanations = ""
-    allocaiton = eco_spold.datasets[0].flowData.allocations[0]
+    allocation = eco_spold.datasets[0].flowData.allocations[0]
 
-    assert allocaiton.referenceToCoProduct == reference_to_co_product
-    assert allocaiton.allocationMethod == allocation_method
-    assert allocaiton.allocationMethodStr == allocation_method_str
-    assert allocaiton.fraction == fraction
-    assert allocaiton.referenceToInputOutputs == reference_to_input_outputs
-    assert allocaiton.explanations == explanations
+    assert allocation.referenceToCoProduct == reference_to_co_product
+    assert allocation.allocationMethod == allocation_method
+    assert allocation.allocationMethodStr == allocation_method_str
+    assert allocation.fraction == fraction
+    assert allocation.referenceToInputOutputs == reference_to_input_outputs
+    assert allocation.explanations == explanations
 
 
 def test_parse_file_v1_reference_function(eco_spold: EcoSpold) -> None:

@@ -879,7 +879,7 @@ class Uncertainty(etree.ElementBase):
     @property
     def normal(self) -> "Normal":
         """Normal (also known as "Gaussian") distribution. It is a family of
-        distributions of the same general form, differing in thei location and
+        distributions of the same general form, differing in their location and
         scale parameters: the mean ("MeanValue") and standard deviation
         ("Deviation"), respectively.
         """
@@ -969,7 +969,7 @@ class Lognormal(etree.ElementBase):
 
 class Normal(etree.ElementBase):
     """Normal (also known as "Gaussian") distribution. It is a family of distributions
-    of the same general form, differing in thei location and scale parameters: the mean
+    of the same general form, differing in their location and scale parameters: the mean
     ("MeanValue") and standard deviation ("Deviation"), respectively.
     """
 
@@ -1242,7 +1242,7 @@ class IntermediateExchange(CustomExchange):
     flow."""
 
     productionVolumeComments = create_attribute_list_v2("productionVolumeComments", str)
-    """lits[str]: A general comment can be made on the data source, assumptions and
+    """list[str]: A general comment can be made on the data source, assumptions and
     calculations for the production volume data."""
 
     intermediateExchangeId = create_attribute_v2("intermediateExchangeId", str)
