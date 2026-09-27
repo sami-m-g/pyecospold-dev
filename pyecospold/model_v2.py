@@ -1,6 +1,7 @@
 """Custom EcoSpold Python classes for v1 of EcoSpold schema."""
 
 from datetime import datetime
+from typing import ClassVar
 
 from lxml import etree
 
@@ -269,19 +270,19 @@ class Activity(etree.ElementBase):
     classification.
     """
 
-    INHERITANCE_DEPTH_MAP: dict[int, str] = {
+    INHERITANCE_DEPTH_MAP: ClassVar[dict[int, str]] = {
         0: "not a child",
         1: "a geography child",
         2: "a temporal child",
         3: "a macro-economic scenario child",
     }
 
-    TYPE_MAP: dict[int, str] = {
+    TYPE_MAP: ClassVar[dict[int, str]] = {
         1: "Unit process",
         2: "System terminated",
     }
 
-    SPECIAL_ACTIVITY_TYPE_MAP: dict[int, str] = {
+    SPECIAL_ACTIVITY_TYPE_MAP: ClassVar[dict[int, str]] = {
         0: "ordinary transforming activity (default)",
         1: "market activity",
         2: "IO activity",
@@ -295,7 +296,7 @@ class Activity(etree.ElementBase):
         10: "market group",
     }
 
-    ENERGY_VALUES_MAP: dict[int, str] = {
+    ENERGY_VALUES_MAP: ClassVar[dict[int, str]] = {
         0: "Undefined (default)",
         1: "Net values",
         2: "Gross values",
@@ -606,7 +607,7 @@ class Geography(etree.ElementBase):
 class Technology(etree.ElementBase):
     """Describes the technological properties of the unit process."""
 
-    TECHNOLOGY_LEVEL_MAP: dict[int, str] = {
+    TECHNOLOGY_LEVEL_MAP: ClassVar[dict[int, str]] = {
         0: "undefined",
         1: "New",
         2: "Modern",
@@ -1214,14 +1215,14 @@ class TransferCoefficient(etree.ElementBase):
 class IntermediateExchange(CustomExchange):
     """Comprises intermediate product and waste inputs and outputs for the activity."""
 
-    INPUT_GROUP_MAP: dict[int, str] = {
+    INPUT_GROUP_MAP: ClassVar[dict[int, str]] = {
         1: "Materials/Fuels",
         2: "Electricity/Heat",
         3: "Services",
         5: "From Technosphere (unspecified)",
     }
 
-    OUTPUT_GROUP_MAP: dict[int, str] = {
+    OUTPUT_GROUP_MAP: ClassVar[dict[int, str]] = {
         0: "ReferenceProduct",
         2: "By-product",
         3: "MaterialForTreatment",
@@ -1661,13 +1662,13 @@ class DataGeneratorAndPublication(etree.ElementBase):
     accessibility of the dataset.
     """
 
-    DATA_PUBLISHED_IN_MAP: dict[int, str] = {
+    DATA_PUBLISHED_IN_MAP: ClassVar[dict[int, str]] = {
         0: "Data as such not published (default).",
         1: "The data of some unit processes or subsystems are published.",
         2: "Data has been published entirely in 'referenceToPublishedSource'.",
     }
 
-    ACCESS_RESTRICTED_TO_MAP: dict[int, str] = {
+    ACCESS_RESTRICTED_TO_MAP: ClassVar[dict[int, str]] = {
         0: "Public",
         1: "Licensees",
         2: "Results only",
@@ -1905,7 +1906,7 @@ class PedigreeMatrix(etree.ElementBase):
     indicators and contains no data itself.
     """
 
-    RELIABILITY_MAP: dict[int, str] = {
+    RELIABILITY_MAP: ClassVar[dict[int, str]] = {
         1: "Verified data based on measurements",
         2: "Verified data partly based on assumptions OR nonverified data based on "
         "measurements",
@@ -1914,7 +1915,7 @@ class PedigreeMatrix(etree.ElementBase):
         5: "Non-qualified estimate (default)",
     }
 
-    COMPLETENESS_MAP: dict[int, str] = {
+    COMPLETENESS_MAP: ClassVar[dict[int, str]] = {
         1: "Representative data from all sites relevant for the market considered "
         "over an adequate period to even out normal fluctuations",
         2: "Representative data from >50% of the sites relevant for the market "
@@ -1927,7 +1928,7 @@ class PedigreeMatrix(etree.ElementBase):
         "shorter periods",
     }
 
-    TEMPORAL_CORRELATION_MAP: dict[int, str] = {
+    TEMPORAL_CORRELATION_MAP: ClassVar[dict[int, str]] = {
         1: "Less than 3 years of difference to the time period of the dataset "
         "(fields 600-610)",
         2: "Less than 6 years of difference to the time period of the dataset "
@@ -1940,7 +1941,7 @@ class PedigreeMatrix(etree.ElementBase):
         "period of the dataset (fields 600-610)",
     }
 
-    GEOGRAPHICAL_CORRELATION_MAP: dict[int, str] = {
+    GEOGRAPHICAL_CORRELATION_MAP: ClassVar[dict[int, str]] = {
         1: "Data from area under study",
         2: "Average data from larger area in which the area under study is included",
         3: "Data from area with similar production conditions",
@@ -1949,7 +1950,7 @@ class PedigreeMatrix(etree.ElementBase):
         "middle east, OECD-Europe instead of Russia)",
     }
 
-    FURTHER_TECHNOLOGY_CORRELATION_MAP: dict[int, str] = {
+    FURTHER_TECHNOLOGY_CORRELATION_MAP: ClassVar[dict[int, str]] = {
         1: "Data from enterprises, processes and materials under study",
         2: "Data from processes and materials under study (i.e. identical technology) "
         "but from different enterprises",

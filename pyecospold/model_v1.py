@@ -694,7 +694,7 @@ class DataSetInformation(etree.ElementBase):
     code.
     """
 
-    TYPE_MAP: dict[int, str] = {
+    TYPE_MAP: ClassVar[dict[int, str]] = {
         0: "System non-terminated",
         1: "Unit process",
         2: "System terminated",
@@ -703,7 +703,7 @@ class DataSetInformation(etree.ElementBase):
         5: "Multioutput process",
     }
 
-    ENERGY_VALUES_MAP: dict[int, str] = {
+    ENERGY_VALUES_MAP: ClassVar[dict[int, str]] = {
         0: "Undefined",
         1: "Net values",
         2: "Gross values",
@@ -954,7 +954,7 @@ class Source(etree.ElementBase):
     publication, name of editors (if any), etc..
     """
 
-    SOURCE_TYPE_MAP: dict[int, str] = {
+    SOURCE_TYPE_MAP: ClassVar[dict[int, str]] = {
         0: "Undefined (default)",
         1: "Article",
         2: "Chapters in anthology",
@@ -1090,13 +1090,13 @@ class DataGeneratorAndPublication(etree.ElementBase):
     the dataset and the accessibility of the dataset.
     """
 
-    DATA_PUBLISHED_IN_MAP: dict[int, str] = {
+    DATA_PUBLISHED_IN_MAP: ClassVar[dict[int, str]] = {
         0: "Data as such notpublished (default)",
         1: "The data of some unit processes or subsystems are published",
         2: "Data has been published entirely in 'referenceToPublishedSource'",
     }
 
-    ACCESS_RESTRICTED_TO_MAP: dict[int, str] = {
+    ACCESS_RESTRICTED_TO_MAP: ClassVar[dict[int, str]] = {
         0: "Public",
         1: "ETH Domain",
         2: "ecoinvent 2000",
