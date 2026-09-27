@@ -2,8 +2,7 @@
 
 from __future__ import annotations
 
-from pathlib import Path
-from typing import IO
+from typing import IO, TYPE_CHECKING
 
 from lxml import etree
 
@@ -75,6 +74,9 @@ from .model_v2 import ModellingAndValidation as ModellingAndValidationV2
 from .model_v2 import Representativeness as RepresentativenessV2
 from .model_v2 import Technology as TechnologyV2
 from .model_v2 import TimePeriod as TimePeriodV2
+
+if TYPE_CHECKING:
+    from pathlib import Path
 
 
 class EcospoldLookupV1(etree.CustomElementClassLookup):

@@ -29,7 +29,7 @@ class Defaults:
         dict[str, dict[str, Callable[[etree.ElementBase], str]]]
     ] = {
         "Dataset": {
-            "generator": lambda node: f"pyecospold.{__version__}",
+            "generator": lambda _: f"pyecospold.{__version__}",
         },
     }
     STATIC_DEFAULTS: ClassVar[dict[str, dict[str, str]]] = {
@@ -85,6 +85,6 @@ class Defaults:
         static_defaults = {
             name: dict(section)
             for name, section in config.items()
-            if name not in ["parameters"]
+            if name != "parameters"
         }
         cls.static_defaults = static_defaults

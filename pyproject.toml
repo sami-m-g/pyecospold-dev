@@ -83,36 +83,27 @@ ignore = [
     "COM812", # conflicts with the formatter
     "CPY001", # licence is declared once in pyproject
     # temporary: existing violations; each is removed by the commit that fixes it
-    "ARG002",
-    "ARG005",
-    "B905",
-    "C417",
     "DTZ001",
     "DTZ011",
     "EM101",
     "EM102",
     "FBT001",
     "FBT002",
-    "FURB171",
     "ISC004",
     "PLR0913",
     "PLR0915",
     "PLR0917",
-    "PLW0108",
     "RUF001",
     "RUF002",
     "RUF012",
-    "RUF013",
-    "RUF036",
-    "SIM117",
     "SLF001",
-    "TC003",
     "TRY003",
     "TRY004",
 ]
 
 [tool.ruff.lint.per-file-ignores]
 "docs/conf.py" = ["A001", "INP001"] # Sphinx requires `copyright`; not a package
+"pyecospold/core.py" = ["ARG002"] # lookup() overrides lxml's fixed signature
 "pyecospold/model_v*.py" = [
     "D205", # docstrings are copied 1:1 from the XSD
     "N802", # public API names mirror the XSD

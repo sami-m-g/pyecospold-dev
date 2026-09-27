@@ -9,7 +9,7 @@ TIMESTAMP_FORMAT: str = "%Y-%m-%dT%H:%M:%S"
 
 TYPE_FUNC_MAP: dict[type, Callable[[Any], Any]] = {
     bool: lambda string: string.lower() == "true",
-    datetime: lambda string: datetime.fromisoformat(string),
+    datetime: datetime.fromisoformat,
 }
 
 TYPE_DEFAULTS: dict[type, Any] = {

@@ -57,7 +57,7 @@ def validate_cas(cas: str | float) -> str:
 
 def _check_digit(cas_str: str) -> None:
     total = sum(
-        (a + 1) * int(b) for a, b in zip(range(9), cas_str.replace("-", "")[-2::-1])
+        i * int(d) for i, d in enumerate(cas_str.replace("-", "")[-2::-1], start=1)
     )
     error = (
         f"CAS Check Digit error: CAS '{cas_str}' has check digit of {cas_str[-1]}, "

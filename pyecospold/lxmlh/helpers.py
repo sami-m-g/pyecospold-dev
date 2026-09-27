@@ -120,14 +120,12 @@ def get_attribute_list(
 
     Returns empty list if attributes don't exist.
     """
-    return list(
-        map(
-            lambda x: TYPE_FUNC_MAP.get(attr_type, attr_type)(
-                re.sub("[\n]{1,}", " ", re.sub("[ ]{2,}", "", x.text))
-            ),
-            get_element_list(parent, attribute),
+    return [
+        TYPE_FUNC_MAP.get(attr_type, attr_type)(
+            re.sub("[\n]{1,}", " ", re.sub("[ ]{2,}", "", x.text))
         )
-    )
+        for x in get_element_list(parent, attribute)
+    ]
 
 
 def create_attribute(
