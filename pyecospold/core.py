@@ -2,11 +2,11 @@
 
 from __future__ import annotations
 
-from io import StringIO
 from pathlib import Path
-from typing import List, Tuple, Union
+from typing import IO, Union
 
 from lxml import etree
+from typing_extensions import override
 
 from .config import Defaults
 from .lxmlh import (
@@ -19,53 +19,91 @@ from .lxmlh import (
     validate_zip_file,
 )
 from .model_v1 import AdministrativeInformation as AdministrativeInformationV1
-from .model_v1 import Allocation
+from .model_v1 import (
+    Allocation,
+    Dataset,
+    DataSetInformation,
+    Exchange,
+    MetaInformation,
+    Person,
+    ProcessInformation,
+    ReferenceFunction,
+    Source,
+    Validation,
+)
 from .model_v1 import DataEntryBy as DataEntryByV1
 from .model_v1 import DataGeneratorAndPublication as DataGeneratorAndPublicationV1
-from .model_v1 import Dataset, DataSetInformation
 from .model_v1 import EcoSpold as EcoSpoldV1
-from .model_v1 import Exchange
 from .model_v1 import FlowData as FlowDataV1
 from .model_v1 import Geography as GeographyV1
-from .model_v1 import MetaInformation
 from .model_v1 import ModellingAndValidation as ModellingAndValidationV1
-from .model_v1 import Person, ProcessInformation, ReferenceFunction
 from .model_v1 import Representativeness as RepresentativenessV1
-from .model_v1 import Source
 from .model_v1 import Technology as TechnologyV1
 from .model_v1 import TimePeriod as TimePeriodV1
-from .model_v1 import Validation
-from .model_v2 import Activity, ActivityDataset, ActivityDescription
-from .model_v2 import AdministrativeInformation as AdministrativeInformationV2
-from .model_v2 import Beta, Classification, Compartment
-from .model_v2 import DataEntryBy as DataEntryByV2
-from .model_v2 import DataGeneratorAndPublication as DataGeneratorAndPublicationV2
-from .model_v2 import EcoSpold as EcoSpoldV2
-from .model_v2 import ElementaryExchange, FileAttributes
-from .model_v2 import FlowData as FlowDataV2
-from .model_v2 import Gamma
-from .model_v2 import Geography as GeographyV2
 from .model_v2 import (
+    Activity,
+    ActivityDataset,
+    ActivityDescription,
+    Beta,
+    Binomial,
+    Classification,
+    Compartment,
+    ElementaryExchange,
+    FileAttributes,
+    Gamma,
     ImpactIndicator,
     IntermediateExchange,
     Lognormal,
     MacroEconomicScenario,
+    Normal,
+    Parameter,
+    PedigreeMatrix,
+    Property,
+    RequiredContextReference,
+    Review,
+    TextAndImage,
+    TransferCoefficient,
+    Triangular,
+    Uncertainty,
+    Undefined,
+    Uniform,
 )
+from .model_v2 import AdministrativeInformation as AdministrativeInformationV2
+from .model_v2 import DataEntryBy as DataEntryByV2
+from .model_v2 import DataGeneratorAndPublication as DataGeneratorAndPublicationV2
+from .model_v2 import EcoSpold as EcoSpoldV2
+from .model_v2 import FlowData as FlowDataV2
+from .model_v2 import Geography as GeographyV2
 from .model_v2 import ModellingAndValidation as ModellingAndValidationV2
-from .model_v2 import Normal, Parameter, PedigreeMatrix, Property
 from .model_v2 import Representativeness as RepresentativenessV2
-from .model_v2 import RequiredContextReference, Review
 from .model_v2 import Technology as TechnologyV2
-from .model_v2 import TextAndImage
 from .model_v2 import TimePeriod as TimePeriodV2
-from .model_v2 import TransferCoefficient, Triangular, Uncertainty, Uniform
 
 
 class EcospoldLookupV1(etree.CustomElementClassLookup):
     """Custom XML lookup class for Ecospold V1 files."""
 
-    def lookup(self, unused_node_type, unused_document, unused_namespace, name):
-        """Maps Ecospold XML elements to custom Ecospold classes."""
+    @override
+    def lookup(
+        self,
+        type: str,
+        doc: object,
+        namespace: Union[str, None],
+        name: Union[str, None],
+    ) -> Union[type[etree.ElementBase], None]:
+        """Return the pyecospold class for an XML element.
+
+        lxml calls this for every element it parses.
+
+        Args:
+            type: kind of node (``"element"``, ``"comment"``, ...).
+            doc: lxml's internal document object.
+            namespace: namespace of the element.
+            name: tag name of the element.
+
+        Returns:
+            The class for ``name``, or None to let lxml choose.
+        """
         lookupmap = {
             "administrativeInformation": AdministrativeInformationV1,
             "allocation": Allocation,
@@ -88,17 +126,33 @@ class EcospoldLookupV1(etree.CustomElementClassLookup):
             "timePeriod": TimePeriodV1,
             "validation": Validation,
         }
-        try:
-            return lookupmap[name]
-        except KeyError:
-            return None
+        return lookupmap.get(name or "")
 
 
 class EcospoldLookupV2(etree.CustomElementClassLookup):
     """Custom XML lookup class for Ecospold V2 files."""
 
-    def lookup(self, unused_node_type, unused_document, unused_namespace, name):
-        """Maps Ecospold XML elements to custom Ecospold classes."""
+    @override
+    def lookup(
+        self,
+        type: str,
+        doc: object,
+        namespace: Union[str, None],
+        name: Union[str, None],
+    ) -> Union[type[etree.ElementBase], None]:
+        """Return the pyecospold class for an XML element.
+
+        lxml calls this for every element it parses.
+
+        Args:
+            type: kind of node (``"element"``, ``"comment"``, ...).
+            doc: lxml's internal document object.
+            namespace: namespace of the element.
+            name: tag name of the element.
+
+        Returns:
+            The class for ``name``, or None to let lxml choose.
+        """
         lookupmap = {
             "activity": Activity,
             "activityDataset": ActivityDataset,
@@ -107,6 +161,7 @@ class EcospoldLookupV2(etree.CustomElementClassLookup):
             "allocationComment": TextAndImage,
             "childActivityDataset": ActivityDataset,
             "beta": Beta,
+            "binomial": Binomial,
             "classification": Classification,
             "comment": TextAndImage,
             "compartment": Compartment,
@@ -125,81 +180,88 @@ class EcospoldLookupV2(etree.CustomElementClassLookup):
             "macroEconomicScenario": MacroEconomicScenario,
             "modellingAndValidation": ModellingAndValidationV2,
             "normal": Normal,
+            "productionVolumeUncertainty": Uncertainty,
             "parameter": Parameter,
             "pedigreeMatrix": PedigreeMatrix,
             "property": Property,
             "representativeness": RepresentativenessV2,
-            "requiredContexts": RequiredContextReference,
+            "requiredContext": RequiredContextReference,
             "review": Review,
             "technology": TechnologyV2,
             "timePeriod": TimePeriodV2,
             "transferCoefficient": TransferCoefficient,
             "triangular": Triangular,
             "uncertainty": Uncertainty,
+            "undefined": Undefined,
             "uniform": Uniform,
         }
-        try:
-            return lookupmap[name]
-        except KeyError:
-            return None
+        return lookupmap.get(name or "")
 
 
-def parse_file_v1(file: Union[str, Path, StringIO]) -> EcoSpoldV1:
-    """Parses an Ecospold V1 XML file to custom Ecospold classes.
+def parse_file_v1(file: Union[str, Path, IO[str], IO[bytes]]) -> EcoSpoldV1:
+    """Parse an EcoSpold v1 file.
 
-    Parameters:
-    file: the str|Path path to the Ecospold XML file or its StringIO representation.
+    Args:
+        file: path to the EcoSpold file, or an open file object.
 
-    Returns an EcoSpold class representing the root of the XML file.
+    Returns:
+        The root ``EcoSpold`` element.
     """
     return parse_file(file, Defaults.SCHEMA_V1_FILE, EcospoldLookupV1())
 
 
-def parse_file_v2(file: Union[str, Path, StringIO]) -> EcoSpoldV2:
-    """Parses an Ecospold V2 XML file to custom Ecospold classes.
+def parse_file_v2(file: Union[str, Path, IO[str], IO[bytes]]) -> EcoSpoldV2:
+    """Parse an EcoSpold v2 file.
 
-    Parameters:
-    file: the str|Path path to the Ecospold XML file or its StringIO representation.
+    Args:
+        file: path to the EcoSpold file, or an open file object.
 
-    Returns an EcoSpold class representing the root of the XML file.
+    Returns:
+        The root ``EcoSpold`` element.
     """
     return parse_file(file, Defaults.SCHEMA_V2_FILE, EcospoldLookupV2())
 
 
-def validate_file_v1(file: Union[str, Path, StringIO]) -> Union[None, List[str]]:
-    """Validates an Ecospold V1 XML file to custom Ecospold classes.
+def validate_file_v1(
+    file: Union[str, Path, IO[str], IO[bytes]],
+) -> Union[etree._ListErrorLog, None]:
+    """Validate an EcoSpold v1 file against its schema.
 
-    Parameters:
-    file: the str|Path path to the Ecospold XML file or its StringIO representation.
+    Args:
+        file: path to the EcoSpold file, or an open file object.
 
-    Returns ``None`` if valid or a list of error strings.
+    Returns:
+        None if the file is valid, otherwise lxml's log of validation errors.
     """
     return validate_file(file, Defaults.SCHEMA_V1_FILE)
 
 
-def validate_file_v2(file: Union[str, Path, StringIO]) -> Union[None, List[str]]:
-    """Parses an Ecospold V2 XML file to custom Ecospold classes.
+def validate_file_v2(
+    file: Union[str, Path, IO[str], IO[bytes]],
+) -> Union[etree._ListErrorLog, None]:
+    """Validate an EcoSpold v2 file against its schema.
 
-    Parameters:
-    file: the str|Path path to the Ecospold XML file or its StringIO representation.
+    Args:
+        file: path to the EcoSpold file, or an open file object.
 
-    Returns ``None`` if valid or a list of error strings.
+    Returns:
+        None if the file is valid, otherwise lxml's log of validation errors.
     """
     return validate_file(file, Defaults.SCHEMA_V2_FILE)
 
 
 def parse_directory_v1(
-    dir_path: Union[str, Path], valid_suffixes: Union[List[str], None] = None
-) -> List[Tuple[Path, EcoSpoldV1]]:
-    """Parses a directory of Ecospold XML files to a list of custom Ecospold classes.
+    dir_path: Union[str, Path], valid_suffixes: Union[list[str], None] = None
+) -> list[tuple[Path, EcoSpoldV1]]:
+    """Parse every EcoSpold v1 file in a directory.
 
-    Parameters:
-    dir_path: the directory path, should contain files of version 1 of EcoSpold.
-    valid_suffixes: a list of valid file suffixes which will only be considered for
-    parsing. If None, defaults to [".xml", ".spold"].
+    Args:
+        dir_path: directory with EcoSpold v1 files.
+        valid_suffixes: file suffixes to parse; defaults to
+            ``[".xml", ".spold"]``.
 
-    Returns a list of tuples of file paths and corresponding EcoSpold classes
-    representing the root of the XML file.
+    Returns:
+        ``(path, EcoSpold)`` for each parsed file.
     """
     if valid_suffixes is None:
         valid_suffixes = [".xml", ".spold"]
@@ -213,17 +275,17 @@ def parse_directory_v1(
 
 
 def parse_directory_v2(
-    dir_path: Union[str, Path], valid_suffixes: Union[List[str], None] = None
-) -> List[Tuple[Path, EcoSpoldV2]]:
-    """Parses a directory of Ecospold XML files to a list of custom Ecospold classes.
+    dir_path: Union[str, Path], valid_suffixes: Union[list[str], None] = None
+) -> list[tuple[Path, EcoSpoldV2]]:
+    """Parse every EcoSpold v2 file in a directory.
 
-    Parameters:
-    dir_path: the directory path, should contain files of version 2 of EcoSpold.
-    valid_suffixes: a list of valid file suffixes which will only be considered for
-    parsing. If None, defaults to [".xml", ".spold"].
+    Args:
+        dir_path: directory with EcoSpold v2 files.
+        valid_suffixes: file suffixes to parse; defaults to
+            ``[".xml", ".spold"]``.
 
-    Returns a list of tuples of file paths and corresponding EcoSpold classes
-    representing the root of the XML file.
+    Returns:
+        ``(path, EcoSpold)`` for each parsed file.
     """
     if valid_suffixes is None:
         valid_suffixes = [".xml", ".spold"]
@@ -237,17 +299,17 @@ def parse_directory_v2(
 
 
 def validate_directory_v1(
-    dir_path: Union[str, Path, StringIO], valid_suffixes: Union[List[str], None] = None
-) -> List[Tuple[Path, Union[None, List[str]]]]:
-    """Validates an Ecospold V1 XML file to custom Ecospold classes.
+    dir_path: Union[str, Path], valid_suffixes: Union[list[str], None] = None
+) -> list[tuple[Path, Union[etree._ListErrorLog, None]]]:
+    """Validate every EcoSpold v1 file in a directory.
 
-    Parameters:
-        dir_path: the directory path, should contain files of version 1 of EcoSpold.
-        valid_suffixes: a list of valid file suffixes which will only be considered for
-        parsing. If None, defaults to [".xml", ".spold"].
+    Args:
+        dir_path: directory with EcoSpold v1 files.
+        valid_suffixes: file suffixes to validate; defaults to
+            ``[".xml", ".spold"]``.
 
-    Returns a list of tuples of file paths and corresponding list of errors, which
-    is ``None`` if no errors.
+    Returns:
+        ``(path, errors)`` for each file; errors is None for a valid file.
     """
     if valid_suffixes is None:
         valid_suffixes = [".xml", ".spold"]
@@ -258,17 +320,17 @@ def validate_directory_v1(
 
 
 def validate_directory_v2(
-    dir_path: Union[str, Path, StringIO], valid_suffixes: Union[List[str], None] = None
-) -> List[Tuple[Path, Union[None, List[str]]]]:
-    """Validates an Ecospold V1 XML file to custom Ecospold classes.
+    dir_path: Union[str, Path], valid_suffixes: Union[list[str], None] = None
+) -> list[tuple[Path, Union[etree._ListErrorLog, None]]]:
+    """Validate every EcoSpold v2 file in a directory.
 
-    Parameters:
-        dir_path: the directory path, should contain files of version 2 of EcoSpold.
-        valid_suffixes: a list of valid file suffixes which will only be considered for
-        parsing. If None, defaults to [".xml", ".spold"].
+    Args:
+        dir_path: directory with EcoSpold v2 files.
+        valid_suffixes: file suffixes to validate; defaults to
+            ``[".xml", ".spold"]``.
 
-    Returns a list of tuples of file paths and corresponding list of errors, which
-    is ``None`` if no errors.
+    Returns:
+        ``(path, errors)`` for each file; errors is None for a valid file.
     """
     if valid_suffixes is None:
         valid_suffixes = [".xml", ".spold"]
@@ -279,17 +341,17 @@ def validate_directory_v2(
 
 
 def parse_zip_file_v1(
-    file_path: Union[str, Path], valid_suffixes: Union[List[str], None] = None
-) -> List[Tuple[Path, EcoSpoldV1]]:
-    """Parses a directory of Ecospold XML files to a list of custom Ecospold classes.
+    file_path: Union[str, Path], valid_suffixes: Union[list[str], None] = None
+) -> list[tuple[Path, EcoSpoldV1]]:
+    """Parse every EcoSpold v1 file in a ZIP archive.
 
-    Parameters:
-    file_path: the ZIP file path, should contain files of version 1 of EcoSpold.
-    valid_suffixes: a list of valid file suffixes which will only be considered for
-    parsing. If None, defaults to [".xml", ".spold"].
+    Args:
+        file_path: ZIP archive with EcoSpold v1 files.
+        valid_suffixes: file suffixes to parse; defaults to
+            ``[".xml", ".spold"]``.
 
-    Returns a list of tuples of file paths and corresponding EcoSpold classes
-    representing the root of the XML file.
+    Returns:
+        ``(path, EcoSpold)`` for each parsed file.
     """
     if valid_suffixes is None:
         valid_suffixes = [".xml", ".spold"]
@@ -303,17 +365,17 @@ def parse_zip_file_v1(
 
 
 def parse_zip_file_v2(
-    file_path: Union[str, Path], valid_suffixes: Union[List[str], None] = None
-) -> List[Tuple[Path, EcoSpoldV2]]:
-    """Parses a directory of Ecospold XML files to a list of custom Ecospold classes.
+    file_path: Union[str, Path], valid_suffixes: Union[list[str], None] = None
+) -> list[tuple[Path, EcoSpoldV2]]:
+    """Parse every EcoSpold v2 file in a ZIP archive.
 
-    Parameters:
-    file_path: the ZIP file path, should contain files of version 2 of EcoSpold.
-    valid_suffixes: a list of valid file suffixes which will only be considered for
-    parsing. If None, defaults to [".xml", ".spold"].
+    Args:
+        file_path: ZIP archive with EcoSpold v2 files.
+        valid_suffixes: file suffixes to parse; defaults to
+            ``[".xml", ".spold"]``.
 
-    Returns a list of tuples of file paths and corresponding EcoSpold classes
-    representing the root of the XML file.
+    Returns:
+        ``(path, EcoSpold)`` for each parsed file.
     """
     if valid_suffixes is None:
         valid_suffixes = [".xml", ".spold"]
@@ -327,17 +389,17 @@ def parse_zip_file_v2(
 
 
 def validate_zip_file_v1(
-    file_path: Union[str, Path, StringIO], valid_suffixes: Union[List[str], None] = None
-) -> List[Tuple[Path, Union[None, List[str]]]]:
-    """Validates an Ecospold V1 XML file to custom Ecospold classes.
+    file_path: Union[str, Path], valid_suffixes: Union[list[str], None] = None
+) -> list[tuple[Path, Union[etree._ListErrorLog, None]]]:
+    """Validate every EcoSpold v1 file in a ZIP archive.
 
-    Parameters:
-        file_path: the ZIP file path, should contain files of version 1 of EcoSpold.
-        valid_suffixes: a list of valid file suffixes which will only be considered for
-        parsing. If None, defaults to [".xml", ".spold"].
+    Args:
+        file_path: ZIP archive with EcoSpold v1 files.
+        valid_suffixes: file suffixes to validate; defaults to
+            ``[".xml", ".spold"]``.
 
-    Returns a list of tuples of file paths and corresponding list of errors, which
-    is ``None`` if no errors.
+    Returns:
+        ``(path, errors)`` for each file; errors is None for a valid file.
     """
     if valid_suffixes is None:
         valid_suffixes = [".xml", ".spold"]
@@ -348,17 +410,17 @@ def validate_zip_file_v1(
 
 
 def validate_zip_file_v2(
-    file_path: Union[str, Path, StringIO], valid_suffixes: Union[List[str], None] = None
-) -> List[Tuple[Path, Union[None, List[str]]]]:
-    """Validates an Ecospold V2 XML file to custom Ecospold classes.
+    file_path: Union[str, Path], valid_suffixes: Union[list[str], None] = None
+) -> list[tuple[Path, Union[etree._ListErrorLog, None]]]:
+    """Validate every EcoSpold v2 file in a ZIP archive.
 
-    Parameters:
-        file_path: the ZIP file path, should contain files of version 2 of EcoSpold.
-        valid_suffixes: a list of valid file suffixes which will only be considered for
-        parsing. If None, defaults to [".xml", ".spold"].
+    Args:
+        file_path: ZIP archive with EcoSpold v2 files.
+        valid_suffixes: file suffixes to validate; defaults to
+            ``[".xml", ".spold"]``.
 
-    Returns a list of tuples of file paths and corresponding list of errors, which
-    is ``None`` if no errors.
+    Returns:
+        ``(path, errors)`` for each file; errors is None for a valid file.
     """
     if valid_suffixes is None:
         valid_suffixes = [".xml", ".spold"]
@@ -369,22 +431,22 @@ def validate_zip_file_v2(
 
 
 def save_ecospold_file(
-    root: etree.ElementBase, path: str, fill_defaults: bool = False
+    root: etree.ElementBase, path: Union[str, Path], fill_defaults: bool = False
 ) -> None:
-    """Saves an Ecospold class to an XML file.
+    """Save an EcoSpold element tree to an XML file.
 
-    Parameters:
-    root: the EcoSpold class representing the root of the XML file.
-    path: the path to save the Ecospold XML file.
-    fill_defaults: whether to fill defaults values for attributes or not.
+    Args:
+        root: root ``EcoSpold`` element of the tree to save.
+        path: where to write the file.
+        fill_defaults: fill empty attributes from ``Defaults`` before saving.
     """
     if not fill_defaults:
-        staticDefaults = None
-        dynamicDefaults = None
+        static_defaults = None
+        dynamic_defaults = None
     else:
-        staticDefaults = Defaults.STATIC_DEFAULTS
-        dynamicDefaults = Defaults.DYNAMIC_DEFAULTS
+        static_defaults = Defaults.STATIC_DEFAULTS
+        dynamic_defaults = Defaults.DYNAMIC_DEFAULTS
 
     save_file(
-        root, path, static_defaults=staticDefaults, dynamic_defaults=dynamicDefaults
+        root, path, static_defaults=static_defaults, dynamic_defaults=dynamic_defaults
     )

@@ -1,4 +1,6 @@
-"""All information from
+"""Validation and normalisation of CAS registry numbers.
+
+All information from
 https://www.cas.org/support/documentation/chemical-substances/checkdig
 
 CAS numbers have the form A-B-C, where:
@@ -27,29 +29,38 @@ import math
 from typing import Union
 
 
-def validate_cas(cas: Union[str, int, float]) -> str:
-    """Return valid CAS number as a correctly validate string, or raise ``ValueError``.
+def validate_cas(cas: Union[str, float]) -> str:
+    """Normalise a CAS number: strip, re-hyphenate, zero-pad, check the digit.
 
-    Will check the check digit, re-hyphenate, and convert from a number if necessary.
+    Args:
+        cas: CAS number as a string, or as a number without hyphens.
 
+    Returns:
+        The CAS number as ``0000000-00-0``.
+
+    Raises:
+        ValueError: if it has invalid characters, is empty, or its check digit is
+            wrong.
     """
     if isinstance(cas, str):
-        casStr = cas.strip()
+        cas_str = cas.strip()
     elif isinstance(cas, (int, float)):
-        casStr = _convert_numeric_cas(cas)
+        cas_str = _convert_numeric_cas(cas)
 
-    validCharacters = {str(x) for x in range(10)}.union({"-"})
-    invalidCharacters = {c for c in casStr if c not in validCharacters}
-    if invalidCharacters:
-        raise ValueError(f"CAS number includes invalid characters: {invalidCharacters}")
+    valid_characters = {str(x) for x in range(10)}.union({"-"})
+    invalid_characters = {c for c in cas_str if c not in valid_characters}
+    if invalid_characters:
+        msg = f"CAS number includes invalid characters: {invalid_characters}"
+        raise ValueError(msg)
 
-    if not casStr:
-        raise ValueError("Given CAS is empty: {cas}.")
+    if not cas_str:
+        msg = f"Given CAS is empty: {cas!r}."
+        raise ValueError(msg)
 
-    casStr = _rehyphenate_cas(casStr)
+    cas_str = _rehyphenate_cas(cas_str)
 
-    _check_digit(casStr)
-    return _zero_pad_cas(casStr)
+    _check_digit(cas_str)
+    return _zero_pad_cas(cas_str)
 
 
 def _check_digit(cas_str: str) -> None:
@@ -60,20 +71,22 @@ def _check_digit(cas_str: str) -> None:
         f"CAS Check Digit error: CAS '{cas_str}' has check digit of {cas_str[-1]}, "
         f"but it should be {total % 10}"
     )
-    if not total % 10 == int(cas_str[-1]):
-        raise ValueError(f"CAS not valid: {cas_str} ({error})")
+    if total % 10 != int(cas_str[-1]):
+        msg = f"CAS not valid: {cas_str} ({error})"
+        raise ValueError(msg)
 
 
-def _convert_numeric_cas(cas: Union[int, float]) -> str:
+def _convert_numeric_cas(cas: float) -> str:
     if math.isnan(cas):
-        raise ValueError("Given CAS value is Not-a-Number")
-    casStr = str(int(cas))
-    return _rehyphenate_cas(casStr)
+        msg = "Given CAS value is Not-a-Number"
+        raise ValueError(msg)
+    cas_str = str(int(cas))
+    return _rehyphenate_cas(cas_str)
 
 
 def _rehyphenate_cas(cas_str: str) -> str:
     cas_str = cas_str.replace("-", "")
-    return f"{cas_str[-10:-3]}-{ cas_str[-3:-1]}-{cas_str[-1]}"
+    return f"{cas_str[-10:-3]}-{cas_str[-3:-1]}-{cas_str[-1]}"
 
 
 def _zero_pad_cas(cas_str: str) -> str:

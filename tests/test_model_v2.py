@@ -1,6 +1,8 @@
 """Test cases for the __model_v2__ module."""
 
 from datetime import datetime
+from io import BytesIO
+from pathlib import Path
 
 import pytest
 
@@ -10,6 +12,7 @@ from pyecospold.model_v2 import (
     ActivityDataset,
     ActivityDescription,
     AdministrativeInformation,
+    Binomial,
     Classification,
     DataEntryBy,
     DataGeneratorAndPublication,
@@ -19,423 +22,444 @@ from pyecospold.model_v2 import (
     FlowData,
     Geography,
     IntermediateExchange,
+    Lognormal,
     MacroEconomicScenario,
     ModellingAndValidation,
     Parameter,
     Representativeness,
+    RequiredContextReference,
     Technology,
     TextAndImage,
     TimePeriod,
     Uncertainty,
+    Undefined,
 )
 
 
-@pytest.fixture(name="eco_spold")
-def _eco_spold() -> EcoSpold:
-    return parse_file_v2("data/v2/v2_2.spold")
+@pytest.fixture
+def eco_spold(fixtures_dir: Path) -> EcoSpold:
+    return parse_file_v2(fixtures_dir / "v2" / "v2_2.spold")
 
 
 def test_parse_file_v2_eco_spold(eco_spold: EcoSpold) -> None:
     """It parses attributes correctly."""
-    geographyId = "0723d252-7e2a-11de-9820-0019e336be3a"
-    geographyShortName = "RER"
-    activityName = "formic acid production, methyl formate route"
-    elementaryExchangeCompartment = "water"
-    elementaryExchangeSubCompartment = "surface water"
-    elementaryExchangeName = "BOD5, Biological Oxygen Demand"
-    elementaryExchangeUnitName = "kg"
-    intermediateExchangeName = "water, deionised, from tap water, at user"
-    intermediateExchangeUnitName = "kg"
+    geography_id = "0723d252-7e2a-11de-9820-0019e336be3a"
+    geography_short_name = "RER"
+    activity_name = "formic acid production, methyl formate route"
+    elementary_exchange_compartment = "water"
+    elementary_exchange_sub_compartment = "surface water"
+    elementary_exchange_name = "BOD5, Biological Oxygen Demand"
+    elementary_exchange_unit_name = "kg"
+    intermediate_exchange_name = "water, deionised, from tap water, at user"
+    intermediate_exchange_unit_name = "kg"
 
     assert isinstance(eco_spold, EcoSpold)
     assert isinstance(eco_spold.activityDataset, ActivityDataset)
-    assert eco_spold.geography.geographyId == geographyId
-    assert eco_spold.geographyShortName == geographyShortName
-    assert eco_spold.activityName == activityName
+    assert eco_spold.geography.geographyId == geography_id
+    assert eco_spold.geographyShortName == geography_short_name
+    assert eco_spold.activityName == activity_name
     assert (
-        eco_spold.elementary_exchange_compartment(0, 0) == elementaryExchangeCompartment
+        eco_spold.elementary_exchange_compartment(0, 0)
+        == elementary_exchange_compartment
     )
     assert (
         eco_spold.elementary_exchange_sub_compartment(0, 0)
-        == elementaryExchangeSubCompartment
+        == elementary_exchange_sub_compartment
     )
-    assert eco_spold.elementary_exchange_name(0, 0) == elementaryExchangeName
-    assert eco_spold.elementary_exchange_unit_name(0, 0) == elementaryExchangeUnitName
-    assert eco_spold.intermediate_exchange_name(0, 0) == intermediateExchangeName
+    assert eco_spold.elementary_exchange_name(0, 0) == elementary_exchange_name
     assert (
-        eco_spold.intermediate_exchange_unit_name(0, 0) == intermediateExchangeUnitName
+        eco_spold.elementary_exchange_unit_name(0, 0) == elementary_exchange_unit_name
+    )
+    assert eco_spold.intermediate_exchange_name(0, 0) == intermediate_exchange_name
+    assert (
+        eco_spold.intermediate_exchange_unit_name(0, 0)
+        == intermediate_exchange_unit_name
     )
 
 
-def test_parse_file_v2_activity_dataset() -> None:
+def test_parse_file_v2_activity_dataset(fixtures_dir: Path) -> None:
     """It parses attributes correctly."""
-    ecoSpold = parse_file_v2("data/v2/v2_1.xml")
-    activityDataset = ecoSpold.activityDataset
+    eco_spold = parse_file_v2(fixtures_dir / "v2" / "v2_1.xml")
+    activity_dataset = eco_spold.activityDataset
 
-    assert isinstance(activityDataset.activityDescription, ActivityDescription)
+    assert isinstance(activity_dataset.activityDescription, ActivityDescription)
     assert isinstance(
-        activityDataset.administrativeInformation, AdministrativeInformation
+        activity_dataset.administrativeInformation, AdministrativeInformation
     )
-    assert isinstance(activityDataset.flowData, FlowData)
-    assert isinstance(activityDataset.modellingAndValidation, ModellingAndValidation)
+    assert isinstance(activity_dataset.flowData, FlowData)
+    assert isinstance(activity_dataset.modellingAndValidation, ModellingAndValidation)
 
 
 def test_parse_file_v2_child_activity_dataset(eco_spold: EcoSpold) -> None:
     """It parses attributes correctly."""
-    activityDataset = eco_spold.activityDataset
+    activity_dataset = eco_spold.activityDataset
 
-    assert isinstance(activityDataset.activityDescription, ActivityDescription)
+    assert isinstance(activity_dataset.activityDescription, ActivityDescription)
     assert isinstance(
-        activityDataset.administrativeInformation, AdministrativeInformation
+        activity_dataset.administrativeInformation, AdministrativeInformation
     )
-    assert isinstance(activityDataset.flowData, FlowData)
-    assert isinstance(activityDataset.modellingAndValidation, ModellingAndValidation)
+    assert isinstance(activity_dataset.flowData, FlowData)
+    assert isinstance(activity_dataset.modellingAndValidation, ModellingAndValidation)
 
 
 def test_parse_file_v2_activity_description(eco_spold: EcoSpold) -> None:
     """It parses attributes correctly."""
-    activityDescription = eco_spold.activityDataset.activityDescription
+    activity_description = eco_spold.activityDataset.activityDescription
 
-    assert isinstance(activityDescription.activity[0], Activity)
-    assert isinstance(activityDescription.classification[0], Classification)
-    assert isinstance(activityDescription.geography[0], Geography)
+    assert isinstance(activity_description.activity[0], Activity)
+    assert isinstance(activity_description.classification[0], Classification)
+    assert isinstance(activity_description.geography[0], Geography)
     assert isinstance(
-        activityDescription.macroEconomicScenario[0], MacroEconomicScenario
+        activity_description.macroEconomicScenario[0], MacroEconomicScenario
     )
-    assert isinstance(activityDescription.technology[0], Technology)
-    assert isinstance(activityDescription.timePeriod[0], TimePeriod)
+    assert isinstance(activity_description.technology[0], Technology)
+    assert isinstance(activity_description.timePeriod[0], TimePeriod)
 
 
 def test_parse_file_v2_flow_data(eco_spold: EcoSpold) -> None:
     """It parses attributes correctly."""
-    elementaryExchangesLen = 11
-    intermediateExchangesLen = 41
-    parametersLen = 6
-    impactIndicatorsLen = 0
-    flowData = eco_spold.activityDataset.flowData
+    elementary_exchanges_len = 11
+    intermediate_exchanges_len = 41
+    parameters_len = 6
+    impact_indicators_len = 0
+    flow_data = eco_spold.activityDataset.flowData
 
-    assert isinstance(flowData.elementaryExchanges[0], ElementaryExchange)
-    assert isinstance(flowData.intermediateExchanges[0], IntermediateExchange)
-    assert isinstance(flowData.parameters[0], Parameter)
+    assert isinstance(flow_data.elementaryExchanges[0], ElementaryExchange)
+    assert isinstance(flow_data.intermediateExchanges[0], IntermediateExchange)
+    assert isinstance(flow_data.parameters[0], Parameter)
 
-    assert len(flowData.elementaryExchanges) == elementaryExchangesLen
-    assert len(flowData.intermediateExchanges) == intermediateExchangesLen
-    assert len(flowData.parameters) == parametersLen
-    assert len(flowData.impactIndicators) == impactIndicatorsLen
+    assert len(flow_data.elementaryExchanges) == elementary_exchanges_len
+    assert len(flow_data.intermediateExchanges) == intermediate_exchanges_len
+    assert len(flow_data.parameters) == parameters_len
+    assert len(flow_data.impactIndicators) == impact_indicators_len
 
 
 def test_parse_file_v2_modelling_and_validation(eco_spold: EcoSpold) -> None:
     """It parses attributes correctly."""
-    modellingAndValidation = eco_spold.activityDataset.modellingAndValidation
+    modelling_and_validation = eco_spold.activityDataset.modellingAndValidation
 
-    assert isinstance(modellingAndValidation.representativeness, Representativeness)
-    assert modellingAndValidation.review is None
+    assert isinstance(modelling_and_validation.representativeness, Representativeness)
+    assert modelling_and_validation.review is None
 
 
 def test_parse_file_v2_administrative_information(eco_spold: EcoSpold) -> None:
     """It parses attributes correctly."""
-    administrativeInformation = eco_spold.activityDataset.administrativeInformation
+    administrative_information = eco_spold.activityDataset.administrativeInformation
 
-    assert isinstance(administrativeInformation.dataEntryBy, DataEntryBy)
+    assert isinstance(administrative_information.dataEntryBy, DataEntryBy)
     assert isinstance(
-        administrativeInformation.dataGeneratorAndPublication,
+        administrative_information.dataGeneratorAndPublication,
         DataGeneratorAndPublication,
     )
-    assert isinstance(administrativeInformation.fileAttributes, FileAttributes)
+    assert isinstance(administrative_information.fileAttributes, FileAttributes)
 
 
 def test_parse_file_v2_activity(eco_spold: EcoSpold) -> None:
     """It parses attributes correctly."""
-    activityNames = ["formic acid production, methyl formate route"]
-    generalCommentTexts = [
-        "This data represents the production of 1 kg of formic acid "
-        + "from methyl formate. Raw materials and energy consumptions are "
-        + "modelled with literature data. The emissions are estimated. "
-        + "Infrastructure is included with a default value.",
-        "[This dataset was already contained in the ecoinvent database version 2. "
-        + "It was not individually updated during the transfer to ecoinvent version 3. "
-        + "Life Cycle Impact Assessment results may still have changed, as they are "
-        + "affected by changes in the supply chain, i.e. in other datasets. This "
-        + "dataset was generated following the ecoinvent quality guidelines for "
-        + "version 2. It may have been subject to central changes described in the "
-        + "ecoinvent version 3 change report "
-        + "(http://www.ecoinvent.org/database/ecoinvent-version-3/reports-of-changes/),"
-        + " and the results of the central updates were reviewed extensively. The "
-        + "changes added e.g. consistent water flows and other information throughout "
-        + "the database. The documentation of this dataset can be found in the "
-        + "ecoinvent reports of version 2, which are still available via the ecoinvent "
-        + "website. The change report linked above covers all central changes that were"
-        + " made during the conversion process.]",
+    activity_names = ["formic acid production, methyl formate route"]
+    general_comment_texts = [
+        (
+            "This data represents the production of 1 kg of formic acid "
+            "from methyl formate. Raw materials and energy consumptions are "
+            "modelled with literature data. The emissions are estimated. "
+            "Infrastructure is included with a default value."
+        ),
+        (
+            "[This dataset was already contained in the ecoinvent database version 2. "
+            "It was not individually updated during the transfer to ecoinvent version "
+            "3. Life Cycle Impact Assessment results may still have changed, as they "
+            "are affected by changes in the supply chain, i.e. in other datasets. This "
+            "dataset was generated following the ecoinvent quality guidelines for "
+            "version 2. It may have been subject to central changes described in the "
+            "ecoinvent version 3 change report "
+            "(http://www.ecoinvent.org/database/ecoinvent-version-3/reports-of-changes/),"
+            " and the results of the central updates were reviewed extensively. The "
+            "changes added e.g. consistent water flows and other information "
+            "throughout the database. The documentation of this dataset can be found "
+            "in the ecoinvent reports of version 2, which are still available via the "
+            "ecoinvent website. The change report linked above covers all central "
+            "changes that were made during the conversion process.]"
+        ),
     ]
-    generalCommentImageUrls = []
-    includedActivitiesEnds = [
-        "This activity ends with 1 kg of formic acid, 100% af the factory gate. "
-        "The dataset includes the input materials, energy uses, "
-        "infrastructure and emissions."
+    general_comment_image_urls: list[str] = []
+    included_activities_ends = [
+        (
+            "This activity ends with 1 kg of formic acid, 100% af the factory gate. "
+            "The dataset includes the input materials, energy uses, "
+            "infrastructure and emissions."
+        )
     ]
-    includedActivitiesStarts = [
+    included_activities_starts = [
         "From the reception of methyl formate at the factory gate."
     ]
     synonyms = ["methanoic acid"]
     tags = ["ConvertedDataset"]
-    activityId = "ffed8e5b-8ecb-4a93-bc79-a1404afd9fcd"
-    activityNameId = "8b542688-aa36-45d5-b2f0-3b15ade03700"
-    parentActivityId = "dca19657-6614-4b1d-98aa-0658dd2ced39"
-    inheritanceDepth = 0
-    inheritanceDepthStr = "not a child"
-    activityType = 1
-    typeStr = "Unit process"
-    specialActivityType = 0
-    specialActivityTypeStr = "ordinary transforming activity (default)"
-    energyValues = 0
-    energyValuesStr = "Undefined (default)"
-    masterAllocationPropertyId = ""
-    masterAllocationPropertyIdOverwrittenByChild = False
-    masterAllocationPropertyContextId = ""
-    datasetIcon = ""
+    activity_id = "ffed8e5b-8ecb-4a93-bc79-a1404afd9fcd"
+    activity_name_id = "8b542688-aa36-45d5-b2f0-3b15ade03700"
+    parent_activity_id = "dca19657-6614-4b1d-98aa-0658dd2ced39"
+    inheritance_depth = 0
+    inheritance_depth_str = "not a child"
+    activity_type = 1
+    type_str = "Unit process"
+    special_activity_type = 0
+    special_activity_type_str = "ordinary transforming activity (default)"
+    energy_values = 0
+    energy_values_str = "Undefined (default)"
+    master_allocation_property_id = ""
+    master_allocation_property_id_overwritten_by_child = False
+    master_allocation_property_context_id = ""
+    dataset_icon = ""
     activity = eco_spold.activityDataset.activityDescription.activity[0]
 
     assert activity.allocationComment is None
     assert isinstance(activity.generalComment, TextAndImage)
-    assert activity.activityNames == activityNames
-    assert activity.generalComment.texts == generalCommentTexts
-    assert activity.generalComment.imageUrls == generalCommentImageUrls
-    assert activity.includedActivitiesEnds == includedActivitiesEnds
-    assert activity.includedActivitiesStarts == includedActivitiesStarts
+    assert activity.activityNames == activity_names
+    assert activity.generalComment.texts == general_comment_texts
+    assert activity.generalComment.imageUrls == general_comment_image_urls
+    assert activity.includedActivitiesEnds == included_activities_ends
+    assert activity.includedActivitiesStarts == included_activities_starts
     assert activity.synonyms == synonyms
     assert activity.tags == tags
-    assert activity.id == activityId
-    assert activity.activityNameId == activityNameId
-    assert activity.parentActivityId == parentActivityId
-    assert activity.inheritanceDepth == inheritanceDepth
-    assert activity.inheritanceDepthStr == inheritanceDepthStr
-    assert activity.type == activityType
-    assert activity.typeStr == typeStr
-    assert activity.specialActivityType == specialActivityType
-    assert activity.specialActivityTypeStr == specialActivityTypeStr
-    assert activity.energyValues == energyValues
-    assert activity.energyValuesStr == energyValuesStr
-    assert activity.masterAllocationPropertyId == masterAllocationPropertyId
+    assert activity.id == activity_id
+    assert activity.activityNameId == activity_name_id
+    assert activity.parentActivityId == parent_activity_id
+    assert activity.inheritanceDepth == inheritance_depth
+    assert activity.inheritanceDepthStr == inheritance_depth_str
+    assert activity.type == activity_type
+    assert activity.typeStr == type_str
+    assert activity.specialActivityType == special_activity_type
+    assert activity.specialActivityTypeStr == special_activity_type_str
+    assert activity.energyValues == energy_values
+    assert activity.energyValuesStr == energy_values_str
+    assert activity.masterAllocationPropertyId == master_allocation_property_id
     assert (
         activity.masterAllocationPropertyIdOverwrittenByChild
-        == masterAllocationPropertyIdOverwrittenByChild
+        == master_allocation_property_id_overwritten_by_child
     )
     assert (
-        activity.masterAllocationPropertyContextId == masterAllocationPropertyContextId
+        activity.masterAllocationPropertyContextId
+        == master_allocation_property_context_id
     )
-    assert activity.datasetIcon == datasetIcon
+    assert activity.datasetIcon == dataset_icon
 
 
 def test_parse_file_v2_classification(eco_spold: EcoSpold) -> None:
     """It parses attributes correctly."""
-    classificationId = "7ac1cbc6-1385-4a68-8647-ed7aa78db201"
-    classificationContextId = ""
-    classificationSystem = "EcoSpold01Categories"
-    classificationValue = "chemicals/organics"
-    activityDescription = eco_spold.activityDataset.activityDescription
-    classification = activityDescription.classification[0]
+    classification_id = "7ac1cbc6-1385-4a68-8647-ed7aa78db201"
+    classification_context_id = ""
+    classification_system = "EcoSpold01Categories"
+    classification_value = "chemicals/organics"
+    activity_description = eco_spold.activityDataset.activityDescription
+    classification = activity_description.classification[0]
 
-    assert classification.classificationId == classificationId
-    assert classification.classificationContextId == classificationContextId
-    assert classification.classificationSystem == classificationSystem
-    assert classification.classificationValue == classificationValue
+    assert classification.classificationId == classification_id
+    assert classification.classificationContextId == classification_context_id
+    assert classification.classificationSystem == classification_system
+    assert classification.classificationValue == classification_value
 
 
 def test_parse_file_v2_geography(eco_spold: EcoSpold) -> None:
     """It parses attributes correctly."""
-    geographyId = "0723d252-7e2a-11de-9820-0019e336be3a"
-    geographyContextId = ""
-    shortNames = ["RER"]
-    commentsTexts = ["The inventory is modelled for Europe."]
-    commentsImageUrls = []
-    activityDescription = eco_spold.activityDataset.activityDescription
-    geography = activityDescription.geography[0]
+    geography_id = "0723d252-7e2a-11de-9820-0019e336be3a"
+    geography_context_id = ""
+    short_names = ["RER"]
+    comments_texts = ["The inventory is modelled for Europe."]
+    comments_image_urls: list[str] = []
+    activity_description = eco_spold.activityDataset.activityDescription
+    geography = activity_description.geography[0]
 
-    assert geography.geographyId == geographyId
-    assert geography.geographyContextId == geographyContextId
-    assert geography.shortNames == shortNames
-    assert geography.comments[0].texts == commentsTexts
-    assert geography.comments[0].imageUrls == commentsImageUrls
+    assert geography.geographyId == geography_id
+    assert geography.geographyContextId == geography_context_id
+    assert geography.shortNames == short_names
+    assert geography.comments[0].texts == comments_texts
+    assert geography.comments[0].imageUrls == comments_image_urls
 
 
 def test_parse_file_v2_technology(eco_spold: EcoSpold) -> None:
     """It parses attributes correctly."""
-    technologyLevel = 3
-    technologyLevelStr = "Current (default)"
-    commentsTexts = [
-        "To keep undesirable reesterification as low as possible, the time of "
-        + "direct contact between methanol and formic acid must be as short as "
-        + "possible, and separation must be carried out at the lowest possible "
-        + "temperature. Introduction of methyl formate into the lower part of "
-        + "the column in which lower boiling methyl formate and methanol are "
-        + "separated from water and formic acid, has also been suggested. This "
-        + "largely prevents reesterification because of the excess methyl formate "
-        + "present in the critical region of the column."
+    technology_level = 3
+    technology_level_str = "Current (default)"
+    comments_texts = [
+        (
+            "To keep undesirable reesterification as low as possible, the time of "
+            "direct contact between methanol and formic acid must be as short as "
+            "possible, and separation must be carried out at the lowest possible "
+            "temperature. Introduction of methyl formate into the lower part of "
+            "the column in which lower boiling methyl formate and methanol are "
+            "separated from water and formic acid, has also been suggested. This "
+            "largely prevents reesterification because of the excess methyl formate "
+            "present in the critical region of the column."
+        )
     ]
-    commentsImageUrl = (
+    comments_image_url = (
         "https://db3.ecoinvent.org/images/2ddc19c0-905f-42c3-b14c-e68332befec9"
     )
-    activityDescription = eco_spold.activityDataset.activityDescription
-    technology = activityDescription.technology[0]
+    activity_description = eco_spold.activityDataset.activityDescription
+    technology = activity_description.technology[0]
 
-    assert technology.technologyLevel == technologyLevel
-    assert technology.technologyLevelStr == technologyLevelStr
-    assert technology.comments[0].texts[0] == commentsTexts[0]
-    assert technology.comments[0].imageUrls[0] == commentsImageUrl
+    assert technology.technologyLevel == technology_level
+    assert technology.technologyLevelStr == technology_level_str
+    assert technology.comments[0].texts[0] == comments_texts[0]
+    assert technology.comments[0].imageUrls[0] == comments_image_url
 
 
 def test_parse_file_v2_time_period(eco_spold: EcoSpold) -> None:
     """It parses attributes correctly."""
-    startDate = "1984-01-01"
-    endDate = "2014-12-31"
-    isDataValidForEntirePeriod = True
-    commentsTexts = ["Time of publications"]
-    imageUrls = []
-    activityDescription = eco_spold.activityDataset.activityDescription
-    timePeriod = activityDescription.timePeriod[0]
+    start_date = "1984-01-01"
+    end_date = "2014-12-31"
+    is_data_valid_for_entire_period = True
+    comments_texts = ["Time of publications"]
+    image_urls: list[str] = []
+    activity_description = eco_spold.activityDataset.activityDescription
+    time_period = activity_description.timePeriod[0]
 
-    assert timePeriod.startDate == startDate
-    assert timePeriod.endDate == endDate
-    assert timePeriod.isDataValidForEntirePeriod == isDataValidForEntirePeriod
-    assert timePeriod.comments[0].texts == commentsTexts
-    assert timePeriod.comments[0].imageUrls == imageUrls
+    assert time_period.startDate == start_date
+    assert time_period.endDate == end_date
+    assert time_period.isDataValidForEntirePeriod == is_data_valid_for_entire_period
+    assert time_period.comments[0].texts == comments_texts
+    assert time_period.comments[0].imageUrls == image_urls
 
 
 def test_parse_file_v2_macro_economic_scenario(eco_spold: EcoSpold) -> None:
     """It parses attributes correctly."""
-    macroEconomicScenarioId = "d9f57f0a-a01f-42eb-a57b-8f18d6635801"
-    macroEconomicScenarioContextId = ""
+    macro_economic_scenario_id = "d9f57f0a-a01f-42eb-a57b-8f18d6635801"
+    macro_economic_scenario_context_id = ""
     names = ["Business-as-Usual"]
-    comments = []
-    activityDescription = eco_spold.activityDataset.activityDescription
-    macroEconomicScenario = activityDescription.macroEconomicScenario[0]
+    comments: list[str] = []
+    activity_description = eco_spold.activityDataset.activityDescription
+    macro_economic_scenario = activity_description.macroEconomicScenario[0]
 
-    assert macroEconomicScenario.macroEconomicScenarioId == macroEconomicScenarioId
+    assert macro_economic_scenario.macroEconomicScenarioId == macro_economic_scenario_id
     assert (
-        macroEconomicScenario.macroEconomicScenarioContextId
-        == macroEconomicScenarioContextId
+        macro_economic_scenario.macroEconomicScenarioContextId
+        == macro_economic_scenario_context_id
     )
-    assert macroEconomicScenario.names == names
-    assert macroEconomicScenario.comments == comments
+    assert macro_economic_scenario.names == names
+    assert macro_economic_scenario.comments == comments
 
 
 def test_parse_file_v2_intermediate_exchange(eco_spold: EcoSpold) -> None:
     """It parses attributes correctly."""
-    exchangeID = "336dd4ef-cece-4c49-b412-5fe565ec8b8f"
-    unitId = "980b811e-3905-4797-82a5-173f5568bc7e"
+    exchange_id = "336dd4ef-cece-4c49-b412-5fe565ec8b8f"
+    unit_id = "980b811e-3905-4797-82a5-173f5568bc7e"
     amount = 0
-    productionVolumeAmount = 0
+    production_volume_amount = 0
     names = ["heat, district or industrial, natural gas"]
-    unitNames = ["MJ"]
+    unit_names = ["MJ"]
     comments = ["Literature value."]
-    intermediateExchangeId = "1125e767-7b5d-442e-81d6-9b0d3e1919ac"
+    intermediate_exchange_id = "1125e767-7b5d-442e-81d6-9b0d3e1919ac"
     group = 5
-    groupType = "input"
-    groupStr = "From Technosphere (unspecified)"
-    outGroup = 0
-    outGroupStr = "ReferenceProduct"
-    classificationsLen = 1
-    productionVolumeUncertaintiesLen = 0
-    intermediateExchanges = eco_spold.activityDataset.flowData.intermediateExchanges
-    intermediateExchange = intermediateExchanges[1]
-    intermediateExchangeOut = intermediateExchanges[6]
+    group_type = "input"
+    group_str = "From Technosphere (unspecified)"
+    out_group = 0
+    out_group_str = "ReferenceProduct"
+    classifications_len = 1
+    production_volume_uncertainties_len = 0
+    intermediate_exchanges = eco_spold.activityDataset.flowData.intermediateExchanges
+    intermediate_exchange = intermediate_exchanges[1]
+    intermediate_exchange_out = intermediate_exchanges[6]
 
-    assert intermediateExchange.id == exchangeID
-    assert intermediateExchange.unitId == unitId
-    assert intermediateExchange.amount == amount
-    assert intermediateExchange.productionVolumeAmount == productionVolumeAmount
-    assert intermediateExchange.intermediateExchangeId == intermediateExchangeId
-    assert intermediateExchange.group == group
-    assert intermediateExchange.groupType == groupType
-    assert intermediateExchange.groupStr == groupStr
-    assert intermediateExchange.names == names
-    assert intermediateExchange.unitNames == unitNames
-    assert intermediateExchange.comments == comments
+    assert intermediate_exchange.id == exchange_id
+    assert intermediate_exchange.unitId == unit_id
+    assert intermediate_exchange.amount == amount
+    assert intermediate_exchange.productionVolumeAmount == production_volume_amount
+    assert intermediate_exchange.intermediateExchangeId == intermediate_exchange_id
+    assert intermediate_exchange.group == group
+    assert intermediate_exchange.groupType == group_type
+    assert intermediate_exchange.groupStr == group_str
+    assert intermediate_exchange.names == names
+    assert intermediate_exchange.unitNames == unit_names
+    assert intermediate_exchange.comments == comments
 
-    assert intermediateExchangeOut.group == outGroup
-    assert intermediateExchangeOut.groupStr == outGroupStr
+    assert intermediate_exchange_out.group == out_group
+    assert intermediate_exchange_out.groupStr == out_group_str
 
-    assert isinstance(intermediateExchange.uncertainties[0], Uncertainty)
-    assert len(intermediateExchange.classifications) == classificationsLen
+    assert isinstance(intermediate_exchange.uncertainties[0], Uncertainty)
+    assert len(intermediate_exchange.classifications) == classifications_len
     assert (
-        len(intermediateExchange.productionVolumeUncertainties)
-        == productionVolumeUncertaintiesLen
+        len(intermediate_exchange.productionVolumeUncertainties)
+        == production_volume_uncertainties_len
     )
 
 
 def test_parse_file_v2_elementary_exchange(eco_spold: EcoSpold) -> None:
     """It parses attributes correctly."""
-    exchangeID = "719770d0-4b1e-4c44-bd9e-72c4687a6ee0"
-    unitId = "487df68b-4994-4027-8fdc-a4dc298257b7"
+    exchange_id = "719770d0-4b1e-4c44-bd9e-72c4687a6ee0"
+    unit_id = "487df68b-4994-4027-8fdc-a4dc298257b7"
     amount = 0.0011
-    isCalculatedAmount = False
-    sourceIdOverwrittenByChild = False
-    specificAllocationPropertyId = ""
-    specificAllocationPropertyIdOverwrittenByChild = False
-    specificAllocationPropertyContextId = ""
-    elementaryExchangeId = "70d467b6-115e-43c5-add2-441de9411348"
+    is_calculated_amount = False
+    source_id_overwritten_by_child = False
+    specific_allocation_property_id = ""
+    specific_allocation_property_id_overwritten_by_child = False
+    specific_allocation_property_context_id = ""
+    elementary_exchange_id = "70d467b6-115e-43c5-add2-441de9411348"
     names = ["BOD5, Biological Oxygen Demand"]
-    unitNames = ["kg"]
+    unit_names = ["kg"]
     comments = [
-        "Calculation. This value was calculated from the amount of methyl formate in "
-        + "the treated waste water assuming a carbon conversion of 96% for COD. "
-        + "The worst case scenario, BOD=COD, was used. "
-        + "It is assumed that the manufacturing plant is located in an "
-        + "urban/industrial area and consequently the emissions are categorised as "
-        + "emanating in a high population density area. The emissions into water are "
-        + "assumed to be emitted into rivers."
+        (
+            "Calculation. This value was calculated from the amount of methyl formate "
+            "in the treated waste water assuming a carbon conversion of 96% for COD. "
+            "The worst case scenario, BOD=COD, was used. It is assumed that the "
+            "manufacturing plant is located in an urban/industrial area and "
+            "consequently the emissions are categorised as emanating in a high "
+            "population density area. The emissions into water are assumed to be "
+            "emitted into rivers."
+        )
     ]
     group = 4
-    groupType = "output"
-    groupStr = "ToEnvironment"
-    inGroup = 4
-    inGroupStr = "FromEnvironment"
-    synonyms = []
-    tags = []
-    propertiesLen = 0
-    transferCoefficientsLen = 0
-    elementaryExchanges = eco_spold.activityDataset.flowData.elementaryExchanges
-    elementaryExchange = elementaryExchanges[0]
-    elementaryExchangeIn = elementaryExchanges[1]
+    group_type = "output"
+    group_str = "ToEnvironment"
+    in_group = 4
+    in_group_str = "FromEnvironment"
+    synonyms: list[str] = []
+    tags: list[str] = []
+    properties_len = 0
+    transfer_coefficients_len = 0
+    elementary_exchanges = eco_spold.activityDataset.flowData.elementaryExchanges
+    elementary_exchange = elementary_exchanges[0]
+    elementary_exchange_in = elementary_exchanges[1]
 
-    assert elementaryExchange.id == exchangeID
-    assert elementaryExchange.unitId == unitId
-    assert elementaryExchange.amount == amount
-    assert elementaryExchange.isCalculatedAmount == isCalculatedAmount
-    assert elementaryExchange.sourceIdOverwrittenByChild == sourceIdOverwrittenByChild
+    assert elementary_exchange.id == exchange_id
+    assert elementary_exchange.unitId == unit_id
+    assert elementary_exchange.amount == amount
+    assert elementary_exchange.isCalculatedAmount == is_calculated_amount
     assert (
-        elementaryExchange.specificAllocationPropertyId == specificAllocationPropertyId
+        elementary_exchange.sourceIdOverwrittenByChild == source_id_overwritten_by_child
     )
     assert (
-        elementaryExchange.specificAllocationPropertyIdOverwrittenByChild
-        == specificAllocationPropertyIdOverwrittenByChild
+        elementary_exchange.specificAllocationPropertyId
+        == specific_allocation_property_id
     )
     assert (
-        elementaryExchange.specificAllocationPropertyContextId
-        == specificAllocationPropertyContextId
+        elementary_exchange.specificAllocationPropertyIdOverwrittenByChild
+        == specific_allocation_property_id_overwritten_by_child
     )
-    assert elementaryExchange.elementaryExchangeId == elementaryExchangeId
-    assert elementaryExchange.names == names
-    assert elementaryExchange.unitNames == unitNames
-    assert elementaryExchange.comments == comments
-    assert elementaryExchange.group == group
-    assert elementaryExchange.groupType == groupType
-    assert elementaryExchange.groupStr == groupStr
-    assert elementaryExchange.synonyms == synonyms
-    assert elementaryExchange.tags == tags
+    assert (
+        elementary_exchange.specificAllocationPropertyContextId
+        == specific_allocation_property_context_id
+    )
+    assert elementary_exchange.elementaryExchangeId == elementary_exchange_id
+    assert elementary_exchange.names == names
+    assert elementary_exchange.unitNames == unit_names
+    assert elementary_exchange.comments == comments
+    assert elementary_exchange.group == group
+    assert elementary_exchange.groupType == group_type
+    assert elementary_exchange.groupStr == group_str
+    assert elementary_exchange.synonyms == synonyms
+    assert elementary_exchange.tags == tags
 
-    assert elementaryExchangeIn.group == inGroup
-    assert elementaryExchangeIn.groupStr == inGroupStr
+    assert elementary_exchange_in.group == in_group
+    assert elementary_exchange_in.groupStr == in_group_str
 
-    assert isinstance(elementaryExchange.uncertainties[0], Uncertainty)
-    assert len(elementaryExchange.properties) == propertiesLen
-    assert len(elementaryExchange.transferCoefficients) == transferCoefficientsLen
+    assert isinstance(elementary_exchange.uncertainties[0], Uncertainty)
+    assert len(elementary_exchange.properties) == properties_len
+    assert len(elementary_exchange.transferCoefficients) == transfer_coefficients_len
 
 
 def test_parse_file_v2_uncertainty(eco_spold: EcoSpold) -> None:
     """It parses attributes correctly."""
-    flowData = eco_spold.activityDataset.flowData
-    uncertainty = flowData.intermediateExchanges[1].uncertainties[0]
+    flow_data = eco_spold.activityDataset.flowData
+    uncertainty = flow_data.intermediateExchanges[1].uncertainties[0]
 
     assert uncertainty.triangular is None
     assert uncertainty.uniform is None
@@ -447,242 +471,328 @@ def test_parse_file_v2_uncertainty(eco_spold: EcoSpold) -> None:
 
 def test_parse_file_v2_normal(eco_spold: EcoSpold) -> None:
     """It parses attributes correctly."""
-    meanValue = 0
+    mean_value = 0
     variance = 0
-    varianceWithPedigreeUncertainty = 0
-    flowData = eco_spold.activityDataset.flowData
-    uncertainty = flowData.intermediateExchanges[1].uncertainties[0]
+    variance_with_pedigree_uncertainty = 0
+    flow_data = eco_spold.activityDataset.flowData
+    uncertainty = flow_data.intermediateExchanges[1].uncertainties[0]
     normal = uncertainty.normal
 
-    assert normal.meanValue == meanValue
+    assert normal.meanValue == mean_value
     assert normal.variance == variance
-    assert normal.varianceWithPedigreeUncertainty == varianceWithPedigreeUncertainty
+    assert normal.varianceWithPedigreeUncertainty == variance_with_pedigree_uncertainty
 
 
 def test_parse_file_v2_lognormal(eco_spold: EcoSpold) -> None:
     """It parses attributes correctly."""
-    meanValue = 0.6
+    mean_value = 0.6
     _mu = -0.51
     variance = 0.03
-    varianceWithPedigreeUncertainty = 0.0707
-    flowData = eco_spold.activityDataset.flowData
-    uncertainty = flowData.intermediateExchanges[0].uncertainties[0]
+    variance_with_pedigree_uncertainty = 0.0707
+    flow_data = eco_spold.activityDataset.flowData
+    uncertainty = flow_data.intermediateExchanges[0].uncertainties[0]
     lognormal = uncertainty.lognormal
 
-    assert lognormal.meanValue == meanValue
+    assert lognormal.meanValue == mean_value
     assert lognormal.mu == _mu
     assert lognormal.variance == variance
-    assert lognormal.varianceWithPedigreeUncertainty == varianceWithPedigreeUncertainty
+    assert (
+        lognormal.varianceWithPedigreeUncertainty == variance_with_pedigree_uncertainty
+    )
 
 
 def test_parse_file_v2_property(eco_spold: EcoSpold) -> None:
     """It parses attributes correctly."""
-    propertyId = "c74c3729-e577-4081-b572-a283d2561a75"
+    property_id = "c74c3729-e577-4081-b572-a283d2561a75"
     amount = 0.4
-    isDefiningValue = True
-    unitId = "577e242a-461f-44a7-922c-d8e1c3d2bf45"
+    is_defining_value = True
+    unit_id = "577e242a-461f-44a7-922c-d8e1c3d2bf45"
     names = ["carbon content, fossil"]
-    unitNames = ["dimensionless"]
+    unit_names = ["dimensionless"]
     comments = ["CH2O"]
-    uncertaintiesLen = 0
-    flowData = eco_spold.activityDataset.flowData
-    prop = flowData.intermediateExchanges[6].properties[0]
+    uncertainties_len = 0
+    flow_data = eco_spold.activityDataset.flowData
+    prop = flow_data.intermediateExchanges[6].properties[0]
 
-    assert prop.propertyId == propertyId
+    assert prop.propertyId == property_id
     assert prop.amount == amount
-    assert prop.isDefiningValue == isDefiningValue
-    assert prop.unitId == unitId
+    assert prop.isDefiningValue == is_defining_value
+    assert prop.unitId == unit_id
     assert prop.names == names
-    assert prop.unitNames == unitNames
+    assert prop.unitNames == unit_names
     assert prop.comments == comments
-    assert len(prop.uncertainties) == uncertaintiesLen
+    assert len(prop.uncertainties) == uncertainties_len
 
 
 def test_parse_file_v2_compartment(eco_spold: EcoSpold) -> None:
     """It parses attributes correctly."""
-    subCompartmentId = "963f8022-3e2e-4be9-ad4d-b3b7a2282099"
+    sub_compartment_id = "963f8022-3e2e-4be9-ad4d-b3b7a2282099"
     compartments = ["water"]
-    subCompartments = ["surface water"]
-    flowData = eco_spold.activityDataset.flowData
-    compartment = flowData.elementaryExchanges[0].compartment
+    sub_compartments = ["surface water"]
+    flow_data = eco_spold.activityDataset.flowData
+    compartment = flow_data.elementaryExchanges[0].compartment
 
-    assert compartment.subCompartmentId == subCompartmentId
+    assert compartment.subCompartmentId == sub_compartment_id
     assert compartment.compartments == compartments
-    assert compartment.subCompartments == subCompartments
+    assert compartment.subCompartments == sub_compartments
 
 
 def test_parse_file_v2_parameter(eco_spold: EcoSpold) -> None:
     """It parses attributes correctly."""
-    parameterId = "e952df4c-1ca5-4710-9f53-be47be9191c1"
-    variableName = "fraction_CW_R_to_air"
+    parameter_id = "e952df4c-1ca5-4710-9f53-be47be9191c1"
+    variable_name = "fraction_CW_R_to_air"
     amount = 0.771
     names = ["fraction, cooling water, recirculating system, to air"]
     comments = [
-        "Calculated based on literature value (Scown, C.D., 2011, Water Footprint "
-        + "of U.S. Transportation Fuels and supplying information of the article) "
-        + "(Vionnet, S., Quantis Water Database - Technical Report, 2012). "
+        (
+            "Calculated based on literature value (Scown, C.D., 2011, Water Footprint "
+            "of U.S. Transportation Fuels and supplying information of the article) "
+            "(Vionnet, S., Quantis Water Database - Technical Report, 2012). "
+        )
     ]
-    meanValue = 0.771
+    mean_value = 0.771
     _mu = -0.26
     variance = 0.04
-    varianceWithPedigreeUncertainty = 0.0413
-    flowData = eco_spold.activityDataset.flowData
-    parameter = flowData.parameters[0]
+    variance_with_pedigree_uncertainty = 0.0413
+    flow_data = eco_spold.activityDataset.flowData
+    parameter = flow_data.parameters[0]
     lognormal = parameter.uncertainties[0].lognormal
 
-    assert parameter.parameterId == parameterId
-    assert parameter.variableName == variableName
+    assert parameter.parameterId == parameter_id
+    assert parameter.variableName == variable_name
     assert parameter.amount == amount
     assert parameter.names == names
     assert parameter.comments == comments
 
-    assert lognormal.meanValue == meanValue
+    assert lognormal.meanValue == mean_value
     assert lognormal.mu == _mu
     assert lognormal.variance == variance
-    assert lognormal.varianceWithPedigreeUncertainty == varianceWithPedigreeUncertainty
+    assert (
+        lognormal.varianceWithPedigreeUncertainty == variance_with_pedigree_uncertainty
+    )
 
 
 def test_parse_file_v2_representativeness(eco_spold: EcoSpold) -> None:
     """It parses attributes correctly."""
     percent = 100
-    systemModelId = "06590a66-662a-4885-8494-ad0cf410f956"
-    systemModelNames = ["Allocation, ecoinvent default"]
-    samplingProcedures = ["Literature data"]
+    system_model_id = "06590a66-662a-4885-8494-ad0cf410f956"
+    system_model_names = ["Allocation, ecoinvent default"]
+    sampling_procedures = ["Literature data"]
     extrapolations = [
-        "This dataset has been extrapolated from year 2006 to the year of the "
-        "calculation (2014). The uncertainty has been adjusted accordingly."
+        (
+            "This dataset has been extrapolated from year 2006 to the year of the "
+            "calculation (2014). The uncertainty has been adjusted accordingly."
+        )
     ]
-    modellingAndValidation = eco_spold.activityDataset.modellingAndValidation
-    representativeness = modellingAndValidation.representativeness
+    modelling_and_validation = eco_spold.activityDataset.modellingAndValidation
+    representativeness = modelling_and_validation.representativeness
 
     assert representativeness.percent == percent
-    assert representativeness.systemModelId == systemModelId
-    assert representativeness.systemModelNames == systemModelNames
-    assert representativeness.samplingProcedures == samplingProcedures
+    assert representativeness.systemModelId == system_model_id
+    assert representativeness.systemModelNames == system_model_names
+    assert representativeness.samplingProcedures == sampling_procedures
     assert representativeness.extrapolations == extrapolations
 
 
 def test_parse_file_v2_data_entry_by(eco_spold: EcoSpold) -> None:
     """It parses attributes correctly."""
-    personId = "4e412379-4901-477d-bbc1-3e2797ab9350"
-    isActiveAuthor = False
-    personName = "personName"
-    personEmail = "personEmail@domain.com"
-    administrativeInformation = eco_spold.activityDataset.administrativeInformation
-    dataEntryBy = administrativeInformation.dataEntryBy
+    person_id = "4e412379-4901-477d-bbc1-3e2797ab9350"
+    is_active_author = False
+    person_name = "personName"
+    person_email = "personEmail@domain.com"
+    administrative_information = eco_spold.activityDataset.administrativeInformation
+    data_entry_by = administrative_information.dataEntryBy
 
-    assert dataEntryBy.personId == personId
-    assert dataEntryBy.isActiveAuthor == isActiveAuthor
-    assert dataEntryBy.personName == personName
-    assert dataEntryBy.personEmail == personEmail
+    assert data_entry_by.personId == person_id
+    assert data_entry_by.isActiveAuthor == is_active_author
+    assert data_entry_by.personName == person_name
+    assert data_entry_by.personEmail == person_email
 
 
 def test_parse_file_v2_data_generator_and_publication(eco_spold: EcoSpold) -> None:
     """It parses attributes correctly."""
-    personId = "4e412379-4901-477d-bbc1-3e2797ab9350"
-    personName = "personName"
-    personEmail = "personEmail@domain.com"
-    dataPublishedIn = 2
-    dataPublishedInStr = (
+    person_id = "4e412379-4901-477d-bbc1-3e2797ab9350"
+    person_name = "personName"
+    person_email = "personEmail@domain.com"
+    data_published_in = 2
+    data_published_in_str = (
         "Data has been published entirely in 'referenceToPublishedSource'."
     )
-    publishedSourceId = "71272329-1b17-415b-9f9b-299ebfbce109"
-    publishedSourceYear = "2007"
-    publishedSourceFirstAuthor = "Sutter, J."
-    isCopyrightProtected = True
-    pageNumbers = "solvents"
-    accessRestrictedTo = 1
-    accessRestrictedToStr = "Licensees"
-    administrativeInformation = eco_spold.activityDataset.administrativeInformation
-    dataGeneratorAndPublication = administrativeInformation.dataGeneratorAndPublication
-
-    assert dataGeneratorAndPublication.personId == personId
-    assert dataGeneratorAndPublication.personName == personName
-    assert dataGeneratorAndPublication.personEmail == personEmail
-    assert dataGeneratorAndPublication.dataPublishedIn == dataPublishedIn
-    assert dataGeneratorAndPublication.dataPublishedInStr == dataPublishedInStr
-    assert dataGeneratorAndPublication.publishedSourceId == publishedSourceId
-    assert dataGeneratorAndPublication.publishedSourceYear == publishedSourceYear
-    assert (
-        dataGeneratorAndPublication.publishedSourceFirstAuthor
-        == publishedSourceFirstAuthor
+    published_source_id = "71272329-1b17-415b-9f9b-299ebfbce109"
+    published_source_year = "2007"
+    published_source_first_author = "Sutter, J."
+    is_copyright_protected = True
+    page_numbers = "solvents"
+    access_restricted_to = 1
+    access_restricted_to_str = "Licensees"
+    administrative_information = eco_spold.activityDataset.administrativeInformation
+    data_generator_and_publication = (
+        administrative_information.dataGeneratorAndPublication
     )
-    assert dataGeneratorAndPublication.isCopyrightProtected == isCopyrightProtected
-    assert dataGeneratorAndPublication.pageNumbers == pageNumbers
-    assert dataGeneratorAndPublication.accessRestrictedTo == accessRestrictedTo
-    assert dataGeneratorAndPublication.accessRestrictedToStr == accessRestrictedToStr
+
+    assert data_generator_and_publication.personId == person_id
+    assert data_generator_and_publication.personName == person_name
+    assert data_generator_and_publication.personEmail == person_email
+    assert data_generator_and_publication.dataPublishedIn == data_published_in
+    assert data_generator_and_publication.dataPublishedInStr == data_published_in_str
+    assert data_generator_and_publication.publishedSourceId == published_source_id
+    assert data_generator_and_publication.publishedSourceYear == published_source_year
+    assert (
+        data_generator_and_publication.publishedSourceFirstAuthor
+        == published_source_first_author
+    )
+    assert data_generator_and_publication.isCopyrightProtected == is_copyright_protected
+    assert data_generator_and_publication.pageNumbers == page_numbers
+    assert data_generator_and_publication.accessRestrictedTo == access_restricted_to
+    assert (
+        data_generator_and_publication.accessRestrictedToStr == access_restricted_to_str
+    )
 
 
 def test_parse_file_v2_file_attributes(eco_spold: EcoSpold) -> None:
     """It parses attributes correctly."""
-    majorRelease = 3
-    minorRelease = 0
-    majorRevision = 37
-    minorRevision = 0
-    internalSchemaVersion = "2.0.10"
-    defaultLanguage = "en"
-    creationTimestamp = datetime(2010, 7, 28, 18, 41, 6)
-    lastEditTimestamp = datetime(2011, 9, 22, 18, 30, 49)
-    fileGenerator = "EcoEditor 2.0.43.6348"
-    fileTimestamp = datetime(2011, 9, 22, 18, 30, 49)
-    contextId = "de659012-50c4-4e96-b54a-fc781bf987ab"
-    contextNames = ["ecoinvent"]
-    requiredContextsLen = 0
-    administrativeInformation = eco_spold.activityDataset.administrativeInformation
-    fileAttributes = administrativeInformation.fileAttributes
+    major_release = 3
+    minor_release = 0
+    major_revision = 37
+    minor_revision = 0
+    internal_schema_version = "2.0.10"
+    default_language = "en"
+    creation_timestamp = datetime(2010, 7, 28, 18, 41, 6)
+    last_edit_timestamp = datetime(2011, 9, 22, 18, 30, 49)
+    file_generator = "EcoEditor 2.0.43.6348"
+    file_timestamp = datetime(2011, 9, 22, 18, 30, 49)
+    context_id = "de659012-50c4-4e96-b54a-fc781bf987ab"
+    context_names = ["ecoinvent"]
+    required_contexts_len = 0
+    administrative_information = eco_spold.activityDataset.administrativeInformation
+    file_attributes = administrative_information.fileAttributes
 
-    assert fileAttributes.majorRelease == majorRelease
-    assert fileAttributes.minorRelease == minorRelease
-    assert fileAttributes.majorRevision == majorRevision
-    assert fileAttributes.minorRevision == minorRevision
-    assert fileAttributes.internalSchemaVersion == internalSchemaVersion
-    assert fileAttributes.defaultLanguage == defaultLanguage
-    assert fileAttributes.creationTimestamp == creationTimestamp
-    assert fileAttributes.lastEditTimestamp == lastEditTimestamp
-    assert fileAttributes.fileGenerator == fileGenerator
-    assert fileAttributes.fileTimestamp == fileTimestamp
-    assert fileAttributes.contextId == contextId
-    assert fileAttributes.contextNames == contextNames
-    assert len(fileAttributes.requiredContexts) == requiredContextsLen
+    assert file_attributes.majorRelease == major_release
+    assert file_attributes.minorRelease == minor_release
+    assert file_attributes.majorRevision == major_revision
+    assert file_attributes.minorRevision == minor_revision
+    assert file_attributes.internalSchemaVersion == internal_schema_version
+    assert file_attributes.defaultLanguage == default_language
+    assert file_attributes.creationTimestamp == creation_timestamp
+    assert file_attributes.lastEditTimestamp == last_edit_timestamp
+    assert file_attributes.fileGenerator == file_generator
+    assert file_attributes.fileTimestamp == file_timestamp
+    assert file_attributes.contextId == context_id
+    assert file_attributes.contextNames == context_names
+    assert len(file_attributes.requiredContexts) == required_contexts_len
 
 
 def test_parse_file_v2_pedigree_matrix(eco_spold: EcoSpold) -> None:
     """It parses attributes correctly."""
     reliability = 2
-    reliabilityStr = (
+    reliability_str = (
         "Verified data partly based on assumptions OR nonverified data based on "
         "measurements"
     )
     completeness = 3
-    completenessStr = (
+    completeness_str = (
         "Representative data from only some sites (<<50%) relevant for the market "
         "considered OR >50% of sites but from shorter periods"
     )
-    temporalCorrelation = 1
-    temporalCorrelationStr = (
+    temporal_correlation = 1
+    temporal_correlation_str = (
         "Less than 3 years of difference to the time period of the dataset "
         "(fields 600-610)"
     )
-    geographicalCorrelation = 3
-    geographicalCorrelationStr = "Data from area with similar production conditions"
-    furtherTechnologyCorrelation = 1
-    furtherTechnologyCorrelationStr = (
+    geographical_correlation = 3
+    geographical_correlation_str = "Data from area with similar production conditions"
+    further_technology_correlation = 1
+    further_technology_correlation_str = (
         "Data from enterprises, processes and materials under study"
     )
-    flowData = eco_spold.activityDataset.flowData
-    parameter = flowData.parameters[0]
-    pedigreeMatrix = parameter.uncertainties[0].pedigreeMatrices[0]
+    flow_data = eco_spold.activityDataset.flowData
+    parameter = flow_data.parameters[0]
+    pedigree_matrix = parameter.uncertainties[0].pedigreeMatrices[0]
 
-    assert pedigreeMatrix.reliability == reliability
-    assert pedigreeMatrix.reliabilityStr == reliabilityStr
-    assert pedigreeMatrix.completeness == completeness
-    assert pedigreeMatrix.completenessStr == completenessStr
-    assert pedigreeMatrix.temporalCorrelation == temporalCorrelation
-    assert pedigreeMatrix.temporalCorrelationStr == temporalCorrelationStr
-    assert pedigreeMatrix.geographicalCorrelation == geographicalCorrelation
-    assert pedigreeMatrix.geographicalCorrelationStr == geographicalCorrelationStr
-    assert pedigreeMatrix.furtherTechnologyCorrelation == furtherTechnologyCorrelation
+    assert pedigree_matrix.reliability == reliability
+    assert pedigree_matrix.reliabilityStr == reliability_str
+    assert pedigree_matrix.completeness == completeness
+    assert pedigree_matrix.completenessStr == completeness_str
+    assert pedigree_matrix.temporalCorrelation == temporal_correlation
+    assert pedigree_matrix.temporalCorrelationStr == temporal_correlation_str
+    assert pedigree_matrix.geographicalCorrelation == geographical_correlation
+    assert pedigree_matrix.geographicalCorrelationStr == geographical_correlation_str
     assert (
-        pedigreeMatrix.furtherTechnologyCorrelationStr
-        == furtherTechnologyCorrelationStr
+        pedigree_matrix.furtherTechnologyCorrelation == further_technology_correlation
     )
+    assert (
+        pedigree_matrix.furtherTechnologyCorrelationStr
+        == further_technology_correlation_str
+    )
+
+
+LOGNORMAL = (
+    '<lognormal meanValue="1" mu="0" variance="0.0006" '
+    'varianceWithPedigreeUncertainty="0.0513" />'
+)
+CONTEXT_NAME = '<contextName xml:lang="en">ecoinvent</contextName>'
+PRODUCTION_VOLUME_COMMENT_END = "cement bonded board.</productionVolumeComment>"
+
+
+def _parse_edited(fixtures_dir: Path, old: str, new: str) -> EcoSpold:
+    """Parse the v2 sample with one snippet replaced; the parser validates it."""
+    xml = (fixtures_dir / "v2" / "v2_1.xml").read_text(encoding="utf-8")
+    assert xml.count(old) == 1
+    return parse_file_v2(BytesIO(xml.replace(old, new).encode("utf-8")))
+
+
+def test_parse_file_v2_binomial(fixtures_dir: Path) -> None:
+    """It reads a binomial uncertainty as Binomial."""
+    eco_spold = _parse_edited(fixtures_dir, LOGNORMAL, '<binomial n="10" p="0.5" />')
+    exchange = eco_spold.activityDataset.flowData.intermediateExchanges[0]
+
+    binomial = exchange.uncertainties[0].binomial
+    assert isinstance(binomial, Binomial)
+    assert (binomial.n, binomial.p) == (10, 0.5)
+
+
+def test_parse_file_v2_undefined(fixtures_dir: Path) -> None:
+    """It reads an undefined uncertainty as Undefined."""
+    eco_spold = _parse_edited(
+        fixtures_dir,
+        LOGNORMAL,
+        '<undefined minValue="1" maxValue="3" standardDeviation95="0.5" />',
+    )
+    exchange = eco_spold.activityDataset.flowData.intermediateExchanges[0]
+
+    undefined = exchange.uncertainties[0].undefined
+    assert isinstance(undefined, Undefined)
+    assert (undefined.minValue, undefined.maxValue) == (1.0, 3.0)
+
+
+def test_parse_file_v2_production_volume_uncertainty(fixtures_dir: Path) -> None:
+    """It reads a production volume uncertainty as Uncertainty."""
+    eco_spold = _parse_edited(
+        fixtures_dir,
+        PRODUCTION_VOLUME_COMMENT_END,
+        f"{PRODUCTION_VOLUME_COMMENT_END}"
+        f"<productionVolumeUncertainty>{LOGNORMAL}</productionVolumeUncertainty>",
+    )
+    exchange = eco_spold.activityDataset.flowData.intermediateExchanges[0]
+
+    [uncertainty] = exchange.productionVolumeUncertainties
+    assert isinstance(uncertainty, Uncertainty)
+    assert isinstance(uncertainty.lognormal, Lognormal)
+
+
+def test_parse_file_v2_required_context(fixtures_dir: Path) -> None:
+    """It reads a required context as RequiredContextReference."""
+    context_id = "de659012-50c4-4e96-b54a-fc781bf987ab"
+    eco_spold = _parse_edited(
+        fixtures_dir,
+        CONTEXT_NAME,
+        f'{CONTEXT_NAME}<requiredContext majorRelease="3" minorRelease="0" '
+        f'requiredContextId="{context_id}">'
+        '<requiredContextName xml:lang="en">ecoinvent</requiredContextName>'
+        "</requiredContext>",
+    )
+    file_attributes = eco_spold.activityDataset.administrativeInformation.fileAttributes
+
+    [required_context] = file_attributes.requiredContexts
+    assert isinstance(required_context, RequiredContextReference)
+    assert required_context.requiredContextId == context_id

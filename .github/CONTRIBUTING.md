@@ -12,9 +12,9 @@ Here is a list of important resources for contributors:
 - [Code of Conduct][Code of Conduct]
 
 [License]: https://opensource.org/licenses/BSD-3-Clause
-[Source Code]: https://github.com/sami-m-g/pyecospold
+[Source Code]: https://github.com/brightway-lca/pyecospold
 [Documentation]: https://pyecospold.readthedocs.io/
-[Issue Tracker]: https://github.com/sami-m-g/pyecospold/issues
+[Issue Tracker]: https://github.com/brightway-lca/pyecospold/issues
 
 ## How to report a bug
 
@@ -37,32 +37,25 @@ Request features on the [Issue Tracker][Issue Tracker].
 
 ## How to set up your development environment
 
-Install the package with development requirements:
+Install [uv](https://docs.astral.sh/uv/), then create the environment with the package
+and development requirements:
 
 ```console
-$ pip install -e ".[dev]"
+uv sync
 ```
 
 ## How to test the project
 
-
-1. Install the package with development requirements:
-
-```console
-$ pip install -e ".[testing]"
-```
-
-2. Run the full test suite:
+Run the full test suite:
 
 ```console
-$ pytest
+uv run pytest
 ```
 
 List the available Nox sessions:
 
 Unit tests are located in the _tests_ directory,
 and are written using the [pytest][pytest] testing framework.
-
 
 ## How to submit changes
 
@@ -74,23 +67,15 @@ Your pull request needs to meet the following guidelines for acceptance:
 - Include unit tests.
 - If your changes add functionality, update the documentation accordingly.
 
-To run linting and code formatting checks before committing your change, you can install pre-commit as a Git hook by running one of following commands, depending on your dependencies manager:
+Install the Git hooks once, so the checks run on every commit:
 
 ```console
-# conda or mamba
-$ conda install pre-commit
+uv run prek install
 ```
-
-or
-
-```
-$ pip install pre-commit
-```
-
 
 It is recommended to open an issue before starting work on anything.
 This will allow a chance to talk it over with the owners and validate your approach.
 
 [pytest]: https://pytest.readthedocs.io/
-[pull request]: https://github.com/sami-m-g/pyecospold/pulls
-[code of conduct]: CODE_OF_CONDUCT.md
+[pull request]: https://github.com/brightway-lca/pyecospold/pulls
+[code of conduct]: https://github.com/brightway-lca/.github/blob/master/CODE_OF_CONDUCT.md

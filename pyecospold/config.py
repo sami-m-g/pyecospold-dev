@@ -1,44 +1,45 @@
 """Defaults configuration."""
 
 import configparser
-import os
 from dataclasses import dataclass
 from pathlib import Path
-from typing import Any, Callable, ClassVar, Dict
+from typing import Any, Callable, ClassVar, Union
 
-import numpy as np
 from lxml import etree
 
-from . import __version__
+from . import __version__, lxmlh
 
 
 @dataclass
 class Defaults:
-    """Stores default values for Ecospold attributes used when no value exists.
-    Defaults can be fully/ partially overridden by providing a config file or by
-    using set_defaults method"""
+    """Default values that pyecospold fills in when an attribute has none.
 
-    SCHEMA_DIR: ClassVar[str] = os.path.join(Path(__file__).parent.resolve(), "schemas")
-    SCHEMA_V1_FILE: ClassVar[str] = os.path.join(
-        SCHEMA_DIR, "v1", "EcoSpold01Dataset.xsd"
-    )
-    SCHEMA_V2_FILE: ClassVar[str] = os.path.join(SCHEMA_DIR, "v2", "EcoSpold02.xsd")
+    Override them, fully or partially, with ``config_defaults``.
 
-    TYPE_DEFAULTS: ClassVar[Dict[type, Any]] = {
-        int: np.nan_to_num(np.nan),
-        float: np.nan,
-        bool: "false",
-        str: "",
-    }
+    Attributes:
+        SCHEMA_DIR: directory with the bundled XSD schemas.
+        SCHEMA_V1_FILE: XSD that EcoSpold v1 files are validated against.
+        SCHEMA_V2_FILE: XSD that EcoSpold v2 files are validated against.
+        TYPE_DEFAULTS: value read for a missing attribute, per Python type.
+        DYNAMIC_DEFAULTS: functions computing default values, per class and
+            attribute.
+        STATIC_DEFAULTS: fixed default values, per class and attribute.
+    """
+
+    SCHEMA_DIR: ClassVar[str] = str(Path(__file__).parent.resolve() / "schemas")
+    SCHEMA_V1_FILE: ClassVar[str] = str(Path(SCHEMA_DIR, "v1", "EcoSpold01Dataset.xsd"))
+    SCHEMA_V2_FILE: ClassVar[str] = str(Path(SCHEMA_DIR, "v2", "EcoSpold02.xsd"))
+
+    TYPE_DEFAULTS: ClassVar[dict[type, Any]] = lxmlh.TYPE_DEFAULTS
 
     DYNAMIC_DEFAULTS: ClassVar[
-        Dict[str, Dict[str, Callable[[etree.ElementBase], str]]]
+        dict[str, dict[str, Callable[[etree.ElementBase], str]]]
     ] = {
         "Dataset": {
-            "generator": lambda node: f"pyecospold.{__version__}",
+            "generator": lambda _: f"pyecospold.{__version__}",
         },
     }
-    STATIC_DEFAULTS: ClassVar[Dict[str, Dict[str, str]]] = {
+    STATIC_DEFAULTS: ClassVar[dict[str, dict[str, str]]] = {
         "Allocation": {
             "allocationMethod": "-1",
         },
@@ -74,11 +75,11 @@ class Defaults:
     }
 
     @classmethod
-    def config_defaults(cls, config_file: str) -> None:
-        """Fully/ partially overrides defaults.
+    def config_defaults(cls, config_file: Union[str, Path]) -> None:
+        """Override the defaults, fully or partially, from a config file.
 
-        Parameters:
-        config_file: path for config file.
+        Args:
+            config_file: path to the INI config file.
         """
         config = configparser.ConfigParser()
         config.optionxform = lambda optionstr: optionstr
@@ -88,9 +89,9 @@ class Defaults:
             for key, value in dict(config["parameters"]).items():
                 setattr(cls, key, value)
 
-        staticDefaults = {
+        static_defaults = {
             name: dict(section)
             for name, section in config.items()
-            if name not in ["parameters"]
+            if name != "parameters"
         }
-        cls.static_defaults = staticDefaults
+        cls.static_defaults = static_defaults

@@ -1,2 +1,0 @@
-include pyecospold/schemas/v1/*.xsd
-include pyecospold/schemas/v2/*.xsd

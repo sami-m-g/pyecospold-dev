@@ -1,62 +1,82 @@
----
-# This workflow will install Python dependencies and run tests
-# across operating systems, select versions of Python, and user + dev environments
-# For more info see:
-# https://help.github.com/actions/language-and-framework-guides/using-python-with-github-actions
-
 name: Python 🐍 CI/CD tests
 
 on:
   push:
-    branches: [main, develop]
-    paths-ignore: # prevents workflow execution when only these types of files are modified
-      - "**.md" # wildcards prevent file in any repo dir from trigering workflow
-      - "**.bib"
-      - "**.ya?ml" # captures both .yml and .yaml
-      - "LICENSE"
-      - ".gitignore"
+    branches: [main]
   pull_request:
-    branches: [main, develop]
-    types: [opened, reopened] # excludes syncronize to avoid redundant trigger from commits on PRs
-    paths-ignore:
-      - "**.md"
-      - "**.bib"
-      - "**.ya?ml"
-      - "LICENSE"
-      - ".gitignore"
-  workflow_dispatch: # also allow manual trigger, for testing purposes
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
 
 jobs:
-  build:
+  lint:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          fetch-depth: 0 # the commit-message check needs the PR's base commit
+          persist-credentials: false
+      - uses: astral-sh/setup-uv@c18668ad3cf93ea998bef934396af7bb5c839dc7 # v10.2.0
+      - name: Run the hooks
+        run: uv run --locked prek run --all-files --show-diff-on-failure
+      - name: Check links (manual-stage hooks need the network)
+        run: uv run --locked prek run --all-files --hook-stage manual
+      - name: Check commit messages
+        if: github.event_name == 'pull_request'
+        env:
+          BASE_SHA: ${{ github.event.pull_request.base.sha }}
+          HEAD_SHA: ${{ github.event.pull_request.head.sha }}
+        run: uv run --locked prek run commitizen-branch --hook-stage pre-push --from-ref "$BASE_SHA" --to-ref "$HEAD_SHA"
+
+  test:
     runs-on: ${{ matrix.os }}
+    timeout-minutes: 15
     strategy:
       fail-fast: false
       matrix:
         os: [ubuntu-latest, windows-latest, macos-latest]
-        py-version: ["3.8", "3.9", "3.10", "3.11", "3.12"]
-
+        python: ["3.9", "3.10", "3.11", "3.12", "3.13", "3.14"]
+        resolution: [highest]
+        include:
+          - { os: ubuntu-latest, python: "3.9", resolution: lowest-direct }
+    env:
+      UV_RESOLUTION: ${{ matrix.resolution }}
+      UV_LOCKED: ${{ matrix.resolution == 'highest' }}
     steps:
-      - uses: actions/checkout@v4
-
-      # general Python setup
-      - name: Set up Python ${{ matrix.py-version }}
-        uses: actions/setup-python@v5
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
-          python-version: ${{ matrix.py-version }}
+          persist-credentials: false
+      - uses: astral-sh/setup-uv@c18668ad3cf93ea998bef934396af7bb5c839dc7 # v10.2.0
+        with:
+          python-version: ${{ matrix.python }}
+          cache-suffix: ${{ matrix.resolution }}
+      - run: uv run --no-default-groups --group test pytest
 
-      - name: Update pip & install testing pkgs
-        run: |
-          python -VV
-          python -m pip install --upgrade pip setuptools wheel
+  build:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: astral-sh/setup-uv@c18668ad3cf93ea998bef934396af7bb5c839dc7 # v10.2.0
+      - run: uv build
+      # -P keeps the source tree off sys.path, so the installed wheel is imported
+      - run: >-
+          uv run --isolated --no-project --with dist/*.whl --
+          python -P -c "import pyecospold; pyecospold.parse_file_v1('tests/fixtures/v1/v1_1.xml')"
 
-      # install testing
-      - name: Install package and test deps
-        run: |
-          pip install .[testing] # install the package and the testing deps
-
-      - name: Test with pytest
-        run: |
-          pytest
-
-      - name: Upload coverage to Codecov
-        uses: codecov/codecov-action@v4
+  all-green:
+    if: always()
+    needs: [lint, test, build]
+    runs-on: ubuntu-latest
+    steps:
+      - uses: re-actors/alls-green@b5b5b37504aa4183270bd3d855c52a67f212be35 # v1.3.0
+        with:
+          jobs: ${{ toJSON(needs) }}

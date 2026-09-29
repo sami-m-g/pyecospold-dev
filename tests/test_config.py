@@ -1,32 +1,48 @@
 """Test cases for the __config__ module."""
 
-import os
+import copy
 from pathlib import Path
+
+import pytest
 
 from pyecospold.config import Defaults
 
 
-def test_config_defaults() -> None:
+def test_config_defaults(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
     """It overrides defaults variables."""
-    rootDir = Path(__file__).parent.parent.resolve()
+    for name in ("SCHEMA_V1_FILE", "SCHEMA_V2_FILE", "STATIC_DEFAULTS"):
+        monkeypatch.setattr(Defaults, name, copy.deepcopy(getattr(Defaults, name)))
+    monkeypatch.setattr(Defaults, "static_defaults", None, raising=False)
 
-    configFileDir = os.path.join(rootDir, "out", "tests")
-    configFilePath = os.path.join(configFileDir, "config.ini")
-    os.makedirs(configFileDir, exist_ok=True)
+    schema_dir = Path(Defaults.SCHEMA_DIR)
+    valid_company_codes = "CompanyCodes.xml"
+    config_file = tmp_path / "config.ini"
+    config_file.write_text(
+        "[parameters]\n"
+        f"SCHEMA_V1_FILE={schema_dir / 'v1' / 'EcoSpold01Dataset.xsd'}\n"
+        f"SCHEMA_V2_FILE={schema_dir / 'v2' / 'EcoSpold02.xsd'}\n\n"
+        f"[Dataset]\nvalidCompanyCodes={valid_company_codes}\n",
+        encoding="utf-8",
+    )
 
-    schemaDir = os.path.join(rootDir, "pyecospold", "schemas")
-    schemaV1File = os.path.join(schemaDir, "v1", "EcoSpold01Dataset.xsd")
-    schemaV2File = os.path.join(schemaDir, "v2", "EcoSpold02.xsd")
-    validCompanyCodes = "CompanyCodes.xml"
+    Defaults.config_defaults(config_file)
 
-    with open(configFilePath, "w", encoding="utf-8") as configFile:
-        configFile.write("[parameters]\n")
-        configFile.write(f"SCHEMA_V1_FILE={schemaV1File}\n")
-        configFile.write(f"SCHEMA_V2_FILE={schemaV2File}\n\n")
-        configFile.write(f"[Dataset]\nvalidCompanyCodes={validCompanyCodes}\n")
+    assert (
+        Defaults.STATIC_DEFAULTS["Dataset"]["validCompanyCodes"] == valid_company_codes
+    )
 
-    Defaults.config_defaults(configFilePath)
 
-    assert Defaults.STATIC_DEFAULTS["Dataset"]["validCompanyCodes"] == validCompanyCodes
+def test_config_defaults_without_parameters(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    """It keeps the schema paths when the config file has no parameters."""
+    for name in ("SCHEMA_V1_FILE", "SCHEMA_V2_FILE"):
+        monkeypatch.setattr(Defaults, name, getattr(Defaults, name))
+    monkeypatch.setattr(Defaults, "static_defaults", None, raising=False)
+    schema_v1_file = Defaults.SCHEMA_V1_FILE
+    config_file = tmp_path / "config.ini"
+    config_file.write_text("[Dataset]\nvalidCompanyCodes=Other.xml\n", encoding="utf-8")
 
-    Defaults.config_defaults("config.init")
+    Defaults.config_defaults(config_file)
+
+    assert schema_v1_file == Defaults.SCHEMA_V1_FILE

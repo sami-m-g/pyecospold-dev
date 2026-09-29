@@ -1,3 +1,5 @@
+"""Sphinx configuration."""
+
 # Configuration file for the Sphinx documentation builder.
 #
 # For the full list of built-in configuration values, see the documentation:
@@ -7,39 +9,25 @@
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#project-information
 
 import datetime
-import os
-import sys
-from unittest.mock import MagicMock
-
-MOCK_MODULES = [
-    'lxml',
-    'numpy',
-]
-
-sys.modules.update((module, MagicMock()) for module in MOCK_MODULES)
-sys.path.insert(0, os.path.abspath('../'))
-
 
 from pyecospold import __version__
 
-
-project = 'pyecospold'
-copyright = f'{datetime.date.today().year}, Mina Sami'
-author = 'Mina Sami'
+project = "pyecospold"
+copyright = f"{datetime.datetime.now(tz=datetime.timezone.utc).year}, Mina Sami"
+author = "Mina Sami"
 version = release = __version__
 
 # -- General configuration ---------------------------------------------------
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#general-configuration
 
-extensions = ['sphinx.ext.autodoc', 'sphinx.ext.viewcode']
+extensions = ["sphinx.ext.autodoc", "sphinx.ext.napoleon", "sphinx.ext.viewcode"]
 
-templates_path = ['_templates']
-exclude_patterns = ['_build', 'Thumbs.db', '.DS_Store']
-
+templates_path = ["_templates"]
+exclude_patterns = ["_build", "Thumbs.db", ".DS_Store"]
 
 
 # -- Options for HTML output -------------------------------------------------
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#options-for-html-output
 
-html_theme = 'sphinx_rtd_theme'
-html_static_path = ['_static']
+html_theme = "sphinx_rtd_theme"
+html_static_path = ["_static"]

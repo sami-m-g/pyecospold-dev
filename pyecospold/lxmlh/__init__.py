@@ -1,3 +1,5 @@
+"""Helpers for mapping XML elements to Python classes with lxml."""
+
 from .config import TYPE_DEFAULTS, TYPE_FUNC_MAP
 from .helpers import (
     create_attribute,
@@ -19,11 +21,12 @@ from .parsers import (
 )
 
 __all__ = (
-    "__version__",
-    "fill_in_defaults",
+    "TYPE_DEFAULTS",
+    "TYPE_FUNC_MAP",
     "create_attribute",
-    "create_element_text",
     "create_attribute_list",
+    "create_element_text",
+    "fill_in_defaults",
     "get_element",
     "get_element_list",
     "get_inner_text_list",
@@ -31,8 +34,6 @@ __all__ = (
     "parse_file",
     "parse_zip_file",
     "save_file",
-    "TYPE_DEFAULTS",
-    "TYPE_FUNC_MAP",
     "validate_directory",
     "validate_file",
     "validate_zip_file",

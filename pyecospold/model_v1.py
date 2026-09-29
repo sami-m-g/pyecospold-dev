@@ -1,11 +1,12 @@
 """Custom EcoSpold Python classes for v1 of EcoSpold schema."""
 
 from datetime import date, datetime
-from typing import ClassVar, Dict, List
+from typing import ClassVar
 
 from dateutil.parser import parse
 from dateutil.relativedelta import relativedelta
 from lxml import etree
+from typing_extensions import override
 
 from .cas_validation import validate_cas
 from .helpers import (
@@ -20,7 +21,8 @@ class EcoSpold(etree.ElementBase):
     """The data (exchange) format of the ECOINVENT quality network. A dataset
     describes LCI related information of a unit process or a terminated system
     comprising metaInformation (description of the process) and flowData
-    (quantified inputs and outputs and allocation factors, if any)."""
+    (quantified inputs and outputs and allocation factors, if any).
+    """
 
     validationId = create_attribute_v1("validationId", int)
     """int:"""
@@ -29,15 +31,17 @@ class EcoSpold(etree.ElementBase):
     """str:"""
 
     @property
-    def datasets(self) -> List["Dataset"]:
+    def datasets(self) -> list["Dataset"]:
         """Contains information about one individual unit process (or terminated
-        system). Information is divided into metaInformation and flowData."""
+        system). Information is divided into metaInformation and flowData.
+        """
         return get_element_list(self, "dataset")
 
 
 class Dataset(etree.ElementBase):
     """Contains information about one individual unit process (or terminated
-    system). Information is divided into metaInformation and flowData."""
+    system). Information is divided into metaInformation and flowData.
+    """
 
     number = create_attribute_v1("number", int)
     """int: ID number used as an identifier of the dataset."""
@@ -68,7 +72,8 @@ class Dataset(etree.ElementBase):
         """Contains information about the process (its name, (functional) unit,
         classification, technology, geography, time, etc.), about modelling
         assumptions and validation details and about dataset administration
-        (version number, kind of dataset, language)."""
+        (version number, kind of dataset, language).
+        """
         return get_element(self, "metaInformation")
 
     @property
@@ -76,7 +81,8 @@ class Dataset(etree.ElementBase):
         """Contains information about inputs and outputs (to and from nature
         as well as to and from technosphere) and information about allocation
         (flows to be allocated, co-products to be allocated to, allocation
-        factors)."""
+        factors).
+        """
         return get_element(self, "flowData")
 
 
@@ -84,7 +90,8 @@ class MetaInformation(etree.ElementBase):
     """Contains information about the process (its name, (functional) unit,
     classification, technology, geography, time, etc.), about modelling
     assumptions and validation details and about dataset administration
-    (version number, kind of dataset, language)."""
+    (version number, kind of dataset, language).
+    """
 
     @property
     def processInformation(self) -> "ProcessInformation":
@@ -94,14 +101,16 @@ class MetaInformation(etree.ElementBase):
     @property
     def modellingAndValidation(self) -> "ModellingAndValidation":
         """Contains metaInformation about how unit processes are modelled
-        and about the review/validation of the dataset."""
+        and about the review/validation of the dataset.
+        """
         return get_element(self, "modellingAndValidation")
 
     @property
     def administrativeInformation(self) -> "AdministrativeInformation":
         """Contains information about the person that compiled and entered
         the dataset in the database and about kind of publication and the
-        accessibility of the dataset."""
+        accessibility of the dataset.
+        """
         return get_element(self, "administrativeInformation")
 
 
@@ -109,16 +118,18 @@ class FlowData(etree.ElementBase):
     """Contains information about inputs and outputs (to and from nature
     as well as to and from technosphere) and information about allocation
     (flows to be allocated, co-products to be allocated to, allocation
-    factors)."""
+    factors).
+    """
 
     @property
-    def exchanges(self) -> List["Exchange"]:
+    def exchanges(self) -> list["Exchange"]:
         """Comprises all inputs and outputs (both elementary flows and
-        intermediate product flows) registered in a unit process."""
+        intermediate product flows) registered in a unit process.
+        """
         return get_element_list(self, "exchange")
 
     @property
-    def allocations(self) -> List["Allocation"]:
+    def allocations(self) -> list["Allocation"]:
         """Comprises all referenceToInputOutput."""
         return get_element_list(self, "allocation")
 
@@ -129,14 +140,16 @@ class ProcessInformation(etree.ElementBase):
     @property
     def referenceFunction(self) -> "ReferenceFunction":
         """Comprises information which identifies and characterises one particular
-        dataset (=unit process or system terminated)."""
+        dataset (=unit process or system terminated).
+        """
         return get_element(self, "referenceFunction")
 
     @property
     def geography(self) -> "Geography":
         """Contains information about the geographic validity of the process. The region
         described with regional code and free text is the market area of the
-        product / service at issue and not necessarily the place of production."""
+        product / service at issue and not necessarily the place of production.
+        """
         return get_element(self, "geography")
 
     @property
@@ -144,7 +157,8 @@ class ProcessInformation(etree.ElementBase):
         """Contains a description of the technology for which flow data have been
         collected. Free text can be used. Pictures, graphs and tables are not allowed.
         The text should cover information necessary to identify the properties and
-        particularities of the technology(ies) underlying the process data."""
+        particularities of the technology(ies) underlying the process data.
+        """
         return get_element(self, "technology")
 
     @property
@@ -152,75 +166,86 @@ class ProcessInformation(etree.ElementBase):
         """Contains the administrative information about the dataset at issue: type of
         dataset (unit process, elementary flow, impact category, multi-output process)
         timestamp, version and internalVersion number as well as language and
-        localLanguage code."""
+        localLanguage code.
+        """
         return get_element(self, "dataSetInformation")
 
     @property
     def timePeriod(self) -> "TimePeriod":
         """Contains all possible date-formats applicable to describe start and end date
-        of the time period for which the dataset is valid."""
+        of the time period for which the dataset is valid.
+        """
         return get_element(self, "timePeriod")
 
 
 class ModellingAndValidation(etree.ElementBase):
     """Contains metaInformation about how unit processes are modelled
-    and about the review/validation of the dataset."""
+    and about the review/validation of the dataset.
+    """
 
     @property
     def representativeness(self) -> "Representativeness":
         """Contains information about the fraction of the relevant market supplied by
         the product/service described in the dataset. Information about market share,
         production volume (in the ecoinvent quality network: also consumption volume in
-        the market area) and information about how data have been sampled."""
+        the market area) and information about how data have been sampled.
+        """
         return get_element(self, "representativeness")
 
     @property
-    def sources(self) -> List["Source"]:
+    def sources(self) -> list["Source"]:
         """Contains information about author(s), title, kind of publication,
-        place of publication, name of editors (if any), etc.."""
+        place of publication, name of editors (if any), etc..
+        """
         return get_element_list(self, "source")
 
     @property
     def validation(self) -> "Validation":
         """Contains information about who carried out the critical review
         and about the main results and conclusions of the revie and the
-        recommendations made."""
+        recommendations made.
+        """
         return get_element(self, "validation")
 
 
 class AdministrativeInformation(etree.ElementBase):
     """Contains information about the person that compiled and entered
     the dataset in the database and about kind of publication and the
-    accessibility of the dataset."""
+    accessibility of the dataset.
+    """
 
     @property
     def dataEntryBy(self) -> "DataEntryBy":
         """Contains information about the person that entered data in the
         database or transformed data into the format of the ecoinvent
-        (or any other) quality network."""
+        (or any other) quality network.
+        """
         return get_element(self, "dataEntryBy")
 
     @property
     def dataGeneratorAndPublication(self) -> "DataGeneratorAndPublication":
         """Contains information about who compiled for and entered data into
         the database. Furthermore contains information about kind of publication
-        underlying the dataset and the accessibility of the dataset."""
+        underlying the dataset and the accessibility of the dataset.
+        """
         return get_element(self, "dataGeneratorAndPublication")
 
     @property
-    def persons(self) -> List["Person"]:
+    def persons(self) -> list["Person"]:
         """Used for the identification of members of the organisation institute
         co-operating within a quality network (e.g., ecoinvent) referred to in
-        the areas Validation, dataEntryBy and dataGeneratorAndPublication."""
+        the areas Validation, dataEntryBy and dataGeneratorAndPublication.
+        """
         return get_element_list(self, "person")
 
 
 class Exchange(etree.ElementBase):
     """Comprises all inputs and outputs (both elementary flows and
     intermediate product flows) recorded in a unit process and its
-    related information."""
+    related information.
+    """
 
-    INPUT_GROUPS_MAP: ClassVar[Dict[int, str]] = {
+    INPUT_GROUPS_MAP: ClassVar[dict[int, str]] = {
         1: "Materials/Fuels",
         2: "Electricity/Heat",
         3: "Services",
@@ -228,7 +253,7 @@ class Exchange(etree.ElementBase):
         5: "FromTechnosphere",
     }
 
-    OUTPUT_GROUPS_MAP: ClassVar[Dict[int, str]] = {
+    OUTPUT_GROUPS_MAP: ClassVar[dict[int, str]] = {
         0: "ReferenceProduct",
         1: "Include avoided product system",
         2: "Allocated by product",
@@ -236,7 +261,7 @@ class Exchange(etree.ElementBase):
         4: "ToNature",
     }
 
-    UNCERTAINTY_TYPE_MAP: ClassVar[Dict[int, str]] = {
+    UNCERTAINTY_TYPE_MAP: ClassVar[dict[int, str]] = {
         0: "undefined",
         1: "lognormal",
         2: "normal",
@@ -245,14 +270,14 @@ class Exchange(etree.ElementBase):
     }
 
     _inputGroups = create_attribute_list_v1("inputGroup", int)
-    """List[int]: Indicates the kind of input flow. The codes are:
+    """list[int]: Indicates the kind of input flow. The codes are:
     1=Materials/Fuels, 2=Electricity/Heat, 3=Services, 4=FromNature,
     5=FromTechnosphere. Within the ecoinvent quality network,
     only 4 and 5 are actively used (any material, fuel, electricity,
     heat or service is classified as an input from technosphere)."""
 
     _outputGroups = create_attribute_list_v1("outputGroup", int)
-    """List[int]: Indicates the kind of output flow. The codes are: 0=ReferenceProduct,
+    """list[int]: Indicates the kind of output flow. The codes are: 0=ReferenceProduct,
     1=Include avoided product system, 2=Allocated by product,
     3=WasteToTreatment, 4=ToNature. The options 0, 2, and 4 are actively used
     in the ecoinvent quality network. Products of multioutput processes are
@@ -384,57 +409,63 @@ class Exchange(etree.ElementBase):
     ecoinvent database, the 97.5% value is reported in this field."""
 
     mostLikelyValue = create_attribute_v1("mostLikelyValue", float)
-    """float: In some cases the MostLikelyValue is available for exhange data
+    """float: In some cases the MostLikelyValue is available for exchange data
     with triangular distribution. However, do not use this field, but
     calculate the mean value, (minValue + mostLikelyValue +maxValue)/3,
     and enter it into the field "meanValue")."""
 
     @property
-    def groups(self) -> List[int]:
+    def groups(self) -> list[int]:
         """Choice between _inputGroups and _outputGroups. Check their documentation
-        for more information."""
+        for more information.
+        """
         return self._inputGroups if self._inputGroups != [] else self._outputGroups
 
     @property
-    def groupsStr(self) -> List[str]:
+    def groupsStr(self) -> list[str]:
         """Choice between _inputGroupsStr and _outputGroupsStr. Check their
-        documentation for more information."""
+        documentation for more information.
+        """
         return (
             self._inputGroupsStr if self._inputGroups != [] else self._outputGroupsStr
         )
 
     @property
-    def _inputGroupsStr(self) -> List[str]:
+    def _inputGroupsStr(self) -> list[str]:
         """String representation for inputGroups. See inputGroups for
         explanations. 1=Materials/Fuels, 2=Electricity/Heat, 3=Services,
-        4=FromNature, 5=FromTechnosphere."""
+        4=FromNature, 5=FromTechnosphere.
+        """
         return [
-            Exchange.INPUT_GROUPS_MAP[inputGroup] for inputGroup in self._inputGroups
+            Exchange.INPUT_GROUPS_MAP[input_group] for input_group in self._inputGroups
         ]
 
     @property
-    def _outputGroupsStr(self) -> List[str]:
+    def _outputGroupsStr(self) -> list[str]:
         """String representation for outputGroups. See outputGroups for
         explanations. 0=ReferenceProduct, 1=Include avoided product system,
-        2=Allocated by product, 3=WasteToTreatment, 4=ToNature"""
+        2=Allocated by product, 3=WasteToTreatment, 4=ToNature.
+        """
         return [
-            Exchange.OUTPUT_GROUPS_MAP[outputGroup]
-            for outputGroup in self._outputGroups
+            Exchange.OUTPUT_GROUPS_MAP[output_group]
+            for output_group in self._outputGroups
         ]
 
     @property
     def uncertaintyTypeStr(self) -> str:
         """String representation for uncertaintyType. See uncertaintyType for
         explanations. 0=undefined, 1=lognormal (default), 2=normal, 3=triang,
-        4=uniform"""
+        4=uniform.
+        """
         return Exchange.UNCERTAINTY_TYPE_MAP[self.uncertaintyType]
 
 
 class Allocation(etree.ElementBase):
     """Contains all information about allocation procedure, allocation
-    parameters and allocation factors applied on a multi-output process."""
+    parameters and allocation factors applied on a multi-output process.
+    """
 
-    ALLOCATION_METHOD_MAP: ClassVar[Dict[int, str]] = {
+    ALLOCATION_METHOD_MAP: ClassVar[dict[int, str]] = {
         -1: "Undefined",
         0: "Physical causality",
         1: "Economic causality",
@@ -442,7 +473,7 @@ class Allocation(etree.ElementBase):
     }
 
     referenceToInputOutputs = create_attribute_list_v1("referenceToInputOutput", int)
-    """List[int]: The data field is only required, if the reference function describes
+    """list[int]: The data field is only required, if the reference function describes
     a multioutput process. Lists the relation(s) to which a certain allocation
     factor is applied. MultipleOccurrence=Yes on two levels: Firstly, the
     reference occurs per co-product and secondly, the reference occurs per
@@ -452,21 +483,21 @@ class Allocation(etree.ElementBase):
     """int: Indicates the co-product output for which a particular allocation
     factor is valid. Additional information is required about the exchange
     on which the allocation factor is applied (see 'referenceToInputOutput').
-    MultipleOccurences=Yes is only valid, if referenceFunction
+    MultipleOccurrences=Yes is only valid, if referenceFunction
     describes a multioutput process."""
 
     allocationMethod = create_attribute_v1("allocationMethod", int)
     """int: Indicates the kind of allocation parameter chosen. The codes are:
     -1=Undefined (default). 0=Physical causality. 1=Economic causality. 2=Other
     method. 'Other method' comprises in particular physical parameters (like mass,
-    energy, exergy, etc.) and parameters other than economic. MultipleOccurences=Yes
+    energy, exergy, etc.) and parameters other than economic. MultipleOccurrences=Yes
     only valid, if referenceFunction describes a multioutput process."""
 
     fraction = create_attribute_v1("fraction", float)
     """float: Allocation factor, expressed as a fraction (in %), applied on one
     particular exchange for one particular co-product. The sum of the allocation
     factors applied on one particular exchange must add up to 100%.
-    MultipleOccurences=Yes only valid, if referenceFunction describes
+    MultipleOccurrences=Yes only valid, if referenceFunction describes
     a multioutput process."""
 
     explanations = create_attribute_v1("explanations", str)
@@ -479,18 +510,18 @@ class Allocation(etree.ElementBase):
     def allocationMethodStr(self) -> str:
         """String representation for allocationMethod. See allocationMethod for
         explanations. -1=Undefined (default). 0=Physical causality. 1=Economic
-        causality. 2=Other method."""
+        causality. 2=Other method.
+        """
         return Allocation.ALLOCATION_METHOD_MAP[self.allocationMethod]
 
 
 class ReferenceFunction(etree.ElementBase):
-    """
-    Comprises information which identifies and characterises one particular dataset
+    """Comprises information which identifies and characterises one particular dataset
     (=unit process or system terminated).
     """
 
     synonyms = create_attribute_list_v1("synonym", str)
-    """List[str]: Synonyms for the name, localName. In the Excel editor they are
+    """list[str]: Synonyms for the name, localName. In the Excel editor they are
     separated by two slashes ('//'). Synonyms are a subset of referenceFunction.
     0..n entries are allowed with a max. length of 80 each."""
 
@@ -539,7 +570,7 @@ class ReferenceFunction(etree.ElementBase):
     unit = create_attribute_v1("unit", str)
     """str: For unit processes (and systems terminated) it is the unit to which all
     inputs and outputs of the unit process are related to (functional unit).
-    For elementary flows it is the unit in which exhanges are reported. For impact
+    For elementary flows it is the unit in which exchanges are reported. For impact
     categories, it is the unit in which characterisation, damage or weighting
     factors are expressed. SI-units are preferred. The units are always expressed
     in English language."""
@@ -616,7 +647,8 @@ class ReferenceFunction(etree.ElementBase):
 class Geography(etree.ElementBase):
     """Contains information about the geographic validity of the process. The region
     described with regional code and free text is the market area of the
-    product / service at issue and not necessarily the place of production."""
+    product / service at issue and not necessarily the place of production.
+    """
 
     location = create_attribute_v1("location", str)
     """str: 7 letter regional code (capital letters). List of 2 letter ISO country
@@ -627,7 +659,7 @@ class Geography(etree.ElementBase):
     the area/site of production or provenience. If supply and production area
     differ, production area is indicated in the name of the unit process."""
 
-    text = create_attribute_v1("text", str)
+    text = create_attribute_v1("text", str)  # pyrefly: ignore[bad-override, missing-override-decorator]  # EcoSpold's `text` attribute shadows lxml's element text (public API)
     """str: Free text for further explanation. Text comprises additional aspects of
     the location, namely whether:
     - certain areas are exempted from the location indicated,
@@ -642,9 +674,10 @@ class Technology(etree.ElementBase):
     """Contains a description of the technology for which flow data have been
     collected. Free text can be used. Pictures, graphs and tables are not allowed.
     The text should cover information necessary to identify the properties and
-    particularities of the technology(ies) underlying the process data."""
+    particularities of the technology(ies) underlying the process data.
+    """
 
-    text = create_attribute_v1("text", str)
+    text = create_attribute_v1("text", str)  # pyrefly: ignore[bad-override, missing-override-decorator]  # EcoSpold's `text` attribute shadows lxml's element text (public API)
     """str: Describes the technological properties of the unit process. If the
     process comprises several subprocesses, the corresponding technologies
     should be reported as well. Professional nomenclature should be used for
@@ -659,9 +692,10 @@ class DataSetInformation(etree.ElementBase):
     """Contains the administrative information about the dataset at issue: type of
     dataset (unit process, elementary flow, impact category, multi-output process)
     timestamp, version and internalVersion number as well as language and localLanguage
-    code."""
+    code.
+    """
 
-    TYPE_MAP: Dict[int, str] = {
+    TYPE_MAP: ClassVar[dict[int, str]] = {
         0: "System non-terminated",
         1: "Unit process",
         2: "System terminated",
@@ -670,7 +704,7 @@ class DataSetInformation(etree.ElementBase):
         5: "Multioutput process",
     }
 
-    ENERGY_VALUES_MAP: Dict[int, str] = {
+    ENERGY_VALUES_MAP: ClassVar[dict[int, str]] = {
         0: "Undefined",
         1: "Net values",
         2: "Gross values",
@@ -735,26 +769,29 @@ class DataSetInformation(etree.ElementBase):
     def typeStr(self) -> str:
         """String representation for type. See type for explanations.
         0=System non-terminated. 1=Unit process. 2=System terminated. 3=Elementary flow.
-        4=Impact category.5=Multioutput process."""
+        4=Impact category.5=Multioutput process.
+        """
         return DataSetInformation.TYPE_MAP[self.type]
 
     @property
     def energyValuesStr(self) -> str:
         """String representation for energyValues. See energyValues for explanations.
-        0=Undefined. 1=Net values. 2=Gross values."""
+        0=Undefined. 1=Net values. 2=Gross values.
+        """
         return DataSetInformation.ENERGY_VALUES_MAP[self.energyValues]
 
 
 class TimePeriod(etree.ElementBase):
     """Contains all possible date-formats applicable to describe start and end date of
-    the time period for which the dataset is valid."""
+    the time period for which the dataset is valid.
+    """
 
     dataValidForEntirePeriod = create_attribute_v1("dataValidForEntirePeriod", bool)
     """bool: Indicates whether or not the process data (elementary and intermediate
     product flows reported under flow data) are valid for the entire time period
     stated. If not, explanations may be given under 'text'."""
 
-    text = create_attribute_v1("text", str)
+    text = create_attribute_v1("text", str)  # pyrefly: ignore[bad-override, missing-override-decorator]  # EcoSpold's `text` attribute shadows lxml's element text (public API)
     """str: Additional explanations concerning the temporal validity of the flow data
     reported. It may comprise information about:
     - how strong the temporal correlation is for the unit process at issue
@@ -798,15 +835,18 @@ class TimePeriod(etree.ElementBase):
     @property
     def startDate(self) -> date:
         """Start date of the time period for which the dataset is valid. If it is only
-        known that data is older than a certain data, 'startDate' is left blank."""
+        known that data is older than a certain data, 'startDate' is left blank.
+        """
         return parse(self._startDate).date()
 
     @startDate.setter
     def startDate(self, new_date: date) -> None:
         if not isinstance(new_date, date):
-            raise ValueError("`new_date` must be a `datetime.date` instance")
+            msg = "`new_date` must be a `datetime.date` instance"
+            raise ValueError(msg)
         if new_date > self.endDate:
-            raise ValueError("`new_date` is after `timePeriod.endDate`")
+            msg = "`new_date` is after `timePeriod.endDate`"
+            raise ValueError(msg)
         self._startDate = new_date.isoformat()
 
     @property
@@ -817,24 +857,28 @@ class TimePeriod(etree.ElementBase):
     @endDate.setter
     def endDate(self, new_date: date) -> None:
         if not isinstance(new_date, date):
-            raise ValueError("`new_date` must be a `datetime.date` instance")
+            msg = "`new_date` must be a `datetime.date` instance"
+            raise ValueError(msg)
         if new_date < self.startDate:
-            raise ValueError("`new_date` is before `timePeriod.startDate`")
+            msg = "`new_date` is before `timePeriod.startDate`"
+            raise ValueError(msg)
         self._endDate = new_date.isoformat()
 
-    def _init(self):
+    @override
+    def _init(self) -> None:
         """Harmonize all possible date formats to actual dates.
 
         Shortcircuit evaluation is dates are already present as _init is called
         multiple times.
 
         The documentation claims that dates can be blank, but blank values are not
-        valid `xsd:date` instances, so we don't support that proposition."""
+        valid `xsd:date` instances, so we don't support that proposition.
+        """
         if not len(self._startDate) > 0:
             # Create the element; so much love for XML right now
             elem = etree.SubElement(self, f"{{{dict(self.nsmap)[None]}}}startDate")
 
-            start_year_month = getattr(self, "_startYearMonth")
+            start_year_month = self._startYearMonth
             if start_year_month:
                 elem.text = (
                     parse(start_year_month).date() + relativedelta(day=1)
@@ -849,7 +893,7 @@ class TimePeriod(etree.ElementBase):
         if not len(self._endDate) > 0:
             elem = etree.SubElement(self, f"{{{dict(self.nsmap)[None]}}}endDate")
 
-            end_year_month = getattr(self, "_endYearMonth")
+            end_year_month = self._endYearMonth
             if end_year_month:
                 # Dateutil will figure out actual last day of month on its own. Thanks!
                 elem.text = (
@@ -867,7 +911,8 @@ class Representativeness(etree.ElementBase):
     """Contains information about the fraction of the relevant market supplied by the
     product/service described in the dataset. Information about market share,
     production volume (in the ecoinvent quality network: also consumption volume in
-    the market area) and information about how data have been sampled."""
+    the market area) and information about how data have been sampled.
+    """
 
     percent = create_attribute_v1("percent", float)
     """float: Indicates the share in market supply in the geographical area indicated
@@ -908,9 +953,10 @@ class Representativeness(etree.ElementBase):
 
 class Source(etree.ElementBase):
     """Contains information about author(s), title, kind of publication, place of
-    publication, name of editors (if any), etc.."""
+    publication, name of editors (if any), etc..
+    """
 
-    SOURCE_TYPE_MAP: Dict[int, str] = {
+    SOURCE_TYPE_MAP: ClassVar[dict[int, str]] = {
         0: "Undefined (default)",
         1: "Article",
         2: "Chapters in anthology",
@@ -926,7 +972,7 @@ class Source(etree.ElementBase):
 
     sourceType = create_attribute_v1("sourceType", int)
     """int: Indicates the kind of source. The codes are: 0=Undefined (default).
-    1=Article. 2=Chapters in anthology. 3=Seperate publication.
+    1=Article. 2=Chapters in anthology. 3=Separate publication.
     4=Measurement on site. 5=Oral communication. 6=Personal written communication.
     7=Questionnaries."""
 
@@ -939,7 +985,7 @@ class Source(etree.ElementBase):
 
     additionalAuthors = create_attribute_v1("additionalAuthors", str)
     """str: List of additional authors (surname and abbreviated name, e.g. Newton I.),
-    separated by commas. 'Et al.' may be used, if more than five additonal authors
+    separated by commas. 'Et al.' may be used, if more than five additional authors
     contributed to the cited publication."""
 
     year = create_attribute_v1("year", int)
@@ -985,7 +1031,7 @@ class Source(etree.ElementBase):
     issueNo = create_attribute_v1("issueNo", str)
     """str: Indicates the issue number of the journal an article is published in."""
 
-    text = create_attribute_v1("text", str)
+    text = create_attribute_v1("text", str)  # pyrefly: ignore[bad-override, missing-override-decorator]  # EcoSpold's `text` attribute shadows lxml's element text (public API)
     """str: Free text for additional description of the source. It may contain a
     brief summary of the publication and the kind of medium used (e.g. CD-ROM,
     hard copy)"""
@@ -994,14 +1040,16 @@ class Source(etree.ElementBase):
     def sourceTypeStr(self) -> str:
         """String representation for sourceType. See sourceType for explanations.
         0=Undefined (default). 1=Article. 2=Chapters in anthology.
-        3=Seperate publication. 4=Measurement on site. 5=Oral communication.
-        6=Personal written communication. 7=Questionnaries."""
+        3=Separate publication. 4=Measurement on site. 5=Oral communication.
+        6=Personal written communication. 7=Questionnaries.
+        """
         return Source.SOURCE_TYPE_MAP[self.sourceType]
 
 
 class Validation(etree.ElementBase):
     """Contains information about who carried out the critical review and about
-    the main results and conclusions of the revie and the recommendations made."""
+    the main results and conclusions of the revie and the recommendations made.
+    """
 
     proofReadingDetails = create_attribute_v1("proofReadingDetails", str)
     """str: Contains the comment of the reviewer of the dataset. For the ecoinvent
@@ -1041,15 +1089,16 @@ class DataEntryBy(etree.ElementBase):
 class DataGeneratorAndPublication(etree.ElementBase):
     """Contains information about who compiled for and entered data into the
     database. Furthermore contains information about kind of publication underlying
-    the dataset and the accessibility of the dataset."""
+    the dataset and the accessibility of the dataset.
+    """
 
-    DATA_PUBLISHED_IN_MAP: Dict[int, str] = {
+    DATA_PUBLISHED_IN_MAP: ClassVar[dict[int, str]] = {
         0: "Data as such notpublished (default)",
         1: "The data of some unit processes or subsystems are published",
         2: "Data has been published entirely in 'referenceToPublishedSource'",
     }
 
-    ACCESS_RESTRICTED_TO_MAP: Dict[int, str] = {
+    ACCESS_RESTRICTED_TO_MAP: ClassVar[dict[int, str]] = {
         0: "Public",
         1: "ETH Domain",
         2: "ecoinvent 2000",
@@ -1122,7 +1171,8 @@ class DataGeneratorAndPublication(etree.ElementBase):
         """String representation for dataPublishedIn. See dataPublishedIn for
         explanations. 0=Data as such not published (default). 1=The data of some unit
         processes or subsystems are published. 2=Data has been published entirely in
-        'referenceToPublishedSource'"""
+        'referenceToPublishedSource'.
+        """
         return DataGeneratorAndPublication.DATA_PUBLISHED_IN_MAP[self.dataPublishedIn]
 
     @property
@@ -1136,7 +1186,8 @@ class DataGeneratorAndPublication(etree.ElementBase):
         to unit process raw data. Members of the ecoinvent quality network (ecoinvent
         centre) have access to all information. accessRestrictedTo=3: The ecoinvent
         administrator has full access to information. Via the web only LCI results are
-        accessible (for ecoinvent clients and for members of the ecoinvent centre."""
+        accessible (for ecoinvent clients and for members of the ecoinvent centre.
+        """
         return DataGeneratorAndPublication.ACCESS_RESTRICTED_TO_MAP[
             self.accessRestrictedTo
         ]
@@ -1145,7 +1196,8 @@ class DataGeneratorAndPublication(etree.ElementBase):
 class Person(etree.ElementBase):
     """Used for the identification of members of the organisation institute co-operating
     within a quality network (e.g., ecoinvent) referred to in the areas Validation,
-    dataEntryBy and dataGeneratorAndPublication."""
+    dataEntryBy and dataGeneratorAndPublication.
+    """
 
     number = create_attribute_v1("number", int)
     """int: ID number is attributed to each person of an organisation/institute
